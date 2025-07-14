@@ -6,7 +6,13 @@ SECRET_KEY = os.getenv(
     "SECRET_KEY", "django-insecure-04p@%t4gven4uvy!eb)o2)e=e*k@7no3@7hae=a=ms0l3t)-2j"
 )
 
-ALLOWED_HOSTS = ["ubongo.dreamjobzm.com", "3.8.137.16", "127.0.0.1", "localhost"]
+ALLOWED_HOSTS = [
+    "ubongo.dreamjobzm.com",
+    "3.8.137.16",
+    "127.0.0.1",
+    "localhost",
+    "0.0.0.0",
+]
 
 # Security
 SECURE_HSTS_SECONDS = 31536000
