@@ -74,5 +74,5 @@ jobs:
           ssh ubuntu@3.8.137.16 "
             cd /home/ubuntu/ubungo-iq && \
             if [ -f db.sqlite3 ]; then rm db.sqlite3; echo 'Deleted db.sqlite3'; fi; \
-            docker-compose up --build -d --remove-orphans 
+            docker compose up --build -d --remove-orphans 
           "
