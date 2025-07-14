@@ -1,0 +1,78 @@
+name: Deploy BACKEND to DOCKER
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    environment: .env
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Configure known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H 3.8.137.16 >> ~/.ssh/known_hosts
+
+      - name: Validate connection
+        run: ssh ubuntu@3.8.137.16 "hostname"
+
+      - name: Fix permissions on server
+        run: |
+          ssh ubuntu@3.8.137.16 "
+            sudo chown -R ubuntu:ubuntu /home/ubuntu/ubongo_iq/ && \
+            chmod -R u+rwX /home/ubuntu/ubongo_iq/
+          "
+
+      - name: Sync code
+        run: |
+          rsync -avz --delete \
+            --exclude=.git \
+            --exclude=.github \
+            --exclude='__pycache__' \
+            --exclude=staticfiles \
+            --exclude='utils/logging.log' \
+            ./ ubuntu@3.8.137.16:/home/ubuntu/ubongo_iq/
+
+      - name: Create .env on server
+        run: |
+          ssh ubuntu@3.8.137.16 "cat <<EOF > /home/ubuntu/ubongo_iq/.env
+          DATABASE_ENGINE=${{ secrets.DATABASE_ENGINE }}
+          DATABASE_HOST=${{ secrets.DATABASE_HOST }}
+          DATABASE_NAME=${{ secrets.DATABASE_NAME }}
+          DATABASE_USER=${{ secrets.DATABASE_USER }}
+          DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}
+          DATABASE_PORT=${{ secrets.DATABASE_PORT }}
+          DEBUG=${{ secrets.DEBUG }}
+          DJANGO_SETTINGS_MODULE=${{ secrets.DJANGO_SETTINGS_MODULE}}
+          SECRET_KEY=${{ secrets.SECRET_KEY }}
+          MAILTRAP_API_TOKEN=${{secrets.MAILTRAP_API_TOKEN}}
+          AWS_STORAGE_BUCKET_NAME=${{ secrets.AWS_STORAGE_BUCKET_NAME }}
+          AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_CLOUDFRONT_DOMAIN=${{ secrets.AWS_CLOUDFRONT_DOMAIN }}
+          AWS_CLOUDFRONT_ID=${{ secrets.AWS_CLOUDFRONT_ID }}
+          AWS_S3_REGION_NAME=${{ secrets.AWS_S3_REGION_NAME }}
+          ENVIRONMENT=${{ secrets.ENVIRONMENT }}
+          EOF
+          "
+          # Secure the .env file
+          ssh ubuntu@3.8.137.16 "chmod 600 /home/ubuntu/ubongo_iq/.env"
+
+      - name: Deploy containers
+        run: |
+          ssh ubuntu@3.8.137.16 "
+            cd /home/ubuntu/ubongo_iq && \
+            if [ -f db.sqlite3 ]; then rm db.sqlite3; echo 'Deleted db.sqlite3'; fi; \
+            docker-compose up --build -d --remove-orphans 
+          "
