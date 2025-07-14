@@ -1,0 +1,12 @@
+<!-- templates/includes/article_snippets.html -->
+{% for article in articles %}
+  <div class="article-card">
+    <div class="article-image">
+        <img src="{{ article.featured_image.file.url }}" alt="{{ article.title }}">
+    </div>
+    <div class="article-content">
+      <h3><a href="{{ article.url }}">{{ article.title }}</a></h3>
+      <div class="article-category">{{ article.category|default:"General" }}</div>
+    </div>
+  </div>
+{% endfor %}

@@ -1,0 +1,28 @@
+[project]
+name = "ubongo-iq"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Mwapsam",email = "mwapsam@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "django (>=5.2.4,<6.0.0)",
+    "wagtail (>=7.0.1,<8.0.0)",
+    "django-extensions (>=4.1,<5.0)",
+    "psycopg2 (>=2.9.10,<3.0.0)",
+    "whitenoise (>=6.9.0,<7.0.0)",
+    "django-storages (>=1.14.6,<2.0.0)",
+    "gunicorn (>=23.0.0,<24.0.0)",
+    "django-redis (>=6.0.0,<7.0.0)",
+    "pillow (>=11.3.0,<12.0.0)"
+]
+
+[tool.poetry]
+packages = [{include = "ubongo_iq", from = "src"}]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
