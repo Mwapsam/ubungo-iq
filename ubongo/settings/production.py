@@ -2,7 +2,7 @@ from .base import *
 
 DEBUG = False
 
-ALLOWED_HOSTS = ["yourdomain.com", "www.yourdomain.com"]
+ALLOWED_HOSTS = ["ubongo.dreamjobzm.com"]
 
 # Security
 SECURE_HSTS_SECONDS = 31536000
