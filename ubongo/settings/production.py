@@ -1,15 +1,17 @@
 from .base import *
 
 DEBUG = False
+SECRET_KEY = os.getenv(
+    "SECRET_KEY", "django-insecure-04p@%t4gven4uvy!eb)o2)e=e*k@7no3@7hae=a=ms0l3t)-2j"
+)
 
 ALLOWED_HOSTS = ["ubongo.dreamjobzm.com", "3.8.137.16"]
-SECRET_KEY = os.getenv("SECRET_KEY")
 
 # Security
 SECURE_HSTS_SECONDS = 31536000
 SECURE_SSL_REDIRECT = True
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-USE_X_FORWARDED_HOST = True
+USE_X_FORWARDED_HOST = True  
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
