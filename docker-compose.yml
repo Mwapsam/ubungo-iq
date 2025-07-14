@@ -1,0 +1,28 @@
+services:
+  web:
+    build: .
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    command: sh -c "python manage.py migrate && gunicorn ubongo.wsgi:application -b 0.0.0.0 -p 8000"
+    depends_on:
+      - db
+
+  db:
+    build: ./docker/postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - ubongo_postgres_data:/var/lib/postgresql/data
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: ${DATABASE_NAME}
+
+volumes:
+  ubongo_postgres_data:
