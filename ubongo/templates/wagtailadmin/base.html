@@ -1,0 +1,12 @@
+{% extends "wagtailadmin/base.html" %}
+{% load static %}
+
+{% block branding_logo %}
+    <img src="{% static 'img/icon.png' %}" alt="Ubongo IQ" width="80" loading="lazy" style="width: 50px; height: 50px;" />
+{% endblock %}
+
+{% block branding_title %}Ubongo IQ{% endblock %}
+
+{% block branding_favicon %}
+    <link rel="shortcut icon" href="{% static 'img/icon.png' %}" />
+{% endblock %}
