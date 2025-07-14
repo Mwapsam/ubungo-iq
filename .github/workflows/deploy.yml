@@ -30,8 +30,8 @@ jobs:
       - name: Fix permissions on server
         run: |
           ssh ubuntu@3.8.137.16 "
-            sudo chown -R ubuntu:ubuntu /home/ubuntu/ubongo-iq/ && \
-            chmod -R u+rwX /home/ubuntu/ubongo-iq/
+            sudo chown -R ubuntu:ubuntu /home/ubuntu/ubungo-iq/ && \
+            chmod -R u+rwX /home/ubuntu/ubungo-iq/
           "
 
       - name: Sync code
@@ -42,11 +42,11 @@ jobs:
             --exclude='__pycache__' \
             --exclude=staticfiles \
             --exclude='utils/logging.log' \
-            ./ ubuntu@3.8.137.16:/home/ubuntu/ubongo-iq/
+            ./ ubuntu@3.8.137.16:/home/ubuntu/ubungo-iq/
 
       - name: Create .env on server
         run: |
-          ssh ubuntu@3.8.137.16 "cat <<EOF > /home/ubuntu/ubongo-iq/.env
+          ssh ubuntu@3.8.137.16 "cat <<EOF > /home/ubuntu/ubungo-iq/.env
           DATABASE_ENGINE=${{ secrets.DATABASE_ENGINE }}
           DATABASE_HOST=${{ secrets.DATABASE_HOST }}
           DATABASE_NAME=${{ secrets.DATABASE_NAME }}
@@ -67,12 +67,12 @@ jobs:
           EOF
           "
           # Secure the .env file
-          ssh ubuntu@3.8.137.16 "chmod 600 /home/ubuntu/ubongo-iq/.env"
+          ssh ubuntu@3.8.137.16 "chmod 600 /home/ubuntu/ubungo-iq/.env"
 
       - name: Deploy containers
         run: |
           ssh ubuntu@3.8.137.16 "
-            cd /home/ubuntu/ubongo-iq && \
+            cd /home/ubuntu/ubungo-iq && \
             if [ -f db.sqlite3 ]; then rm db.sqlite3; echo 'Deleted db.sqlite3'; fi; \
             docker-compose up --build -d --remove-orphans 
           "
