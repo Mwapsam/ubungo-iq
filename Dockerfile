@@ -9,6 +9,8 @@ ENV PYTHONFAULTHANDLER=1 \
     PIP_NO_CACHE_DIR=off \
     PIP_DISABLE_PIP_VERSION_CHECK=on 
 
+RUN apt-get update && apt-get install -y libheif-dev
+
 RUN pip install poetry
 
 COPY pyproject.toml ./
