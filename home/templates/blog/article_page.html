@@ -10,15 +10,6 @@
       box-sizing: border-box;
   }
 
-  body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-      line-height: 1.6;
-      color: #000000;
-      background: linear-gradient(135deg, #007bff 0%, #2eb67d 100%);
-      min-height: 100vh;
-      padding: 20px;
-  }
-
   .container {
       max-width: 800px;
       margin: 0 auto;
@@ -43,7 +34,7 @@
 
   .hero-section {
       position: relative;
-      height: 400px;
+      height: 600px;
       background: linear-gradient(45deg, #007bff, #2eb67d);
       display: flex;
       align-items: center;
@@ -132,10 +123,10 @@
   .category {
       display: inline-flex;
       align-items: center;
-      padding: 8px 16px;
+      padding: 4px 10px;
       background: linear-gradient(45deg, #007bff, #2eb67d);
       color: white;
-      border-radius: 25px;
+      border-radius: 8px;
       font-weight: 500;
       text-decoration: none;
       transition: all 0.3s ease;
@@ -154,15 +145,46 @@
   }
 
   .tag {
-      padding: 6px 12px;
+      padding: 4px 10px;
       background: rgba(0, 123, 255, 0.1);
       color: #007bff;
-      border-radius: 15px;
+      border-radius: 8px;
       font-size: 0.85rem;
       font-weight: 500;
       text-decoration: none;
       transition: all 0.3s ease;
       border: 1px solid rgba(0, 123, 255, 0.2);
+  }
+
+  .richtext-image.full-width {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    margin: 30px auto;
+    border-radius: 12px;
+    background-color: #F4F4F4; /* TaskCentro light gray */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    text-align: center;
+  }
+
+  .richtext-image.full-width img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+  }
+
+  /* Optional: Add subtle caption styling if used below the image */
+  .richtext-image.full-width + p em {
+    font-family: 'Metropolis Regular', sans-serif;
+    font-size: 0.95rem;
+    color: #2A3563; /* TaskCentro navy */
+    display: block;
+    text-align: center;
+    margin-top: -10px;
+    margin-bottom: 25px;
   }
 
   .tag:hover {
@@ -321,16 +343,18 @@
         <div class="floating-circle"></div>
     </div>
 
+    <div class="hero-section">
+      <div class="hero-bg"></div>
+      <img src="{{ page.featured_image.file.url }}" alt="{{ page.title }}"class="featured-image">
+      <div class="hero-overlay">
+          <div class="hero-content">
+              <h1>{{ page.title }}</h1>
+          </div>
+      </div>
+  </div>
+
     <div class="container">
-        <div class="hero-section">
-            <div class="hero-bg"></div>
-            <img src="{{ page.featured_image.file.url }}" alt="{{ page.title }}"class="featured-image">
-            <div class="hero-overlay">
-                <div class="hero-content">
-                    <h1>{{ page.title }}</h1>
-                </div>
-            </div>
-        </div>
+        
 
         <div class="article-content">
             <div class="article-meta">
