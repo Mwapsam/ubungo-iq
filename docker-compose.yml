@@ -24,5 +24,31 @@ services:
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
       POSTGRES_DB: ${DATABASE_NAME}
 
+  redis:
+    image: redis:6
+    ports:
+      - '6379:6379'
+
+  celery_worker:
+    build: .
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    command: celery -A ubongo worker --loglevel=info
+    depends_on:
+      - redis
+
+  celery_beat:
+    build: .
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    command: celery -A ubongo beat --loglevel=info
+    depends_on:
+      - redis
+
+
 volumes:
   ubongo_postgres_data:

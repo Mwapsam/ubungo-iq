@@ -108,3 +108,19 @@ LOGGING = {
 }
 
 ENVIRONMENT = os.environ.get("ENVIRONMENT", "development").lower()
+
+REDIS_URL = os.getenv("REDIS_URL", "redis://redis:6379")
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [REDIS_URL],
+        },
+    },
+}
+
+
+CELERY_BROKER_URL = os.getenv("REDIS_URL", "redis://redis:6379")
+CELERY_RESULT_BACKEND = "django-db"
+CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"

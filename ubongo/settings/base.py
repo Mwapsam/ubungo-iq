@@ -128,4 +128,26 @@ WAGTAILSEARCH_BACKENDS = {
 }
 
 WAGTAILADMIN_BASE_URL = "http://example.com"
-WAGTAILDOCS_EXTENSIONS = ['csv', 'docx', 'key', 'odt', 'pdf', 'pptx', 'rtf', 'txt', 'xlsx', 'zip']
+
+WAGTAILIMAGES_JPEG_QUALITY = 85
+WAGTAILIMAGES_WEBP_QUALITY = 80
+WAGTAILIMAGES_AVIF_QUALITY = 70
+
+
+WAGTAILIMAGES_EXTENSIONS = ["gif", "jpg", "jpeg", "png", "webp", "svg", "avif"]
+
+WAGTAILIMAGES_FORMAT_CONVERSIONS = {
+    "bmp": "avif",
+    "png": "avif",
+    "jpeg": "avif",
+    "gif": "webp",
+}
+
+
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+
+INSTALLED_APPS += ["django_celery_results"]
+
+CELERY_TIMEZONE = TIME_ZONE
