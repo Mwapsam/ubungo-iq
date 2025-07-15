@@ -16,7 +16,6 @@ ALLOWED_HOSTS = [
 
 INSTALLED_APPS += ["storages"]
 
-# Security
 SECURE_HSTS_SECONDS = 31536000
 SECURE_SSL_REDIRECT = True
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
@@ -29,7 +28,6 @@ X_FRAME_OPTIONS = "DENY"
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760
 
 
-# Amazon S3 settings
 STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
@@ -66,7 +64,6 @@ STORAGES = {
     "staticfiles": {"BACKEND": "ubongo.settings.storage_backends.StaticToS3Storage"},
 }
 
-# Production database
 DATABASES = {
     "default": {
         "ENGINE": os.environ.get("DATABASE_ENGINE", "django.db.backends.postgresql"),
@@ -79,7 +76,6 @@ DATABASES = {
     }
 }
 
-# Email
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = os.environ.get("EMAIL_HOST", "live.smtp.mailtrap.io")
 EMAIL_PORT = os.environ.get("EMAIL_PORT", 587)
