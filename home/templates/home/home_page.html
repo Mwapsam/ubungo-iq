@@ -144,30 +144,38 @@
     /* Articles Grid */
     .articles-section {
         padding: 2rem;
-        max-width: 1200px;
+        max-width: 1000px;
         margin: 0 auto;
     }
 
     .articles-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 2rem;
         margin-bottom: 2rem;
     }
 
 
     .article-image img {
         width: 100%;
-        height: 200px;
+        height: 270px;
         border-radius: 20px;
         position: relative;
         overflow: hidden;
         object-fit: cover;
         object-position: top;
+        box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+    }
+
+    #load-more-btn {
+      border-radius: 0 !important;
     }
 
     .article-content {
         padding: 1.5rem 0;
+    }
+
+    .article-card {
+      width: 18rem;
     }
 
     .article-card h3 {
