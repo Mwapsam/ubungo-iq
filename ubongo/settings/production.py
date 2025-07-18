@@ -7,7 +7,8 @@ SECRET_KEY = os.getenv(
 )
 
 ALLOWED_HOSTS = [
-    "ubongo.dreamjobzm.com",
+    "*.ubongoiq.com",
+    "ubongoiq.com",
     "3.8.137.16",
     "127.0.0.1",
     "localhost",
