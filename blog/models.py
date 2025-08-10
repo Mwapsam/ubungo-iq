@@ -8,6 +8,7 @@ from taggit.models import TaggedItemBase
 from modelcluster.fields import ParentalKey
 from modelcluster.tags import ClusterTaggableManager
 from django_extensions.db.fields import AutoSlugField
+import readtime
 
 from utils.generators import slugify_function
 
@@ -18,12 +19,10 @@ class Category(models.Model):
     slug = AutoSlugField(
         populate_from="name", slugify_function=slugify_function, unique=True
     )
+    color = models.CharField(max_length=7, default="#3b82f6")
     description = models.TextField(blank=True, null=True)
 
-    panels = [
-        FieldPanel("name"),
-        FieldPanel("description"),
-    ]
+    panels = [FieldPanel("name"), FieldPanel("description"), FieldPanel("color")]
 
     def __str__(self):
         return self.name
@@ -79,6 +78,8 @@ class ArticlePage(Page):
         related_name="+",
     )
     published_at = models.DateTimeField(auto_now_add=True)
+    view_count = models.PositiveIntegerField(default=0)
+    featured = models.BooleanField(default=False)
 
     content_panels = Page.content_panels + [
         FieldPanel("intro"),
@@ -87,6 +88,7 @@ class ArticlePage(Page):
         FieldPanel("category"),
         FieldPanel("tags"),
         FieldPanel("featured_image"),
+        FieldPanel("featured"),
     ]
 
     search_fields = Page.search_fields + [
@@ -101,3 +103,18 @@ class ArticlePage(Page):
 
     def __str__(self):
         return self.title
+
+    @property
+    def reading_time(self):
+        content = f"{self.intro} {self.body}"
+        return readtime.of_text(content)
+
+    @property
+    def reading_time_minutes(self):
+        rt = self.reading_time
+        return max(1, rt.minutes)
+
+    def increment_view_count(self):
+        ArticlePage.objects.filter(pk=self.pk).update(
+            view_count=models.F("view_count") + 1
+        )

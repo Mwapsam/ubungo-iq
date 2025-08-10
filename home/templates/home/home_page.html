@@ -1,486 +1,1446 @@
-<!-- templates/home/home_page.html -->
 {% extends "base.html" %}
-{% load static %}
-
-{% load wagtailcore_tags %}
-
-{% block title %}Home{% endblock %}
-{% block body_class %}home-page{% endblock %}
+{% load wagtailcore_tags wagtailimages_tags %}
 
 {% block extra_css %}
-<style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        line-height: 1.6;
-        color: #333;
-        background-color: #fff;
-    }
+    <style>
+        :root {
+            /* Hero Magazine Inspired Color Palette */
+            --black: #000000;
+            --white: #ffffff;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            
+            /* Enhanced Color Palette */
+            --primary-blue: #3b82f6;
+            --secondary-green: #10b981;
+            --accent-purple: #8b5cf6;
+            --warm-orange: #f59e0b;
+            --danger-red: #ef4444;
+            
+            /* Typography */
+            --font-display: 'Playfair Display', serif;
+            --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-size-xs: 0.75rem;
+            --font-size-sm: 0.875rem;
+            --font-size-base: 1rem;
+            --font-size-lg: 1.125rem;
+            --font-size-xl: 1.25rem;
+            --font-size-2xl: 1.5rem;
+            --font-size-3xl: 1.875rem;
+            --font-size-4xl: 2.25rem;
+            --font-size-5xl: 3rem;
+            --font-size-6xl: 3.75rem;
+            
+            /* Spacing */
+            --space-1: 0.25rem;
+            --space-2: 0.5rem;
+            --space-3: 0.75rem;
+            --space-4: 1rem;
+            --space-5: 1.25rem;
+            --space-6: 1.5rem;
+            --space-8: 2rem;
+            --space-10: 2.5rem;
+            --space-12: 3rem;
+            --space-16: 4rem;
+            --space-20: 5rem;
+            --space-24: 6rem;
+            
+            /* Layout */
+            --max-width: 1200px;
+            --max-width-prose: 65ch;
+            
+            /* Transitions */
+            --transition-fast: 150ms ease;
+            --transition-base: 250ms ease;
+            --transition-slow: 350ms ease;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
 
-    /* Header Styles */
-    header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 1rem 2rem;
-        border-bottom: 1px solid #eee;
-        background: white;
-        position: sticky;
-        top: 0;
-        z-index: 100;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    .logo {
-        font-size: 1.5rem;
-        font-weight: bold;
-        color: #333;
-    }
+        body {
+            font-family: var(--font-body);
+            background: var(--white);
+            color: var(--gray-900);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            font-size: var(--font-size-base);
+        }
 
-    nav {
-        display: flex;
-        gap: 2rem;
-        align-items: center;
-    }
+        img {
+            max-width: 100%;
+            height: auto;
+        }
 
-    nav a {
-        text-decoration: none;
-        color: #666;
-        font-weight: 500;
-        transition: color 0.3s ease;
-    }
+        /* Reading Progress Bar */
+        .reading-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--secondary-green));
+            z-index: 1000;
+            transition: width 0.3s ease;
+        }
 
-    nav a:hover {
-        color: #333;
-    }
+        /* Enhanced Header Styles */
+        .header {
+            position: sticky;
+            top: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--gray-200);
+            z-index: 100;
+            transition: var(--transition-base);
+        }
 
-    .subscribe {
-        background: #007bff;
-        color: white !important;
-        padding: 0.5rem 1rem;
-        border-radius: 4px;
-        transition: background 0.3s ease;
-    }
+        .header.scrolled {
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: var(--shadow-md);
+        }
 
-    .subscribe:hover {
-        background: #0056b3;
-    }
+        .header-container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: var(--space-4) var(--space-6);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
 
-    /* Hero Section */
-    .hero {
-        text-align: center;
-        padding: 4rem 2rem;
-        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    }
+        .logo {
+            font-family: var(--font-display);
+            font-size: var(--font-size-2xl);
+            font-weight: 600;
+            color: var(--black);
+            text-decoration: none;
+            letter-spacing: -0.025em;
+            position: relative;
+        }
 
-    .hero h1 {
-        font-size: 3rem;
-        font-weight: 700;
-        margin-bottom: 1rem;
-        color: #333;
-        line-height: 1.2;
-    }
+        .logo::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--secondary-green));
+            transition: var(--transition-base);
+        }
 
-    .hero-subtitle {
-        font-size: 1.2rem;
-        color: #666;
-        margin-bottom: 2rem;
-    }
+        .logo:hover::after {
+            width: 100%;
+        }
 
-    .btn {
-        display: inline-block;
-        padding: 1rem 2rem;
-        background: #007bff;
-        color: white;
-        text-decoration: none;
-        border-radius: 8px;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        border: none;
-        cursor: pointer;
-        font-size: 1rem;
-    }
+        /* Enhanced Navigation */
+        .nav {
+            display: flex;
+            align-items: center;
+            gap: var(--space-8);
+        }
 
-    .btn:hover {
-        background: #0056b3;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
-    }
+        .nav-link {
+            color: var(--gray-700);
+            text-decoration: none;
+            font-size: var(--font-size-sm);
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            transition: var(--transition-fast);
+            position: relative;
+            padding: var(--space-2) 0;
+        }
 
-    /* Categories Section */
-    .categories {
-        display: flex;
-        gap: 1rem;
-        margin: 2rem;
-        flex-wrap: wrap;
-        justify-content: center;
-    }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-blue);
+            transition: var(--transition-base);
+        }
 
-    .category-tag {
-        background: #f8f9fa;
-        padding: 0.7rem 1.5rem;
-        border-radius: 25px;
-        cursor: pointer;
-        font-weight: 500;
-        transition: all 0.3s ease;
-        border: 1px solid #e9ecef;
-    }
+        .nav-link:hover {
+            color: var(--black);
+        }
 
-    .category-tag:hover {
-        background: #e9ecef;
-        transform: translateY(-1px);
-    }
+        .nav-link:hover::after {
+            width: 100%;
+        }
 
-    .category-tag.active {
-        background: #007bff;
-        color: white;
-        border-color: #007bff;
-    }
+        /* Search Enhancement */
+        .search-container {
+            position: relative;
+            margin-left: var(--space-4);
+        }
 
-    /* Articles Grid */
-    .articles-section {
-        padding: 2rem;
-        max-width: 1000px;
-        margin: 0 auto;
-    }
+        .search-input {
+            padding: var(--space-2) var(--space-3) var(--space-2) var(--space-8);
+            border: 1px solid var(--gray-300);
+            border-radius: 20px;
+            font-size: var(--font-size-sm);
+            transition: var(--transition-base);
+            width: 200px;
+        }
 
-    .articles-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        margin-bottom: 2rem;
-    }
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            width: 250px;
+        }
 
+        .search-icon {
+            position: absolute;
+            left: var(--space-3);
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-400);
+        }
 
-    .article-image img {
-        width: 100%;
-        height: 270px;
-        border-radius: 20px;
-        position: relative;
-        overflow: hidden;
-        object-fit: cover;
-        object-position: top;
-        box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
-    }
+        .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            padding: var(--space-2);
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
 
-    #load-more-btn {
-      border-radius: 0 !important;
-    }
+        .mobile-menu {
+            display: none;
+        }
 
-    .article-content {
-        padding: 1.5rem 0;
-    }
+        /* Enhanced Hero Section */
+        .hero {
+            position: relative;
+            height: 70vh;
+            min-height: 500px;
+            display: flex;
+            align-items: flex-end;
+            margin-bottom: var(--space-16);
+            overflow: hidden;
+        }
 
-    .article-card {
-      width: 18rem;
-    }
+        .hero-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1;
+            transition: transform 10s ease;
+        }
 
-    .article-card h3 {
-        margin-bottom: 0.8rem;
-        font-size: 1.1rem;
-        line-height: 1.4;
-        font-weight: 600;
-    }
+        .hero:hover .hero-image {
+            transform: scale(1.02);
+        }
 
-    .article-card h3 a {
-        text-decoration: none;
-        color: #333;
-        transition: color 0.3s ease;
-    }
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(transparent 30%, rgba(0,0,0,0.4) 70%, rgba(0,0,0,0.8));
+            z-index: 2;
+        }
 
-    .article-card h3 a:hover {
-        color: #007bff;
-    }
+        .hero-content {
+            position: relative;
+            z-index: 3;
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 var(--space-6) var(--space-12);
+            color: var(--white);
+            animation: fadeInUp 1s ease-out;
+        }
 
-    .article-category {
-        color: #999;
-        font-size: 0.9rem;
-        text-decoration: underline;
-        font-weight: 500;
-    }
+        .hero-badge {
+            display: inline-block;
+            background: rgba(59, 130, 246, 0.9);
+            color: var(--white);
+            padding: var(--space-2) var(--space-4);
+            border-radius: 20px;
+            font-size: var(--font-size-xs);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: var(--space-4);
+            backdrop-filter: blur(10px);
+        }
 
-    /* Load More Button */
-    .load-more-container {
-        text-align: center;
-        margin: 2rem 0;
-    }
+        .hero-category {
+            font-size: var(--font-size-xs);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: var(--space-3);
+            opacity: 0.9;
+        }
 
-    /* Ad Space */
-    .ad-space {
-        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-        padding: 4rem 2rem;
-        text-align: center;
-        margin: 3rem 0;
-    }
+        .hero-title {
+            font-family: var(--font-display);
+            font-size: clamp(var(--font-size-3xl), 5vw, var(--font-size-6xl));
+            font-weight: 600;
+            line-height: 1.1;
+            margin-bottom: var(--space-4);
+            letter-spacing: -0.025em;
+        }
 
-    .ad-space h2 {
-        font-size: 2.5rem;
-        margin-bottom: 1rem;
-        color: #333;
-    }
+        .hero-excerpt {
+            font-size: var(--font-size-lg);
+            line-height: 1.6;
+            max-width: 600px;
+            opacity: 0.95;
+            margin-bottom: var(--space-6);
+        }
 
-    .ad-space p {
-        font-size: 1.1rem;
-        color: #666;
-        margin-bottom: 2rem;
-        max-width: 600px;
-        margin-left: auto;
-        margin-right: auto;
-    }
+        .hero-cta {
+            display: flex;
+            gap: var(--space-4);
+            flex-wrap: wrap;
+        }
 
-    /* Newsletter Section */
-    .newsletter-section {
-        background: #007bff;
-        color: white;
-        padding: 3rem 2rem;
-        text-align: center;
-    }
+        .hero-btn {
+            padding: var(--space-3) var(--space-6);
+            border-radius: 25px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition-base);
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
 
-    .newsletter-section h3 {
-        font-size: 2rem;
-        margin-bottom: 1rem;
-    }
+        .hero-btn--primary {
+            background: var(--primary-blue);
+            color: var(--white);
+            border: 2px solid var(--primary-blue);
+        }
 
-    .newsletter-section p {
-        font-size: 1.1rem;
-        margin-bottom: 2rem;
-        opacity: 0.9;
-    }
+        .hero-btn--secondary {
+            background: transparent;
+            color: var(--white);
+            border: 2px solid var(--white);
+        }
 
-    .newsletter-form {
-        display: flex;
-        gap: 1rem;
-        max-width: 400px;
-        margin: 0 auto;
-    }
+        .hero-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
 
-    .newsletter-form input {
-        flex: 1;
-        padding: 1rem;
-        border: none;
-        border-radius: 8px;
-        font-size: 1rem;
-    }
+        /* Trending Section */
+        .trending-section {
+            background: var(--gray-50);
+            padding: var(--space-16) var(--space-6);
+            margin-bottom: var(--space-16);
+        }
 
-    .newsletter-form button {
-        padding: 1rem 2rem;
-        background: white;
-        color: #007bff;
-        border: none;
-        border-radius: 8px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
+        .trending-container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+        }
 
-    .newsletter-form button:hover {
-        background: #f8f9fa;
-    }
+        .trending-header {
+            text-align: center;
+            margin-bottom: var(--space-12);
+        }
 
-    /* Footer */
-    footer {
-        background: #333;
-        color: white;
-        padding: 2rem;
-        text-align: center;
-    }
+        .trending-title {
+            font-family: var(--font-display);
+            font-size: var(--font-size-3xl);
+            font-weight: 600;
+            margin-bottom: var(--space-4);
+            color: var(--gray-900);
+        }
 
-    .footer-content {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        max-width: 1200px;
-        margin: 0 auto;
-    }
+        .trending-subtitle {
+            color: var(--gray-600);
+            font-size: var(--font-size-lg);
+        }
 
-    .footer-links {
-        display: flex;
-        gap: 2rem;
-    }
+        .trending-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-6);
+        }
 
-    .footer-links a {
-        color: #ccc;
-        text-decoration: none;
-        transition: color 0.3s ease;
-    }
+        .trending-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: var(--space-6);
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition-base);
+            border: 1px solid var(--gray-200);
+        }
 
-    .footer-links a:hover {
-        color: white;
-    }
+        .trending-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
 
-    /* Responsive Design */
-    @media (max-width: 768px) {
-        .hero h1 {
-            font-size: 2rem;
+        .trending-number {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background: var(--primary-blue);
+            color: var(--white);
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            font-weight: 600;
+            font-size: var(--font-size-sm);
+            margin-bottom: var(--space-3);
+        }
+
+        .trending-card-title {
+            font-size: var(--font-size-lg);
+            font-weight: 600;
+            margin-bottom: var(--space-2);
+            color: var(--gray-900);
+        }
+
+        .trending-card-meta {
+            font-size: var(--font-size-sm);
+            color: var(--gray-500);
+        }
+
+        /* Category Filter */
+        .category-filter {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-3);
+            margin-bottom: var(--space-12);
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: var(--space-3) var(--space-5);
+            border: 2px solid var(--gray-300);
+            background: var(--white);
+            color: var(--gray-700);
+            border-radius: 25px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition-base);
+            text-transform: uppercase;
+            font-size: var(--font-size-xs);
+            letter-spacing: 0.1em;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            border-color: var(--primary-blue);
+            background: var(--primary-blue);
+            color: var(--white);
+            transform: translateY(-1px);
+        }
+
+        /* Main Container */
+        .main {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 var(--space-6);
+        }
+
+        /* Enhanced Articles Grid */
+        .articles-section {
+            margin-bottom: var(--space-24);
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: var(--font-size-3xl);
+            font-weight: 500;
+            margin-bottom: var(--space-12);
+            text-align: center;
+            letter-spacing: -0.025em;
         }
 
         .articles-grid {
-            grid-template-columns: 1fr;
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: var(--space-8);
+        }
+
+        /* Enhanced Article Card Styles */
+        .article-card {
+            position: relative;
+            transition: var(--transition-base);
+            border-radius: 12px;
+            overflow: hidden;
+            background: var(--white);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .article-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .article-card--featured {
+            grid-column: span 8;
+            grid-row: span 2;
+        }
+
+        .article-card--large {
+            grid-column: span 6;
+        }
+
+        .article-card--medium {
+            grid-column: span 4;
+        }
+
+        .article-card--small {
+            grid-column: span 3;
+        }
+
+        .card-image {
+            position: relative;
+            overflow: hidden;
+            margin-bottom: var(--space-4);
+        }
+
+        .card-image--featured {
+            height: 400px;
+        }
+
+        .card-image--large {
+            height: 300px;
+        }
+
+        .card-image--medium {
+            height: 250px;
+        }
+
+        .card-image--small {
+            height: 200px;
+        }
+
+        .card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition-slow);
+        }
+
+        .article-card:hover .card-image img {
+            transform: scale(1.05);
+        }
+
+        .card-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(transparent, rgba(0,0,0,0.3));
+            opacity: 0;
+            transition: var(--transition-base);
+        }
+
+        .article-card:hover .card-overlay {
+            opacity: 1;
+        }
+
+        .card-content {
+            padding: var(--space-6);
+        }
+
+        .card-category {
+            display: inline-block;
+            font-size: var(--font-size-xs);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--primary-blue);
+            background: rgba(59, 130, 246, 0.1);
+            padding: var(--space-1) var(--space-3);
+            border-radius: 12px;
+            margin-bottom: var(--space-3);
+        }
+
+        .card-title {
+            font-family: var(--font-display);
+            font-weight: 600;
+            line-height: 1.3;
+            margin-bottom: var(--space-3);
+            letter-spacing: -0.025em;
+        }
+
+        .card-title--featured {
+            font-size: var(--font-size-3xl);
+        }
+
+        .card-title--large {
+            font-size: var(--font-size-2xl);
+        }
+
+        .card-title--medium {
+            font-size: var(--font-size-xl);
+        }
+
+        .card-title--small {
+            font-size: var(--font-size-lg);
+        }
+
+        .card-title a {
+            color: var(--gray-900);
+            text-decoration: none;
+            transition: var(--transition-fast);
+        }
+
+        .card-title a:hover {
+            color: var(--primary-blue);
+        }
+
+        .card-excerpt {
+            color: var(--gray-600);
+            line-height: 1.6;
+            margin-bottom: var(--space-4);
+        }
+
+        .card-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: var(--font-size-sm);
+            color: var(--gray-500);
+        }
+
+        .card-meta-left {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+        }
+
+        .card-views {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+            color: var(--gray-400);
+        }
+
+        /* Newsletter Section */
+        .newsletter-section {
+            background: linear-gradient(135deg, var(--gray-900), var(--gray-800));
+            color: var(--white);
+            padding: var(--space-20) var(--space-6);
+            margin: var(--space-24) 0;
+            text-align: center;
+        }
+
+        .newsletter-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .newsletter-title {
+            font-family: var(--font-display);
+            font-size: var(--font-size-3xl);
+            font-weight: 600;
+            margin-bottom: var(--space-4);
+        }
+
+        .newsletter-subtitle {
+            font-size: var(--font-size-lg);
+            color: var(--gray-300);
+            margin-bottom: var(--space-8);
         }
 
         .newsletter-form {
-            flex-direction: column;
+            display: flex;
+            gap: var(--space-3);
+            max-width: 400px;
+            margin: 0 auto;
         }
 
-        .footer-content {
-            flex-direction: column;
-            gap: 1rem;
+        .newsletter-input {
+            flex: 1;
+            padding: var(--space-4);
+            border: none;
+            border-radius: 25px;
+            font-size: var(--font-size-base);
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--white);
+            backdrop-filter: blur(10px);
         }
 
-        nav {
-            gap: 1rem;
+        .newsletter-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
         }
-    }
-</style>
+
+        .newsletter-input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .newsletter-btn {
+            padding: var(--space-4) var(--space-6);
+            background: var(--primary-blue);
+            color: var(--white);
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-base);
+        }
+
+        .newsletter-btn:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+
+        /* Load More Section */
+        .load-more {
+            text-align: center;
+            margin-top: var(--space-16);
+        }
+
+        .load-more-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-4) var(--space-8);
+            background: var(--black);
+            color: var(--white);
+            border: none;
+            border-radius: 25px;
+            font-size: var(--font-size-sm);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            transition: var(--transition-base);
+        }
+
+        .load-more-btn:hover {
+            background: var(--gray-800);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .load-more-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Floating Actions */
+        .floating-actions {
+            position: fixed;
+            right: var(--space-6);
+            bottom: var(--space-6);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-3);
+            z-index: 50;
+        }
+
+        .floating-btn {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition-base);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .floating-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .scroll-to-top {
+            background: var(--primary-blue);
+            color: var(--white);
+        }
+
+        .newsletter-toggle {
+            background: var(--secondary-green);
+            color: var(--white);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInFromRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .animate-on-scroll.in-view {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .articles-grid {
+                grid-template-columns: repeat(8, 1fr);
+            }
+            
+            .article-card--featured {
+                grid-column: span 8;
+            }
+            
+            .article-card--large {
+                grid-column: span 4;
+            }
+
+            .search-container {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-container {
+                padding: var(--space-3) var(--space-4);
+            }
+
+            .nav {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: var(--white);
+                border-top: 1px solid var(--gray-200);
+                flex-direction: column;
+                padding: var(--space-4);
+                gap: var(--space-4);
+            }
+
+            .nav.show {
+                display: flex;
+            }
+
+            .mobile-toggle {
+                display: block;
+            }
+
+            .hero {
+                height: 60vh;
+                min-height: 400px;
+                margin-bottom: var(--space-12);
+            }
+
+            .hero-content {
+                padding: 0 var(--space-4) var(--space-8);
+            }
+
+            .hero-cta {
+                flex-direction: column;
+            }
+
+            .main {
+                padding: 0 var(--space-4);
+            }
+
+            .articles-grid {
+                grid-template-columns: 1fr;
+                gap: var(--space-10);
+            }
+
+            .article-card--featured,
+            .article-card--large,
+            .article-card--medium,
+            .article-card--small {
+                grid-column: span 1;
+            }
+
+            .card-image--featured,
+            .card-image--large,
+            .card-image--medium,
+            .card-image--small {
+                height: 250px;
+            }
+
+            .card-title--featured {
+                font-size: var(--font-size-2xl);
+            }
+
+            .section-title {
+                font-size: var(--font-size-2xl);
+                margin-bottom: var(--space-8);
+            }
+
+            .trending-section {
+                padding: var(--space-12) var(--space-4);
+            }
+
+            .newsletter-form {
+                flex-direction: column;
+                max-width: none;
+            }
+
+            .floating-actions {
+                right: var(--space-4);
+                bottom: var(--space-4);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-container {
+                padding: var(--space-3);
+            }
+
+            .logo {
+                font-size: var(--font-size-xl);
+            }
+
+            .hero-content {
+                padding: 0 var(--space-3) var(--space-6);
+            }
+
+            .main {
+                padding: 0 var(--space-3);
+            }
+
+            .articles-grid {
+                gap: var(--space-8);
+            }
+
+            .card-image--featured,
+            .card-image--large,
+            .card-image--medium,
+            .card-image--small {
+                height: 200px;
+            }
+
+            .trending-section {
+                padding: var(--space-8) var(--space-3);
+            }
+
+            .newsletter-section {
+                padding: var(--space-12) var(--space-3);
+            }
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
+<!-- Reading Progress Bar -->
+<div class="reading-progress" id="readingProgress"></div>
 
-  <!-- Header -->
-  <header>
-    <div class="logo">ubongo</div>
-    <nav>
-      <a href="/">Home</a>
-      <a href="#">Blogs</a>
-      <a href="#">Marketplace</a>
-      <a href="#">IQ4RM</a>
-      <a href="#" class="subscribe">Subscribe</a>
-    </nav>
-  </header>
+<!-- Enhanced Header -->
+<header class="header" id="header">
+    <div class="header-container">
+        <a href="/" class="logo">Ubongo IQ</a>
+        
+        <nav class="nav" id="nav">
+            <a href="/" class="nav-link">Home</a>
+            <a href="#" class="nav-link">Articles</a>
+            <a href="#" class="nav-link">Categories</a>
+            <a href="#" class="nav-link">About</a>
+            <a href="#" class="nav-link">Contact</a>
+        </nav>
 
-  <!-- Hero Section -->
-  <section class="hero">
-    <h1>He lost 186 Billion in earnings yesterday?</h1>
-    <p class="hero-subtitle">Stay informed with the latest financial news and insights</p>
-    <a href="#" class="btn">Find out why?</a>
-  </section>
+        <div class="search-container">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="search-input" placeholder="Search articles..." id="searchInput">
+        </div>
+        
+        <button class="mobile-toggle" aria-label="Toggle menu" id="mobileToggle">
+            ☰
+        </button>
+    </div>
+</header>
 
-  <!-- Blog Categories -->
-  <section class="categories">
-    {% for category in categories %}
-      <span class="category-tag">{{ category }}</span>
-    {% endfor %}
-  </section>
+{% if articles %}
+<!-- Enhanced Hero Section -->
+{% with articles.0 as featured_article %}
+<section class="hero">
+    {% if featured_article.featured_image %}
+        {% image featured_article.featured_image width-1200 height-800 as hero_img %}
+        <img src="{{ hero_img.url }}" alt="{{ featured_article.title }}" class="hero-image">
+    {% endif %}
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <div class="hero-badge">🔥 Trending Now</div>
+        {% if featured_article.category %}
+            <div class="hero-category">{{ featured_article.category.name }}</div>
+        {% endif %}
+        <h1 class="hero-title">{{ featured_article.title }}</h1>
+        <p class="hero-excerpt">{{ featured_article.intro|truncatewords:30 }}</p>
+        <div class="hero-cta">
+            <a href="{{ featured_article.url }}" class="hero-btn hero-btn--primary">
+                Read Full Story →
+            </a>
+            <a href="#articles" class="hero-btn hero-btn--secondary">
+                Explore More
+            </a>
+        </div>
+    </div>
+</section>
+{% endwith %}
 
-  <!-- Articles Section -->
-  <section class="articles-section">
-    <div id="articles-container" class="articles-grid">
-      {% include "includes/article_snippets.html" %}
+<!-- Trending Section -->
+<section class="trending-section">
+    <div class="trending-container">
+        <div class="trending-header">
+            <h2 class="trending-title">Trending This Week</h2>
+            <p class="trending-subtitle">Most popular articles from our community</p>
+        </div>
+        <div class="trending-grid">
+            {% for article in articles|slice:"1:4" %}
+                <div class="trending-card animate-on-scroll">
+                    <div class="trending-number">{{ forloop.counter }}</div>
+                    <h3 class="trending-card-title">{{ article.title|truncatewords:8 }}</h3>
+                    <div class="trending-card-meta">
+                        {{ article.published_at|date:"M j" }} • {{ article.reading_time_minutes }} min read
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Main Content -->
+<main class="main" id="articles">
+    <!-- Category Filter -->
+    <div class="category-filter">
+        <button class="filter-btn active" data-category="all">All</button>
+        <button class="filter-btn" data-category="finance">Finance</button>
+        <button class="filter-btn" data-category="tech">Tech</button>
+        <button class="filter-btn" data-category="business">Business</button>
+        <button class="filter-btn" data-category="science">Science</button>
+        <button class="filter-btn" data-category="innovation">Innovation</button>
     </div>
 
-    <!-- Load More Button -->
-    <div class="load-more-container">
-      <button id="load-more-btn" class="btn">Load More</button>
+    <section class="articles-section">
+        <div class="articles-grid" id="articlesGrid">
+            {% for article in articles|slice:"1:" %}
+                <article class="article-card article-card--large animate-on-scroll" data-category="{{ article.category.name|lower|default:'general' }}">
+                    <div class="card-image card-image--large">
+                        {% if article.featured_image %}
+                            {% image article.featured_image width-600 height-400 as card_img %}
+                            <img src="{{ card_img.url }}" alt="{{ article.title }}" loading="lazy">
+                        {% else %}
+                            <div style="background: linear-gradient(135deg, var(--primary-blue), var(--secondary-green)); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem;">📰</div>
+                        {% endif %}
+                        <div class="card-overlay"></div>
+                    </div>
+                    
+                    <div class="card-content">
+                        {% if article.category %}
+                            <span class="card-category">{{ article.category.name }}</span>
+                        {% endif %}
+                        
+                        <h2 class="card-title {% cycle 'card-title--large' 'card-title--medium' 'card-title--medium' 'card-title--small' 'card-title--small' 'card-title--small' %}">
+                            <a href="{{ article.url }}">{{ article.title }}</a>
+                        </h2>
+                        
+                        {% if article.intro %}
+                            <p class="card-excerpt">{{ article.intro|truncatewords:15 }}</p>
+                        {% endif %}
+                        
+                        <div class="card-meta">
+                            <div class="card-meta-left">
+                                <span>{{ article.published_at|date:"M j, Y" }}</span>
+                                <span>{{ article.reading_time_minutes }} min read</span>
+                            </div>
+                            <div class="card-views">
+                                <span>👁</span>
+                                <span>{{ article.view_count|default:"0" }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    </section>
+
+    {% if has_more %}
+    <section class="load-more">
+        <button class="load-more-btn" id="loadMoreBtn" data-url="{% url 'load_more_articles' %}">
+            <span>Load More Articles</span>
+            <span>↓</span>
+        </button>
+    </section>
+    {% endif %}
+</main>
+
+<!-- Newsletter Section -->
+<section class="newsletter-section">
+    <div class="newsletter-container">
+        <h2 class="newsletter-title">Stay in the Loop</h2>
+        <p class="newsletter-subtitle">Get weekly insights delivered straight to your inbox. No spam, just value.</p>
+        <form class="newsletter-form" id="newsletterForm">
+            <input type="email" class="newsletter-input" placeholder="Enter your email address" required>
+            <button type="submit" class="newsletter-btn">Subscribe</button>
+        </form>
+        <p style="font-size: var(--font-size-sm); color: var(--gray-400); margin-top: var(--space-4);">
+            Join 50,000+ readers who trust Ubongo IQ for cutting-edge insights
+        </p>
     </div>
-  </section>
+</section>
 
-  <!-- Ad Space -->
-  <section class="ad-space">
-    <h2>Money isn't real</h2>
-    <p>Veniam, quis nostrud exerci tation lorem est ullamcorper suscipit lobortis nisl ut aliquip ex ea consectetuer lorem ipsum dolor sit amet consectetuer ut wisi enim ad minim nonummy est aliquip ex ea lorem.</p>
-    <a href="#" class="btn">Find out why?</a>
-  </section>
+<!-- Floating Actions -->
+<div class="floating-actions">
+    <button class="floating-btn scroll-to-top" id="scrollToTop" title="Scroll to top">
+        ↑
+    </button>
+    <button class="floating-btn newsletter-toggle" id="newsletterToggle" title="Subscribe to newsletter">
+        ✉️
+    </button>
+</div>
 
-  <!-- Newsletter Section -->
-  <section class="newsletter-section">
-    <h3>Don't be shy</h3>
-    <p>Subscribe to our newsletter for the latest updates and insights</p>
-    <form class="newsletter-form">
-      <input type="email" placeholder="Enter your email" required>
-      <button type="submit">Subscribe</button>
-    </form>
-  </section>
-
-  <!-- Footer -->
-  <footer>
-    <div class="footer-content">
-      <div class="footer-links">
-        <a href="#">Blogs</a>
-        <a href="#">Marketplace</a>
-        <a href="#">IQ4RM</a>
-        <a href="#">Collaboration</a>
-      </div>
-      <div>
-        <p>&copy; 2025 All Rights Reserved | Powered by Ubongo AI</p>
-      </div>
+{% else %}
+<!-- Enhanced Empty State -->
+<main class="main">
+    <div style="text-align: center; padding: var(--space-20) 0; color: var(--gray-500);">
+        <div style="font-size: 4rem; margin-bottom: var(--space-4);">📚</div>
+        <h2 style="font-family: var(--font-display); font-size: var(--font-size-2xl); margin-bottom: var(--space-4); color: var(--gray-700);">No Articles Yet</h2>
+        <p style="font-size: var(--font-size-lg); margin-bottom: var(--space-6);">We're working on bringing you amazing content. Check back soon!</p>
+        <a href="/" class="hero-btn hero-btn--primary">Explore Other Sections</a>
     </div>
-  </footer>
-
+</main>
+{% endif %}
 {% endblock %}
 
 {% block extra_js %}
 <script>
-  let offset = '{{ articles|length }}';
-  const limit = 3;
+document.addEventListener('DOMContentLoaded', () => {
+    // Enhanced mobile menu toggle
+    const mobileToggle = document.getElementById('mobileToggle');
+    const nav = document.getElementById('nav');
+    
+    if (mobileToggle && nav) {
+        mobileToggle.addEventListener('click', () => {
+            nav.classList.toggle('show');
+            mobileToggle.textContent = nav.classList.contains('show') ? '✕' : '☰';
+        });
+    }
 
-  // Load more articles functionality
-  document.getElementById("load-more-btn").addEventListener("click", function () {
-    const btn = this;
-    btn.innerHTML = 'Loading...';
-    btn.disabled = true;
-
-    fetch(`/blog/ajax/load-articles/?limit=${limit}&offset=${offset}`)
-      .then(response => response.json())
-      .then(data => {
-        if (!data.articles || data.articles.length === 0) {
-          btn.innerHTML = "No more articles";
-          btn.disabled = true;
-          return;
+    // Reading progress bar
+    const progressBar = document.getElementById('readingProgress');
+    function updateProgress() {
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const scrollPercent = (scrollTop / docHeight) * 100;
+        progressBar.style.width = Math.min(scrollPercent, 100) + '%';
+    }
+    
+    window.addEventListener('scroll', updateProgress);
+    
+    // Header scroll effect
+    const header = document.getElementById('header');
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 100) {
+            header.classList.add('scrolled');
+        } else {
+            header.classList.remove('scrolled');
         }
+    });
 
-        const container = document.getElementById("articles-container");
-        data.articles.forEach(article => {
-          const html = `
-            <div class="article-card">
-              <div class="article-content">
-                <h3><a href="${article.url}">${article.title}</a></h3>
-                <p>${article.intro}</p>
-                <div class="article-meta">
-                  <span class="article-category">${article.category || 'General'}</span>
-                  <small>${article.date}</small>
-                </div>
-              </div>
-            </div>
-          `;
-          container.insertAdjacentHTML("beforeend", html);
+    // Search functionality
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        let searchTimeout;
+        searchInput.addEventListener('input', (e) => {
+            clearTimeout(searchTimeout);
+            const query = e.target.value.toLowerCase();
+            
+            searchTimeout = setTimeout(() => {
+                const articles = document.querySelectorAll('.article-card');
+                articles.forEach(article => {
+                    const title = article.querySelector('.card-title a').textContent.toLowerCase();
+                    const excerpt = article.querySelector('.card-excerpt')?.textContent.toLowerCase() || '';
+                    const category = article.querySelector('.card-category')?.textContent.toLowerCase() || '';
+                    
+                    if (title.includes(query) || excerpt.includes(query) || category.includes(query)) {
+                        article.style.display = 'block';
+                    } else {
+                        article.style.display = query ? 'none' : 'block';
+                    }
+                });
+            }, 300);
+        });
+    }
+
+    // Category filtering
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const articles = document.querySelectorAll('.article-card');
+    
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Update active state
+            filterBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            const category = btn.dataset.category;
+            
+            articles.forEach(article => {
+                const articleCategory = article.dataset.category;
+                if (category === 'all' || articleCategory === category) {
+                    article.style.display = 'block';
+                    article.style.opacity = '0';
+                    setTimeout(() => {
+                        article.style.opacity = '1';
+                    }, 100);
+                } else {
+                    article.style.display = 'none';
+                }
+            });
+        });
+    });
+
+    // Scroll animations
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('in-view');
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('.animate-on-scroll').forEach(el => {
+        observer.observe(el);
+    });
+
+    // Newsletter form
+    const newsletterForm = document.getElementById('newsletterForm');
+    if (newsletterForm) {
+        newsletterForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = e.target.querySelector('.newsletter-input').value;
+            const btn = e.target.querySelector('.newsletter-btn');
+            
+            btn.textContent = 'Subscribing...';
+            btn.disabled = true;
+            
+            // Simulate API call
+            setTimeout(() => {
+                alert('Thank you for subscribing! 🎉');
+                e.target.reset();
+                btn.textContent = 'Subscribe';
+                btn.disabled = false;
+            }, 1500);
+        });
+    }
+
+    // Enhanced load more functionality
+    const loadMoreBtn = document.getElementById('loadMoreBtn');
+    let currentPage = 1;
+    let isLoading = false;
+
+    if (loadMoreBtn) {
+        loadMoreBtn.addEventListener('click', async () => {
+            if (isLoading) return;
+
+            isLoading = true;
+            const btnText = loadMoreBtn.querySelector('span');
+            const btnIcon = loadMoreBtn.querySelector('span:last-child');
+            
+            btnText.textContent = 'Loading...';
+            btnIcon.textContent = '⟳';
+            loadMoreBtn.disabled = true;
+
+            try {
+                const response = await fetch(`${loadMoreBtn.dataset.url}?page=${currentPage + 1}`);
+                const data = await response.json();
+
+                if (data.articles && data.articles.length > 0) {
+                    const articlesGrid = document.getElementById('articlesGrid');
+                    
+                    data.articles.forEach((article, index) => {
+                        const cardSizes = ['large', 'medium', 'medium', 'small', 'small', 'small'];
+                        const size = cardSizes[index % cardSizes.length];
+                        
+                        const articleEl = document.createElement('article');
+                        articleEl.className = `article-card article-card--${size} animate-on-scroll`;
+                        articleEl.dataset.category = article.category?.toLowerCase() || 'general';
+                        articleEl.innerHTML = `
+                            <div class="card-image card-image--${size}">
+                                ${article.featured_image ? 
+                                    `<img src="${article.featured_image}" alt="${article.title}" loading="lazy">` :
+                                    '<div style="background: linear-gradient(135deg, var(--primary-blue), var(--secondary-green)); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem;">📰</div>'
+                                }
+                                <div class="card-overlay"></div>
+                            </div>
+                            <div class="card-content">
+                                ${article.category ? `<span class="card-category">${article.category}</span>` : ''}
+                                <h2 class="card-title card-title--${size}">
+                                    <a href="${article.url}">${article.title}</a>
+                                </h2>
+                                ${article.intro ? `<p class="card-excerpt">${article.intro}</p>` : ''}
+                                <div class="card-meta">
+                                    <div class="card-meta-left">
+                                        <span>${article.formatted_date}</span>
+                                        <span>${article.reading_time} min read</span>
+                                    </div>
+                                    <div class="card-views">
+                                        <span>👁</span>
+                                        <span>${article.view_count || 0}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        articlesGrid.appendChild(articleEl);
+                        observer.observe(articleEl);
+                    });
+
+                    currentPage++;
+
+                    if (!data.has_more) {
+                        loadMoreBtn.style.display = 'none';
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading more articles:', error);
+                alert('Failed to load more articles. Please try again.');
+            } finally {
+                isLoading = false;
+                btnText.textContent = 'Load More Articles';
+                btnIcon.textContent = '↓';
+                loadMoreBtn.disabled = false;
+            }
+        });
+    }
+
+    // Floating actions
+    const scrollToTopBtn = document.getElementById('scrollToTop');
+    const newsletterToggle = document.getElementById('newsletterToggle');
+    
+    if (scrollToTopBtn) {
+        scrollToTopBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 500) {
+                scrollToTopBtn.style.opacity = '1';
+                scrollToTopBtn.style.pointerEvents = 'auto';
+            } else {
+                scrollToTopBtn.style.opacity = '0';
+                scrollToTopBtn.style.pointerEvents = 'none';
+            }
+        });
+        
+        // Initially hide
+        scrollToTopBtn.style.opacity = '0';
+        scrollToTopBtn.style.pointerEvents = 'none';
+        scrollToTopBtn.style.transition = 'opacity 0.3s ease';
+    }
+    
+    if (newsletterToggle) {
+        newsletterToggle.addEventListener('click', () => {
+            document.querySelector('.newsletter-section').scrollIntoView({
+                behavior: 'smooth'
+            });
+        });
+    }
+
+    // Auto-hide mobile menu on scroll
+    let lastScrollY = window.scrollY;
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > lastScrollY && window.scrollY > 100) {
+            nav.classList.remove('show');
+            mobileToggle.textContent = '☰';
+        }
+        lastScrollY = window.scrollY;
+    });
+
+    // Smooth scroll for hero CTA
+    document.querySelectorAll('a[href="#articles"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('articles').scrollIntoView({
+                behavior: 'smooth'
+            });
+        });
+    });
+
+    // Add loading shimmer effect for images
+    const images = document.querySelectorAll('.card-image img');
+    images.forEach(img => {
+        if (!img.complete) {
+            img.parentElement.classList.add('loading-shimmer');
+            img.addEventListener('load', () => {
+                img.parentElement.classList.remove('loading-shimmer');
+            });
+        }
+    });
+
+    // Performance optimization: Lazy load images
+    if ('IntersectionObserver' in window) {
+        const imageObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    if (img.dataset.src) {
+                        img.src = img.dataset.src;
+                        img.removeAttribute('data-src');
+                        imageObserver.unobserve(img);
+                    }
+                }
+            });
         });
 
-        offset += data.articles.length;
-        btn.innerHTML = 'Load More';
-        btn.disabled = false;
-      })
-      .catch(err => {
-        console.error(err);
-        btn.innerHTML = 'Error loading articles';
-        btn.disabled = false;
-      });
-  });
-
-  // Category filter functionality
-  document.querySelectorAll('.category-tag').forEach(tag => {
-    tag.addEventListener('click', function() {
-      // Remove active class from all tags
-      document.querySelectorAll('.category-tag').forEach(t => t.classList.remove('active'));
-      // Add active class to clicked tag
-      this.classList.add('active');
-      
-      // Here you can add filtering logic
-      const category = this.textContent;
-      console.log('Filter by category:', category);
-    });
-  });
-
-  // Newsletter form submission
-  document.querySelector('.newsletter-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const email = this.querySelector('input[type="email"]').value;
-    console.log('Newsletter subscription:', email);
-    // Add your newsletter subscription logic here
-    alert('Thank you for subscribing!');
-    this.reset();
-  });
+        document.querySelectorAll('img[data-src]').forEach(img => {
+            imageObserver.observe(img);
+        });
+    }
+});
 </script>
 {% endblock %}

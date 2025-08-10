@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Wedding Invitations - Create Beautiful Online Invites</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-aqua: #00C9DA;
+            --primary-navy: #2A3563;
+            --neutral-gray: #F4F4F4;
+            --accent-black: #000000;
+            --soft-blush: #F8E8E8;
+            --ivory: #FEFEF9;
+            --gold: #1d5c30;
+            --soft-pink: #1a1919;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            line-height: 1.6;
+            color: var(--primary-navy);
+            background: linear-gradient(135deg, var(--ivory) 0%, var(--soft-blush) 100%);
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(0, 201, 218, 0.1);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-navy);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--primary-navy);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-aqua);
+        }
+
+        .nav-cta {
+            display: flex;
+            gap: 1rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            background: linear-gradient(135deg, var(--ivory) 0%, #fefefe 50%, var(--soft-blush) 100%);
+            padding-top: 80px;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="floral" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="%23F8E8E8" opacity="0.3"/><circle cx="5" cy="5" r="0.5" fill="%2300C9DA" opacity="0.2"/><circle cx="15" cy="15" r="0.5" fill="%2300C9DA" opacity="0.2"/></pattern></defs><rect width="100" height="100" fill="url(%23floral)"/></svg>') center/cover;
+            opacity: 0.1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 900px;
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 4rem;
+            font-weight: 700;
+            color: var(--primary-navy);
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .hero .tagline {
+            font-size: 1.4rem;
+            color: var(--primary-aqua);
+            margin-bottom: 2rem;
+            font-weight: 400;
+        }
+
+        .hero .description {
+            font-size: 1.2rem;
+            color: var(--primary-navy);
+            margin-bottom: 3rem;
+            line-height: 1.8;
+        }
+
+        .divider {
+            width: 100px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary-aqua), var(--gold));
+            margin: 2rem auto;
+            border-radius: 2px;
+        }
+
+        /* CTA Buttons */
+        .cta-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 3rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.7rem 1rem;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 500;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-aqua), var(--gold));
+            color: white;
+            box-shadow: 0 5px 15px rgba(0, 201, 218, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 201, 218, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--primary-navy);
+            border: 2px solid var(--primary-aqua);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary-aqua);
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        /* How It Works */
+        .how-it-works {
+            padding: 8rem 0;
+            background: var(--ivory);
+        }
+
+        .how-it-works h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            color: var(--primary-navy);
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            margin-top: 2rem;
+            gap: 1rem;
+        }
+
+        .step {
+            text-align: center;
+            padding: 1rem;
+            position: relative;
+        }
+
+        .step-number {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary-aqua), var(--gold));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+            position: relative;
+        }
+
+        .step-number::after {
+            content: '';
+            position: absolute;
+            right: -60px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 2px;
+            background: var(--primary-aqua);
+            opacity: 0.3;
+        }
+
+        .step:last-child .step-number::after {
+            display: none;
+        }
+
+        .step h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1rem;
+            color: var(--primary-navy);
+            margin-bottom: 1rem;
+        }
+
+        .step p {
+            color: var(--primary-navy);
+            line-height: 1.8;
+        }
+
+        /* Features */
+        .features {
+            padding: 8rem 0;
+            background: var(--soft-blush);
+        }
+
+        .features h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            color: var(--primary-navy);
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 3rem;
+            margin-top: 2rem;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            border: 2px solid var(--primary-aqua);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .feature-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--primary-aqua), var(--gold));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            font-size: 2.5rem;
+            color: white;
+        }
+
+        .feature-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: var(--primary-navy);
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-card p {
+            color: var(--primary-navy);
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+
+        /* Templates Preview */
+        .templates {
+            padding: 8rem 0;
+            background: var(--ivory);
+        }
+
+        .templates h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            color: var(--primary-navy);
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .templates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+            margin-top: 2rem;
+        }
+
+        .template-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .template-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .template-preview {
+            height: 250px;
+            background: linear-gradient(135deg, var(--primary-aqua), var(--soft-pink));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+
+        .template-info {
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .template-info h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: var(--primary-navy);
+            margin-bottom: 1rem;
+        }
+
+        .template-info p {
+            color: var(--primary-navy);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Testimonials */
+        .testimonials {
+            padding: 8rem 0;
+            background: var(--soft-blush);
+        }
+
+        .testimonials h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            color: var(--primary-navy);
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 3rem;
+        }
+
+        .testimonial {
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            border-left: 4px solid var(--primary-aqua);
+        }
+
+        .testimonial-text {
+            font-style: italic;
+            font-size: 1.2rem;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            color: var(--primary-navy);
+        }
+
+        .testimonial-author {
+            font-weight: 500;
+            color: var(--primary-aqua);
+            font-size: 1.1rem;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 8rem 0;
+            background: var(--primary-navy);
+            text-align: center;
+            color: white;
+        }
+
+        .cta-section h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            margin-bottom: 2rem;
+        }
+
+        .cta-section p {
+            font-size: 1.3rem;
+            margin-bottom: 3rem;
+            opacity: 0.9;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--accent-black);
+            color: white;
+            padding: 4rem 0 2rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-aqua);
+        }
+
+        .footer-section p,
+        .footer-section a {
+            color: white;
+            text-decoration: none;
+            line-height: 1.8;
+            opacity: 0.9;
+        }
+
+        .footer-section a:hover {
+            color: var(--primary-aqua);
+            opacity: 1;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 2rem;
+            margin-top: 3rem;
+            text-align: center;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero .tagline {
+                font-size: 1.2rem;
+            }
+
+            .hero .description {
+                font-size: 1.1rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .steps {
+                grid-template-columns: 1fr;
+            }
+
+            .step-number::after {
+                display: none;
+            }
+
+            .features-grid,
+            .templates-grid,
+            .testimonial-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .how-it-works h2,
+            .features h2,
+            .templates h2,
+            .testimonials h2,
+            .cta-section h2 {
+                font-size: 2.2rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-content > * {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .hero-content > *:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .hero-content > *:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        .hero-content > *:nth-child(4) {
+            animation-delay: 0.6s;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-container">
+                <a href="#" class="logo">Wedding Cards</a>
+                <ul class="nav-links">
+                    <li><a href="#how-it-works">How It Works</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#templates">Templates</a></li>
+                    <li><a href="#testimonials">Reviews</a></li>
+                </ul>
+                <div class="nav-cta">
+                    <a href="#" class="btn btn-secondary">Login</a>
+                    <a href="#" class="btn btn-primary">Get Started</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Create Beautiful Digital Wedding Invitations</h1>
+                <div class="tagline">Design, Send & Manage Your Wedding Invites Online</div>
+                <div class="divider"></div>
+                <p class="description">Say goodbye to paper invitations! Create stunning digital wedding cards, track RSVPs, and manage your guest list all in one place. Beautiful, eco-friendly, and completely customizable.</p>
+                <div class="cta-buttons">
+                    <a href="#" class="btn btn-primary">Start Creating Free</a>
+                    <a href="#templates" class="btn btn-secondary">View Templates</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="container">
+            <h2>How It Works</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Choose Your Design</h3>
+                    <p>Select from our collection of beautiful, professionally designed wedding invitation templates. Each template is fully customizable to match your wedding theme and style.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Customize & Personalize</h3>
+                    <p>Add your wedding details, photos, and personal touches. Change colors, fonts, and layouts to create the perfect invitation that reflects your unique love story.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Send & Track</h3>
+                    <p>Send invitations via email, SMS, or share your unique wedding page link. Track who has opened, viewed, and responded to your invitations in real-time.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3>Manage RSVPs</h3>
+                    <p>Collect RSVPs, dietary preferences, and plus-one information automatically. Export guest lists and manage your wedding planning effortlessly.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features" id="features">
+        <div class="container">
+            <h2>Everything You Need</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🎨</div>
+                    <h3>Beautiful Templates</h3>
+                    <p>Choose from dozens of professionally designed templates. Each one is fully customizable with your colors, fonts, and style preferences.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3>Mobile Optimized</h3>
+                    <p>Your invitations look perfect on all devices. Guests can view and respond from their smartphones, tablets, or computers.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>RSVP Management</h3>
+                    <p>Track responses in real-time. Collect dietary preferences, song requests, and other important information from your guests.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌍</div>
+                    <h3>Eco-Friendly</h3>
+                    <p>Go paperless and reduce your carbon footprint. Digital invitations are environmentally friendly and cost-effective.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Instant Delivery</h3>
+                    <p>Send invitations instantly via email or SMS. No printing, no postage, no delays. Your guests receive invitations immediately.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔔</div>
+                    <h3>Automated Reminders</h3>
+                    <p>Set up automatic reminders for guests who haven't responded. Keep your RSVP timeline on track effortlessly.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Templates Preview -->
+    <section class="templates" id="templates">
+        <div class="container">
+            <h2>Beautiful Design Templates</h2>
+            <div class="templates-grid">
+                <div class="template-card">
+                    <div class="template-preview">
+                        <span>Classic Elegance</span>
+                    </div>
+                    <div class="template-info">
+                        <h3>Classic Elegance</h3>
+                        <p>Timeless design with elegant typography and subtle floral accents. Perfect for traditional weddings.</p>
+                        <a href="#" class="btn btn-secondary">Preview Template</a>
+                    </div>
+                </div>
+                <div class="template-card">
+                    <div class="template-preview">
+                        <span>Modern Minimalist</span>
+                    </div>
+                    <div class="template-info">
+                        <h3>Modern Minimalist</h3>
+                        <p>Clean, contemporary design with bold typography and geometric elements. Ideal for modern couples.</p>
+                        <a href="#" class="btn btn-secondary">Preview Template</a>
+                    </div>
+                </div>
+                <div class="template-card">
+                    <div class="template-preview">
+                        <span>Rustic Romance</span>
+                    </div>
+                    <div class="template-info">
+                        <h3>Rustic Romance</h3>
+                        <p>Warm, romantic design with natural elements and earthy tones. Great for outdoor and barn weddings.</p>
+                        <a href="#" class="btn btn-secondary">Preview Template</a>
+                    </div>
+                </div>
+                <div class="template-card">
+                    <div class="template-preview">
+                        <span>Bohemian Chic</span>
+                    </div>
+                    <div class="template-info">
+                        <h3>Bohemian Chic</h3>
+                        <p>Artistic design with watercolor elements and flowing typography. Perfect for boho-style weddings.</p>
+                        <a href="#" class="btn btn-secondary">Preview Template</a>
+                    </div>
+                </div>
+                <div class="template-card">
+                    <div class="template-preview">
+                        <span>Vintage Glamour</span>
+                    </div>
+                    <div class="template-info">
+                        <h3>Vintage Glamour</h3>
+                        <p>Art deco inspired design with gold accents and vintage typography. Ideal for glamorous celebrations.</p>
+                        <a href="#" class="btn btn-secondary">Preview Template</a>
+                    </div>
+                </div>
+                <div class="template-card">
+                    <div class="template-preview">
+                        <span>Beach Bliss</span>
+                    </div>
+                    <div class="template-info">
+                        <h3>Beach Bliss</h3>
+                        <p>Coastal-inspired design with ocean colors and nautical elements. Perfect for beach weddings.</p>
+                        <a href="#" class="btn btn-secondary">Preview Template</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials" id="testimonials">
+        <div class="container">
+            <h2>What Couples Are Saying</h2>
+            <div class="testimonial-grid">
+                <div class="testimonial">
+                    <p class="testimonial-text">"Creating our wedding invitations was so easy! The templates are gorgeous and the RSVP tracking saved us so much time. Highly recommend!"</p>
+                    <div class="testimonial-author">- Sarah & Mike</div>
+                </div>
+                <div class="testimonial">
+                    <p class="testimonial-text">"We loved how eco-friendly and cost-effective digital invitations were. Our guests received them instantly and the response rate was amazing!"</p>
+                    <div class="testimonial-author">- Emma & Josh</div>
+                </div>
+                <div class="testimonial">
+                    <p class="testimonial-text">"The customization options were perfect. We created invitations that truly reflected our style and personality. The process was seamless from start to finish."</p>
+                    <div class="testimonial-author">- Lisa & David</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <h2>Ready to Create Your Perfect Invitation?</h2>
+            <p>Join thousands of couples who have created beautiful digital wedding invitations</p>
+            <div class="cta-buttons">
+                <a href="#" class="btn btn-primary">Start Creating Free</a>
+                <a href="#" class="btn btn-secondary">View All Templates</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Wedding Cards</h3>
+                    <p>Create beautiful digital wedding invitations that reflect your unique love story. Eco-friendly, cost-effective, and completely customizable.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <p><a href="#templates">Templates</a></p>
+                    <p><a href="#features">Features</a></p>
+                    <p><a href="#how-it-works">How It Works</a></p>
+                    <p><a href="#">Pricing</a></p>
+                </div>
+                <div class="footer-section">
+                    <h3>Support</h3>
+                    <p><a href="#">Help Center</a></p>
+                    <p><a href="#">Contact Us</a></p>
+                    <p><a href="#">FAQs</a></p>
+                    <p><a href="#">Tutorials</a></p>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact</h3>
+                    <p>Email: hello@weddingcards.com</p>
+                    <p>Phone: (555) 123-4567</p>
+                    <p>Support Hours: Mon-Fri 9AM-6PM EST</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2024 Wedding Cards. All rights reserved. | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'fadeInUp 0.8s ease-out';
+                }
+            });
+        }, observerOptions);
+
+        // Observe all sections
+        document.querySelectorAll('section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // CTA button functionality
+        document.querySelectorAll('.btn-primary').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (this.textContent.includes('Create') || this.textContent.includes('Start')) {
+                    alert('Redirecting to invitation creation wizard...');
+                }
+            });
+        });
+
+        // Template preview functionality
+        document.querySelectorAll('.template-card .btn').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('Opening template preview in a new window...');
+            });
+        });
+
+        // Navigation CTA buttons
+        document.querySelector('.nav-cta .btn-secondary').addEventListener('click', function(e) {
+            e.preventDefault();
+            alert('Redirecting to login page...');
+        });
+
+        // Create Invitation button in navigation
+        document.querySelector('.nav-cta .btn-primary').addEventListener('click', function(e) {
+            e.preventDefault();
+            alert('Redirecting to invitation creation wizard...');
+        });
+
+        // Mobile menu toggle
+        const navLinks = document.querySelector('.nav-links');
+        const navCta = document.querySelector('.nav-cta');
+        let isMenuOpen = false;
+
+        function toggleMobileMenu() {
+            if (!isMenuOpen) {
+                navLinks.style.display = 'flex';
+                navLinks.style.flexDirection = 'column';
+                navLinks.style.position = 'absolute';
+                navLinks.style.top = '100%';
+                navLinks.style.left = '0';
+                navLinks.style.right = '0';
+                navLinks.style.background = 'rgba(255, 255, 255, 0.95)';
+                navLinks.style.padding = '1rem';
+                navCta.style.display = 'flex';
+                navCta.style.flexDirection = 'column';
+                navCta.style.position = 'absolute';
+                navCta.style.top = `${navLinks.offsetHeight + 80}px`;
+                navCta.style.left = '0';
+                navCta.style.right = '0';
+                navCta.style.background = 'rgba(255, 255, 255, 0.95)';
+                navCta.style.padding = '1rem';
+                isMenuOpen = true;
+            } else {
+                navLinks.style.display = 'none';
+                navCta.style.display = 'none';
+                isMenuOpen = false;
+            }
+        }
+
+        // Add mobile menu button
+        const mobileMenuButton = document.createElement('button');
+        mobileMenuButton.innerHTML = '☰';
+        mobileMenuButton.style.display = 'none';
+        mobileMenuButton.style.background = 'none';
+        mobileMenuButton.style.border = 'none';
+        mobileMenuButton.style.fontSize = '1.5rem';
+        mobileMenuButton.style.cursor = 'pointer';
+        mobileMenuButton.style.color = 'var(--primary-navy)';
+        document.querySelector('.nav-container').appendChild(mobileMenuButton);
+
+        mobileMenuButton.addEventListener('click', toggleMobileMenu);
+
+        // Responsive menu handling
+        function handleResize() {
+            if (window.innerWidth <= 768) {
+                mobileMenuButton.style.display = 'block';
+                navLinks.style.display = 'none';
+                navCta.style.display = 'none';
+            } else {
+                mobileMenuButton.style.display = 'none';
+                navLinks.style.display = 'flex';
+                navLinks.style.position = 'static';
+                navLinks.style.background = 'none';
+                navLinks.style.padding = '0';
+                navCta.style.display = 'flex';
+                navCta.style.position = 'static';
+                navCta.style.background = 'none';
+                navCta.style.padding = '0';
+                isMenuOpen = false;
+            }
+        }
+
+        window.addEventListener('resize', handleResize);
+        handleResize(); // Initial call to set up menu based on window size
+
+        // Add hover effect for template cards
+        document.querySelectorAll('.template-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.querySelector('.template-preview').style.transform = 'scale(1.02)';
+                this.querySelector('.template-preview').style.transition = 'transform 0.3s ease';
+            });
+            card.addEventListener('mouseleave', function() {
+                this.querySelector('.template-preview').style.transform = 'scale(1)';
+            });
+        });
+
+        // Add scroll-based navbar effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.style.boxShadow = '0 2px 5px rgba(0,0,0,0.1)';
+            } else {
+                navbar.style.boxShadow = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
