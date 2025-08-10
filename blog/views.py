@@ -8,7 +8,7 @@ from blog.models import ArticlePage, Category
 
 
 @require_http_methods(["GET"])
-@cache_page(60 * 5)  
+# @cache_page(60 * 5)  
 def load_more_articles(request):
     page = int(request.GET.get("page", 2))
     category = request.GET.get("category", "")
