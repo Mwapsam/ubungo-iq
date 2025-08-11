@@ -1,12 +1,11 @@
 {% extends "base.html" %}
-{% load wagtailcore_tags wagtailimages_tags %}
+{% load wagtailcore_tags wagtailimages_tags static %}
 
 {% block extra_css %}
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            /* Hero Magazine Inspired Color Palette */
             --black: #000000;
             --white: #ffffff;
             --gray-50: #f9fafb;
@@ -20,14 +19,12 @@
             --gray-800: #1f2937;
             --gray-900: #111827;
             
-            /* Enhanced Color Palette */
             --primary-blue: #3b82f6;
             --secondary-green: #10b981;
             --accent-purple: #8b5cf6;
             --warm-orange: #f59e0b;
             --danger-red: #ef4444;
             
-            /* Typography */
             --font-display: 'Playfair Display', serif;
             --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             --font-size-xs: 0.75rem;
@@ -41,7 +38,6 @@
             --font-size-5xl: 3rem;
             --font-size-6xl: 3.75rem;
             
-            /* Spacing */
             --space-1: 0.25rem;
             --space-2: 0.5rem;
             --space-3: 0.75rem;
@@ -55,16 +51,13 @@
             --space-20: 5rem;
             --space-24: 6rem;
             
-            /* Layout */
             --max-width: 1200px;
             --max-width-prose: 65ch;
             
-            /* Transitions */
             --transition-fast: 150ms ease;
             --transition-base: 250ms ease;
             --transition-slow: 350ms ease;
             
-            /* Shadows */
             --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
@@ -92,7 +85,6 @@
             height: auto;
         }
 
-        /* Reading Progress Bar */
         .reading-progress {
             position: fixed;
             top: 0;
@@ -104,7 +96,6 @@
             transition: width 0.3s ease;
         }
 
-        /* Enhanced Header Styles */
         .header {
             position: sticky;
             top: 0;
@@ -154,7 +145,6 @@
             width: 100%;
         }
 
-        /* Enhanced Navigation */
         .nav {
             display: flex;
             align-items: center;
@@ -192,7 +182,6 @@
             width: 100%;
         }
 
-        /* Search Enhancement */
         .search-container {
             position: relative;
             margin-left: var(--space-4);
@@ -235,7 +224,6 @@
             display: none;
         }
 
-        /* Enhanced Hero Section */
         .hero {
             position: relative;
             height: 70vh;
@@ -329,7 +317,6 @@
 
         .hero-btn {
             padding: var(--space-3) var(--space-6);
-            border-radius: 25px;
             font-weight: 600;
             text-decoration: none;
             transition: var(--transition-base);
@@ -355,7 +342,6 @@
             box-shadow: var(--shadow-lg);
         }
 
-        /* Trending Section */
         .trending-section {
             background: var(--gray-50);
             padding: var(--space-16) var(--space-6);
@@ -431,7 +417,6 @@
             color: var(--gray-500);
         }
 
-        /* Category Filter */
         .category-filter {
             display: flex;
             justify-content: center;
@@ -462,14 +447,12 @@
             transform: translateY(-1px);
         }
 
-        /* Main Container */
         .main {
             max-width: var(--max-width);
             margin: 0 auto;
             padding: 0 var(--space-6);
         }
 
-        /* Enhanced Articles Grid */
         .articles-section {
             margin-bottom: var(--space-24);
         }
@@ -489,19 +472,14 @@
             gap: var(--space-8);
         }
 
-        /* Enhanced Article Card Styles */
         .article-card {
             position: relative;
             transition: var(--transition-base);
-            border-radius: 12px;
             overflow: hidden;
-            background: var(--white);
-            box-shadow: var(--shadow-sm);
         }
 
         .article-card:hover {
-            transform: translateY(-8px);
-            box-shadow: var(--shadow-xl);
+            transform: translateY(0);
         }
 
         .article-card--featured {
@@ -532,7 +510,7 @@
         }
 
         .card-image--large {
-            height: 300px;
+            height: 500px;
         }
 
         .card-image--medium {
@@ -551,7 +529,7 @@
         }
 
         .article-card:hover .card-image img {
-            transform: scale(1.05);
+            transform: scale(-1px);
         }
 
         .card-overlay {
@@ -570,7 +548,7 @@
         }
 
         .card-content {
-            padding: var(--space-6);
+            padding: 0;
         }
 
         .card-category {
@@ -647,12 +625,11 @@
             color: var(--gray-400);
         }
 
-        /* Newsletter Section */
         .newsletter-section {
             background: linear-gradient(135deg, var(--gray-900), var(--gray-800));
             color: var(--white);
             padding: var(--space-20) var(--space-6);
-            margin: var(--space-24) 0;
+            margin: var(--space-24) 0 0 0;
             text-align: center;
         }
 
@@ -717,7 +694,6 @@
             transform: translateY(-1px);
         }
 
-        /* Load More Section */
         .load-more {
             text-align: center;
             margin-top: var(--space-16);
@@ -752,7 +728,6 @@
             transform: none;
         }
 
-        /* Floating Actions */
         .floating-actions {
             position: fixed;
             right: var(--space-6);
@@ -791,7 +766,6 @@
             color: var(--white);
         }
 
-        /* Animations */
         @keyframes fadeInUp {
             from {
                 opacity: 0;
@@ -825,7 +799,6 @@
             transform: translateY(0);
         }
 
-        /* Responsive Design */
         @media (max-width: 1024px) {
             .articles-grid {
                 grid-template-columns: repeat(8, 1fr);
@@ -956,7 +929,7 @@
             .card-image--large,
             .card-image--medium,
             .card-image--small {
-                height: 200px;
+                height: 500px;
             }
 
             .trending-section {
@@ -971,13 +944,13 @@
 {% endblock %}
 
 {% block content %}
-<!-- Reading Progress Bar -->
 <div class="reading-progress" id="readingProgress"></div>
 
-<!-- Enhanced Header -->
 <header class="header" id="header">
     <div class="header-container">
-        <a href="/" class="logo">Ubongo IQ</a>
+        <a href="/" class="logo">
+          <img src="{% static 'img/main.png' %}" alt="Logo" width="120" />
+        </a>
         
         <nav class="nav" id="nav">
             <a href="/" class="nav-link">Home</a>
@@ -999,7 +972,6 @@
 </header>
 
 {% if articles %}
-<!-- Enhanced Hero Section -->
 {% with articles.0 as featured_article %}
 <section class="hero">
     {% if featured_article.featured_image %}
@@ -1026,7 +998,6 @@
 </section>
 {% endwith %}
 
-<!-- Trending Section -->
 <section class="trending-section">
     <div class="trending-container">
         <div class="trending-header">
@@ -1047,9 +1018,7 @@
     </div>
 </section>
 
-<!-- Main Content -->
 <main class="main" id="articles">
-    <!-- Category Filter -->
     <div class="category-filter">
         <button class="filter-btn active" data-category="all">All</button>
         <button class="filter-btn" data-category="finance">Finance</button>
@@ -1112,7 +1081,6 @@
     {% endif %}
 </main>
 
-<!-- Newsletter Section -->
 <section class="newsletter-section">
     <div class="newsletter-container">
         <h2 class="newsletter-title">Stay in the Loop</h2>
@@ -1127,7 +1095,6 @@
     </div>
 </section>
 
-<!-- Floating Actions -->
 <div class="floating-actions">
     <button class="floating-btn scroll-to-top" id="scrollToTop" title="Scroll to top">
         ↑
@@ -1138,7 +1105,6 @@
 </div>
 
 {% else %}
-<!-- Enhanced Empty State -->
 <main class="main">
     <div style="text-align: center; padding: var(--space-20) 0; color: var(--gray-500);">
         <div style="font-size: 4rem; margin-bottom: var(--space-4);">📚</div>
@@ -1153,7 +1119,6 @@
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // Enhanced mobile menu toggle
     const mobileToggle = document.getElementById('mobileToggle');
     const nav = document.getElementById('nav');
     
@@ -1164,7 +1129,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Reading progress bar
     const progressBar = document.getElementById('readingProgress');
     function updateProgress() {
         const scrollTop = window.scrollY;
@@ -1175,7 +1139,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     window.addEventListener('scroll', updateProgress);
     
-    // Header scroll effect
     const header = document.getElementById('header');
     window.addEventListener('scroll', () => {
         if (window.scrollY > 100) {
@@ -1185,7 +1148,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Search functionality
     const searchInput = document.getElementById('searchInput');
     if (searchInput) {
         let searchTimeout;
@@ -1210,13 +1172,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Category filtering
     const filterBtns = document.querySelectorAll('.filter-btn');
     const articles = document.querySelectorAll('.article-card');
     
     filterBtns.forEach(btn => {
         btn.addEventListener('click', () => {
-            // Update active state
             filterBtns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             
@@ -1237,7 +1197,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Scroll animations
     const observerOptions = {
         threshold: 0.1,
         rootMargin: '0px 0px -50px 0px'
@@ -1255,7 +1214,6 @@ document.addEventListener('DOMContentLoaded', () => {
         observer.observe(el);
     });
 
-    // Newsletter form
     const newsletterForm = document.getElementById('newsletterForm');
     if (newsletterForm) {
         newsletterForm.addEventListener('submit', async (e) => {
@@ -1266,7 +1224,6 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.textContent = 'Subscribing...';
             btn.disabled = true;
             
-            // Simulate API call
             setTimeout(() => {
                 alert('Thank you for subscribing! 🎉');
                 e.target.reset();
@@ -1276,7 +1233,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Enhanced load more functionality
     const loadMoreBtn = document.getElementById('loadMoreBtn');
     let currentPage = 1;
     let isLoading = false;
@@ -1355,7 +1311,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Floating actions
     const scrollToTopBtn = document.getElementById('scrollToTop');
     const newsletterToggle = document.getElementById('newsletterToggle');
     
@@ -1377,7 +1332,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
         
-        // Initially hide
         scrollToTopBtn.style.opacity = '0';
         scrollToTopBtn.style.pointerEvents = 'none';
         scrollToTopBtn.style.transition = 'opacity 0.3s ease';
@@ -1391,7 +1345,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Auto-hide mobile menu on scroll
     let lastScrollY = window.scrollY;
     window.addEventListener('scroll', () => {
         if (window.scrollY > lastScrollY && window.scrollY > 100) {
@@ -1401,7 +1354,6 @@ document.addEventListener('DOMContentLoaded', () => {
         lastScrollY = window.scrollY;
     });
 
-    // Smooth scroll for hero CTA
     document.querySelectorAll('a[href="#articles"]').forEach(link => {
         link.addEventListener('click', (e) => {
             e.preventDefault();
@@ -1411,7 +1363,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Add loading shimmer effect for images
     const images = document.querySelectorAll('.card-image img');
     images.forEach(img => {
         if (!img.complete) {
@@ -1422,7 +1373,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Performance optimization: Lazy load images
     if ('IntersectionObserver' in window) {
         const imageObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
