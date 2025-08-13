@@ -17,8 +17,13 @@ CHANNEL_LAYERS = {
     },
 }
 
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+    }
+}
+
 CELERY_BROKER_URL = "memory://"
 CELERY_RESULT_BACKEND = "cache+memory://"
 CELERY_CACHE_BACKEND = "default" 
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
-

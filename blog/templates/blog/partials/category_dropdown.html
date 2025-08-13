@@ -1,0 +1,13 @@
+{% for category in categories %}
+<li>
+    <a href="/blog/category/{{ category.slug }}/" 
+       style="display: flex; justify-content: space-between; align-items: center;">
+        <span>{{ category.name }}</span>
+        <span style="background: {{ category.color }}; color: white; padding: 0.125rem 0.5rem; border-radius: var(--radius); font-size: var(--font-size-xs); font-weight: 500;">
+            {{ category.article_count }}
+        </span>
+    </a>
+</li>
+{% empty %}
+<li style="color: var(--color-gray-500); font-style: italic;">No categories yet</li>
+{% endfor %}

@@ -1,0 +1,92 @@
+{% load wagtailimages_tags wagtailcore_tags %}
+
+<article class="article-card fade-in-up">
+    {% if article.featured_image %}
+    <div class="article-card-image">
+        <a href="{{ article.get_url }}" aria-label="Read {{ article.title }}">
+            <picture>
+                {% comment %} Use responsive images with multiple formats {% endcomment %}
+                {% image article.featured_image width-600 format-avif as img_avif %}
+                {% image article.featured_image width-600 format-webp as img_webp %}
+                {% image article.featured_image width-600 as img_fallback %}
+                
+                <source srcset="{{ img_avif.url }}" type="image/avif">
+                <source srcset="{{ img_webp.url }}" type="image/webp">
+                <img src="{{ img_fallback.url }}" 
+                     alt="{{ article.featured_image.title|default:article.title }}"
+                     loading="lazy"
+                     decoding="async">
+            </picture>
+        </a>
+        {% if article.featured %}
+        <span class="featured-badge" style="position: absolute; top: 1rem; left: 1rem; background: var(--color-accent); color: white; padding: 0.25rem 0.5rem; border-radius: var(--radius); font-size: var(--font-size-xs); font-weight: 600;">
+            Featured
+        </span>
+        {% endif %}
+    </div>
+    {% endif %}
+    
+    <div class="article-card-content">
+        <!-- Meta information -->
+        <div class="article-card-meta">
+            {% if article.category %}
+            <a href="/blog/category/{{ article.category.slug }}/" 
+               class="article-card-category"
+               style="background-color: {{ article.category.color|default:'var(--color-primary)' }};">
+                {{ article.category.name }}
+            </a>
+            {% endif %}
+            
+            <span class="article-card-date">
+                {{ article.first_published_at|date:"M d, Y" }}
+            </span>
+            
+            {% if article.reading_time_minutes %}
+            <span class="reading-time">
+                <svg style="width: 16px; height: 16px; display: inline; vertical-align: middle; margin-right: 4px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                {{ article.reading_time_minutes }} min read
+            </span>
+            {% endif %}
+        </div>
+        
+        <!-- Title -->
+        <h3 class="article-card-title">
+            <a href="{{ article.get_url }}">{{ article.title }}</a>
+        </h3>
+        
+        <!-- Excerpt -->
+        {% if article.intro %}
+        <p class="article-card-excerpt">
+            {{ article.intro|truncatewords:25 }}
+        </p>
+        {% endif %}
+        
+        <!-- Tags and View Count -->
+        <div class="article-card-footer">
+            <div class="article-card-tags">
+                {% for tag in article.tags.all|slice:":3" %}
+                <a href="/blog/tag/{{ tag.slug }}/" class="article-tag">
+                    #{{ tag.name }}
+                </a>
+                {% endfor %}
+                {% if article.tags.count > 3 %}
+                <span class="article-tag" style="background: var(--color-gray-200); color: var(--color-gray-500);">
+                    +{{ article.tags.count|add:"-3" }}
+                </span>
+                {% endif %}
+            </div>
+            
+            {% if article.view_count %}
+            <div class="view-count" style="display: flex; align-items: center; gap: 0.25rem; color: var(--color-gray-500); font-size: var(--font-size-xs);">
+                <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                </svg>
+                {{ article.view_count|floatformat:0 }}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</article>

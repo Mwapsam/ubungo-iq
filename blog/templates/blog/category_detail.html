@@ -1,0 +1,224 @@
+{% extends "base.html" %}
+{% load static wagtailcore_tags wagtailimages_tags seo_tags %}
+
+{% block body_class %}category-page{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Category Header -->
+    <header class="category-header" style="text-align: center; padding: 3rem 0; background: linear-gradient(135deg, {{ category.color|default:'var(--color-primary)' }}15, {{ category.color|default:'var(--color-primary)' }}05); border-radius: var(--radius-2xl); margin-bottom: 3rem;">
+        {% render_breadcrumbs %}
+        
+        <div class="category-content" style="max-width: 600px; margin: 0 auto;">
+            <div class="category-badge" style="display: inline-block; background: {{ category.color|default:'var(--color-primary)' }}; color: white; padding: 0.5rem 1.5rem; border-radius: var(--radius-full); font-weight: 600; margin-bottom: 1rem;">
+                {{ category.name }}
+            </div>
+            
+            <h1 class="category-title" style="font-family: var(--font-display); font-size: var(--font-size-4xl); font-weight: 700; margin-bottom: 1rem; color: var(--color-gray-900);">
+                {{ category.name }} Articles
+            </h1>
+            
+            {% if category.description %}
+            <p class="category-description" style="font-size: var(--font-size-lg); color: var(--color-gray-600); line-height: var(--leading-relaxed); margin-bottom: 2rem;">
+                {{ category.description }}
+            </p>
+            {% endif %}
+            
+            <div class="category-stats" style="display: flex; justify-content: center; gap: 2rem; font-size: var(--font-size-sm); color: var(--color-gray-500);">
+                <span>{{ total_articles }} article{{ total_articles|pluralize }}</span>
+                <span>Updated {{ articles.first.last_published_at|date:"M d, Y" }}</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Filters -->
+    <section class="filters-section" style="margin: 2rem 0;">
+        <div class="filters" id="category-filters">
+            <div class="filter-group">
+                <label class="filter-label" for="sort-filter">Sort Articles</label>
+                <select id="sort-filter" 
+                        class="filter-select"
+                        hx-get="/api/load_more_articles/"
+                        hx-target="#articles-container"
+                        hx-include="[name='search']"
+                        hx-trigger="change"
+                        hx-vals='{"category": "{{ category.slug }}"}'
+                        name="sort">
+                    <option value="latest" {% if current_sort == 'latest' %}selected{% endif %}>Latest</option>
+                    <option value="popular" {% if current_sort == 'popular' %}selected{% endif %}>Most Popular</option>
+                    <option value="oldest" {% if current_sort == 'oldest' %}selected{% endif %}>Oldest</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label class="filter-label" for="search-filter">Search in {{ category.name }}</label>
+                <input type="search" 
+                       id="search-filter"
+                       class="search-input"
+                       placeholder="Search {{ category.name|lower }} articles..."
+                       hx-get="/api/load_more_articles/"
+                       hx-target="#articles-container"
+                       hx-include="[name='sort']"
+                       hx-trigger="input changed delay:500ms"
+                       hx-vals='{"category": "{{ category.slug }}"}'
+                       name="search"
+                       value="{{ search_query }}"
+                       style="width: 100%; padding: var(--space-2) var(--space-3); border: 1px solid var(--color-gray-300); border-radius: var(--radius);">
+            </div>
+            
+            <div class="filter-group">
+                <label class="filter-label">View Options</label>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button class="view-toggle active" data-view="grid" style="padding: 0.5rem; border: 1px solid var(--color-gray-300); background: var(--color-primary); color: white; border-radius: var(--radius); cursor: pointer;">
+                        <svg style="width: 16px; height: 16px;" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/>
+                        </svg>
+                    </button>
+                    <button class="view-toggle" data-view="list" style="padding: 0.5rem; border: 1px solid var(--color-gray-300); background: white; color: var(--color-gray-600); border-radius: var(--radius); cursor: pointer;">
+                        <svg style="width: 16px; height: 16px;" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M4 14h4v-4H4v4zm0 5h4v-4H4v4zM4 9h4V5H4v4zm5 5h12v-2H9v2zm0 5h12v-2H9v2zM9 5v2h12V5H9z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Articles -->
+    <section class="articles-section">
+        <div id="articles-container" 
+             class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+             hx-get="/api/load_more_articles/?category={{ category.slug }}&page=1"
+             hx-target="this"
+             hx-trigger="load"
+             data-loading-class="loading">
+            <!-- Articles will be loaded here -->
+            <div class="loading-placeholder" style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+                <div class="loading-spinner" style="margin: 0 auto;"></div>
+                <p style="margin-top: 1rem; color: var(--color-gray-500);">Loading {{ category.name|lower }} articles...</p>
+            </div>
+        </div>
+
+        <!-- Load More -->
+        <div class="load-more" id="load-more-section" style="display: none;">
+            <button class="load-more-btn" 
+                    id="load-more-btn"
+                    hx-get="/api/load_more_articles/"
+                    hx-target="#articles-container"
+                    hx-swap="beforeend"
+                    hx-include="[name='search'], [name='sort']"
+                    hx-vals='{"page": "2", "category": "{{ category.slug }}"}'
+                    data-loading-states>
+                <span class="btn-text">Load More {{ category.name }} Articles</span>
+                <span class="loading-spinner htmx-indicator"></span>
+            </button>
+        </div>
+    </section>
+
+    <!-- Related Categories -->
+    {% if related_categories %}
+    <section class="related-categories" style="margin: 4rem 0; padding: 3rem 0; background: var(--color-gray-50); border-radius: var(--radius-2xl);">
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <h2 style="font-family: var(--font-display); font-size: var(--font-size-2xl); font-weight: 600; margin-bottom: 0.5rem;">
+                Explore Other Categories
+            </h2>
+            <p style="color: var(--color-gray-600);">Discover more topics that might interest you</p>
+        </div>
+        
+        <div class="categories-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; max-width: 800px; margin: 0 auto;">
+            {% for rel_category in related_categories %}
+            <a href="/blog/category/{{ rel_category.slug }}/" 
+               class="category-card"
+               style="background: white; padding: 1.5rem; border-radius: var(--radius-lg); box-shadow: var(--shadow); text-decoration: none; text-align: center; transition: all var(--transition-normal);">
+                <div class="category-icon" style="width: 3rem; height: 3rem; background: {{ rel_category.color }}; border-radius: 50%; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">
+                    {{ rel_category.name|first }}
+                </div>
+                <h3 style="font-weight: 600; margin-bottom: 0.5rem; color: var(--color-gray-900);">{{ rel_category.name }}</h3>
+                <p style="font-size: var(--font-size-sm); color: var(--color-gray-500); margin: 0;">{{ rel_category.article_count }} article{{ rel_category.article_count|pluralize }}</p>
+            </a>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // View toggle functionality
+    const viewToggles = document.querySelectorAll('.view-toggle');
+    const articlesContainer = document.getElementById('articles-container');
+    
+    viewToggles.forEach(toggle => {
+        toggle.addEventListener('click', function() {
+            viewToggles.forEach(t => {
+                t.classList.remove('active');
+                t.style.background = 'white';
+                t.style.color = 'var(--color-gray-600)';
+            });
+            
+            this.classList.add('active');
+            this.style.background = 'var(--color-primary)';
+            this.style.color = 'white';
+            
+            const view = this.dataset.view;
+            if (view === 'list') {
+                articlesContainer.className = 'articles-list';
+            } else {
+                articlesContainer.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3';
+            }
+        });
+    });
+
+    // Load more pagination
+    let currentPage = 1;
+    document.body.addEventListener('htmx:beforeRequest', function(evt) {
+        if (evt.target.id === 'load-more-btn') {
+            currentPage++;
+            evt.detail.parameters.page = currentPage;
+        }
+    });
+
+    // Reset page when filters change
+    document.body.addEventListener('htmx:beforeRequest', function(evt) {
+        if (evt.target.matches('#sort-filter, #search-filter')) {
+            currentPage = 1;
+            evt.detail.parameters.page = 1;
+        }
+    });
+});
+</script>
+
+<style>
+.category-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-xl);
+}
+
+.articles-list .article-card {
+    display: flex;
+    flex-direction: row;
+    max-width: none;
+}
+
+.articles-list .article-card .article-card-image {
+    width: 200px;
+    flex-shrink: 0;
+    aspect-ratio: 16/10;
+}
+
+.articles-list .article-card .article-card-content {
+    flex: 1;
+}
+
+@media (max-width: 768px) {
+    .articles-list .article-card {
+        flex-direction: column;
+    }
+    
+    .articles-list .article-card .article-card-image {
+        width: 100%;
+        aspect-ratio: 16/9;
+    }
+}
+</style>
+{% endblock %}

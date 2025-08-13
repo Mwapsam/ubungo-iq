@@ -1,4 +1,4 @@
-name: Deploy BACKEND to DOCKER
+name: Deploy BACKEND 
 
 on:
   push:
@@ -64,6 +64,7 @@ jobs:
           AWS_CLOUDFRONT_ID=${{ secrets.AWS_CLOUDFRONT_ID }}
           AWS_S3_REGION_NAME=${{ secrets.AWS_S3_REGION_NAME }}
           ENVIRONMENT=${{ secrets.ENVIRONMENT }}
+          SENTRY_DSN=${{ secrets.SENTRY_DSN }}
           EOF
           "
           # Secure the .env file

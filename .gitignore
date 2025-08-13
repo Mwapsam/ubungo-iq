@@ -2,3 +2,7 @@
 *.sqlite3
 *.pyc
 *.log
+staticfiles/
+media/
+CLAUDE.md
+README_TESTING.md

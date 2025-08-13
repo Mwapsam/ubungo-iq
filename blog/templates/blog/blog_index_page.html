@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+{% load static wagtailcore_tags wagtailimages_tags %}
+
+{% block body_class %}blog-index{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Hero Section -->
+    {% if page.intro %}
+    <section class="hero-section" style="margin-bottom: 3rem;">
+        <div class="hero-content" style="text-align: center; max-width: 800px; margin: 0 auto;">
+            <h1 class="hero-title" style="font-family: var(--font-display); font-size: var(--font-size-5xl); font-weight: 700; margin-bottom: 1.5rem; color: var(--color-gray-900);">
+                {{ page.title }}
+            </h1>
+            <div class="hero-intro" style="font-size: var(--font-size-lg); color: var(--color-gray-600); line-height: var(--leading-relaxed);">
+                {{ page.intro|richtext }}
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Featured Articles -->
+    <section class="featured-articles" id="featured-articles">
+        <h2 class="section-title" style="font-family: var(--font-display); font-size: var(--font-size-3xl); font-weight: 600; margin-bottom: 2rem; text-align: center;">
+            Featured Articles
+        </h2>
+        
+        <div id="featured-container" 
+             hx-get="{% url 'blog:load_more_articles' %}?featured=true&per_page=3" 
+             hx-target="this" 
+             hx-trigger="load"
+             data-loading-class="loading">
+            <!-- Featured articles will be loaded here -->
+            <div class="loading-placeholder" style="text-align: center; padding: 3rem;">
+                <div class="loading-spinner" style="margin: 0 auto;"></div>
+                <p style="margin-top: 1rem; color: var(--color-gray-500);">Loading featured articles...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filters Section -->
+    <section class="filters-section" style="margin: 3rem 0;">
+        <div class="filters" id="article-filters">
+            <div class="filter-group">
+                <label class="filter-label" for="category-filter">Category</label>
+                <select id="category-filter" 
+                        class="filter-select"
+                        hx-get="{% url 'blog:load_more_articles' %}"
+                        hx-target="#articles-container"
+                        hx-include="[name='search'], [name='sort']"
+                        hx-trigger="change"
+                        name="category">
+                    <option value="">All Categories</option>
+                    <!-- Categories will be loaded dynamically -->
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label class="filter-label" for="sort-filter">Sort By</label>
+                <select id="sort-filter" 
+                        class="filter-select"
+                        hx-get="{% url 'blog:load_more_articles' %}"
+                        hx-target="#articles-container"
+                        hx-include="[name='search'], [name='category']"
+                        hx-trigger="change"
+                        name="sort">
+                    <option value="latest">Latest</option>
+                    <option value="popular">Most Popular</option>
+                    <option value="oldest">Oldest</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label class="filter-label" for="search-filter">Search</label>
+                <input type="search" 
+                       id="search-filter"
+                       class="search-input"
+                       placeholder="Search articles..."
+                       hx-get="{% url 'blog:load_more_articles' %}"
+                       hx-target="#articles-container"
+                       hx-include="[name='category'], [name='sort']"
+                       hx-trigger="input changed delay:500ms"
+                       name="search"
+                       style="width: 100%; padding: var(--space-2) var(--space-3); border: 1px solid var(--color-gray-300); border-radius: var(--radius);">
+            </div>
+        </div>
+    </section>
+
+    <!-- Articles Grid -->
+    <section class="articles-section">
+        <div id="articles-container" 
+             class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+             hx-get="{% url 'blog:load_more_articles' %}?page=1" 
+             hx-target="this" 
+             hx-trigger="load"
+             data-loading-class="loading">
+            <!-- Articles will be loaded here -->
+            <div class="loading-placeholder" style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+                <div class="loading-spinner" style="margin: 0 auto;"></div>
+                <p style="margin-top: 1rem; color: var(--color-gray-500);">Loading articles...</p>
+            </div>
+        </div>
+
+        <!-- Load More Button -->
+        <div class="load-more" id="load-more-section" style="display: none;">
+            <button class="load-more-btn" 
+                    id="load-more-btn"
+                    hx-get="{% url 'blog:load_more_articles' %}"
+                    hx-target="#articles-container"
+                    hx-swap="beforeend"
+                    hx-include="[name='search'], [name='category'], [name='sort']"
+                    hx-vals='{"page": "2"}'
+                    data-loading-states>
+                <span class="btn-text">Load More Articles</span>
+                <span class="loading-spinner htmx-indicator"></span>
+            </button>
+        </div>
+    </section>
+
+    <!-- Newsletter Signup -->
+    {% include "blog/partials/newsletter_signup.html" %}
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Load categories into filter dropdown
+    fetch('/blog/api/categories/')
+        .then(response => response.json())
+        .then(data => {
+            const categoryFilter = document.getElementById('category-filter');
+            data.categories.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category.slug;
+                option.textContent = `${category.name} (${category.count})`;
+                categoryFilter.appendChild(option);
+            });
+        })
+        .catch(error => console.error('Error loading categories:', error));
+
+    // Handle load more pagination
+    let currentPage = 1;
+    document.body.addEventListener('htmx:beforeRequest', function(evt) {
+        if (evt.target.id === 'load-more-btn') {
+            currentPage++;
+            evt.detail.parameters.page = currentPage;
+        }
+    });
+
+    // Reset page when filters change
+    document.body.addEventListener('htmx:beforeRequest', function(evt) {
+        if (evt.target.matches('#category-filter, #sort-filter, #search-filter')) {
+            currentPage = 1;
+            evt.detail.parameters.page = 1;
+            document.getElementById('load-more-section').style.display = 'none';
+        }
+    });
+
+    // Show/hide load more button based on response
+    document.body.addEventListener('htmx:afterRequest', function(evt) {
+        if (evt.target.id === 'articles-container') {
+            try {
+                const response = JSON.parse(evt.detail.xhr.responseText);
+                const loadMoreSection = document.getElementById('load-more-section');
+                if (response.has_more) {
+                    loadMoreSection.style.display = 'block';
+                } else {
+                    loadMoreSection.style.display = 'none';
+                }
+            } catch (e) {
+                // Response is HTML, not JSON
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

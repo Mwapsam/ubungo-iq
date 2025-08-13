@@ -1,0 +1,146 @@
+{% load wagtailimages_tags %}
+
+{% for article in articles %}
+    {% if forloop.first %}
+    <!-- First featured article - large format -->
+    <article class="featured-article" style="margin-bottom: 2rem;">
+        {% if article.featured_image %}
+        <div class="featured-article-image">
+            <a href="{{ article.get_url }}">
+                <picture>
+                    {% image article.featured_image width-800 format-avif as img_avif %}
+                    {% image article.featured_image width-800 format-webp as img_webp %}
+                    {% image article.featured_image width-800 as img_fallback %}
+                    
+                    <source srcset="{{ img_avif.url }}" type="image/avif">
+                    <source srcset="{{ img_webp.url }}" type="image/webp">
+                    <img src="{{ img_fallback.url }}" 
+                         alt="{{ article.featured_image.title|default:article.title }}"
+                         loading="lazy">
+                </picture>
+            </a>
+        </div>
+        {% endif %}
+        
+        <div class="featured-article-content">
+            <div class="featured-article-meta" style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; font-size: var(--font-size-sm); color: var(--color-gray-500);">
+                {% if article.category %}
+                <a href="/blog/category/{{ article.category.slug }}/" 
+                   class="featured-category"
+                   style="background: {{ article.category.color|default:'var(--color-primary)' }}; color: white; padding: 0.25rem 0.75rem; border-radius: var(--radius-full); text-decoration: none; font-weight: 500;">
+                    {{ article.category.name }}
+                </a>
+                {% endif %}
+                
+                <time>{{ article.first_published_at|date:"M d, Y" }}</time>
+                
+                {% if article.reading_time_minutes %}
+                <span>{{ article.reading_time_minutes }} min read</span>
+                {% endif %}
+            </div>
+            
+            <h2 class="featured-article-title">
+                <a href="{{ article.get_url }}">{{ article.title }}</a>
+            </h2>
+            
+            {% if article.intro %}
+            <p class="featured-article-excerpt">{{ article.intro }}</p>
+            {% endif %}
+            
+            <a href="{{ article.get_url }}" class="btn btn-primary" style="margin-top: 1.5rem;">
+                Read Article
+            </a>
+        </div>
+    </article>
+    
+    {% if articles|length > 1 %}
+    <!-- Secondary featured articles grid -->
+    <div class="secondary-featured" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+    {% endif %}
+    
+    {% else %}
+    <!-- Secondary featured articles -->
+    <article class="featured-card" style="background: white; border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow); transition: all var(--transition-normal);">
+        {% if article.featured_image %}
+        <div class="featured-card-image" style="aspect-ratio: 16/9; overflow: hidden;">
+            <a href="{{ article.get_url }}">
+                <picture>
+                    {% image article.featured_image width-400 format-avif as img_avif %}
+                    {% image article.featured_image width-400 format-webp as img_webp %}
+                    {% image article.featured_image width-400 as img_fallback %}
+                    
+                    <source srcset="{{ img_avif.url }}" type="image/avif">
+                    <source srcset="{{ img_webp.url }}" type="image/webp">
+                    <img src="{{ img_fallback.url }}" 
+                         alt="{{ article.featured_image.title|default:article.title }}"
+                         loading="lazy"
+                         style="width: 100%; height: 100%; object-fit: cover; transition: transform var(--transition-slow);">
+                </picture>
+            </a>
+        </div>
+        {% endif %}
+        
+        <div class="featured-card-content" style="padding: 1.5rem;">
+            <div class="featured-card-meta" style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; font-size: var(--font-size-xs); color: var(--color-gray-500);">
+                {% if article.category %}
+                <span class="category-badge" 
+                      style="background: {{ article.category.color|default:'var(--color-primary)' }}; color: white; padding: 0.125rem 0.5rem; border-radius: var(--radius); font-weight: 500;">
+                    {{ article.category.name }}
+                </span>
+                {% endif %}
+                <time>{{ article.first_published_at|date:"M d" }}</time>
+            </div>
+            
+            <h3 class="featured-card-title" style="font-family: var(--font-display); font-size: var(--font-size-lg); font-weight: 600; line-height: var(--leading-tight); margin-bottom: 0.75rem;">
+                <a href="{{ article.get_url }}" style="text-decoration: none; color: var(--color-gray-900); transition: color var(--transition-fast);">
+                    {{ article.title }}
+                </a>
+            </h3>
+            
+            {% if article.intro %}
+            <p class="featured-card-excerpt" style="color: var(--color-gray-600); font-size: var(--font-size-sm); line-height: var(--leading-relaxed);">
+                {{ article.intro|truncatewords:15 }}
+            </p>
+            {% endif %}
+        </div>
+    </article>
+    {% endif %}
+    
+    {% if forloop.last and articles|length > 1 %}
+    </div>
+    {% endif %}
+{% empty %}
+    <div class="no-featured" style="text-align: center; padding: 3rem; color: var(--color-gray-500);">
+        <h3>No featured articles yet</h3>
+        <p>Check back soon for featured content!</p>
+    </div>
+{% endfor %}
+
+<style>
+.featured-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-xl);
+}
+
+.featured-card:hover img {
+    transform: scale(1.05);
+}
+
+.featured-card-title a:hover {
+    color: var(--color-primary);
+}
+
+.featured-article:hover {
+    transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+    .featured-article {
+        display: block !important;
+    }
+    
+    .secondary-featured {
+        grid-template-columns: 1fr !important;
+    }
+}
+</style>

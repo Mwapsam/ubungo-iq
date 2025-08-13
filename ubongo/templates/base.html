@@ -1,46 +1,167 @@
-{% load static wagtailcore_tags wagtailuserbar %}
+{% load static wagtailcore_tags wagtailuserbar seo_tags %}
 
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <title>
-            {% block title %}
-            {% if page.seo_title %}{{ page.seo_title }}{% else %}{{ page.title }}{% endif %}
-            {% endblock %}
-            {% block title_suffix %}
-            {% wagtail_site as current_site %}
-            {% if current_site and current_site.site_name %}- {{ current_site.site_name }}{% endif %}
-            {% endblock %}
-        </title>
-        {% if page.search_description %}
-        <meta name="description" content="{{ page.search_description }}" />
-        {% endif %}
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    {% if request.in_preview_panel %}
+    <base target="_blank">
+    {% endif %}
+    
+    {% render_seo_meta %}
+    
+    <script src="https://unpkg.com/htmx.org@1.9.12" defer></script>
+    <script src="https://unpkg.com/htmx.org/dist/ext/loading-states.js" defer></script>
+    
+    {% structured_data page %}
+    {% breadcrumb_data page %}
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="{% static 'css/modern-blog.css' %}">
+    <link rel="stylesheet" href="{% static 'css/ubongo.css' %}">
+    
+    {% block extra_css %}{% endblock %}
+</head>
 
-        {# Force all links in the live preview panel to be opened in a new tab #}
-        {% if request.in_preview_panel %}
-        <base target="_blank">
-        {% endif %}
-
-        {# Global stylesheets #}
-        <link rel="stylesheet" type="text/css" href="{% static 'css/ubongo.css' %}">
-
-        {% block extra_css %}
-        {# Override this in templates to add extra stylesheets #}
-        {% endblock %}
-    </head>
-
-    <body class="{% block body_class %}{% endblock %}">
-        {% wagtailuserbar %}
-
+<body class="{% block body_class %}{% endblock %}" hx-ext="loading-states">
+    {% wagtailuserbar %}
+    
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
+    <header class="site-header" role="banner">
+        <div class="container">
+            <div class="header-content">
+                <div class="site-logo">
+                    <a href="/" class="logo-link">
+                        <img src="{% static 'img/main.png' %}" alt="Ubongo IQ" class="logo-image">
+                    </a>
+                </div>
+                
+                <nav class="main-nav" role="navigation" aria-label="Main navigation">
+                    <ul class="nav-list">
+                        <li><a href="/" class="nav-link">Home</a></li>
+                        <li><a href="/blog/" class="nav-link">Blog</a></li>
+                        <li class="dropdown">
+                            <a class="nav-link dropdown" aria-expanded="false">Categories</a>
+                            <ul class="dropdown-menu" id="categories-menu"
+                                hx-get="/blog/api/categories/" 
+                                hx-target="this" 
+                                hx-trigger="load">
+                                <li>Loading...</li>
+                            </ul>
+                        </li>
+                        <li><a href="/about/" class="nav-link">About</a></li>
+                        <li><a href="/contact/" class="nav-link">Contact</a></li>
+                    </ul>
+                </nav>
+                
+                <div class="search-container">
+                    <form class="search-form">
+                        <div class="search-input-wrapper">
+                            <input type="search" 
+                                   name="q" 
+                                   placeholder="Search articles..." 
+                                   class="search-input" 
+                                   aria-label="Search articles"
+                                   hx-get="/blog/api/search/"
+                                   hx-target="#search-results"
+                                   hx-trigger="input changed delay:500ms">
+                            <button type="submit" class="search-button" aria-label="Search">
+                                <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 1 1-14 0 7 7 0 0 1 14 0z"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        <div id="search-results" class="search-results" data-loading-class="loading"></div>
+                    </form>
+                </div>
+                
+                <button class="mobile-menu-toggle" aria-expanded="false" aria-label="Toggle mobile menu">
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                </button>
+            </div>
+        </div>
+    </header>
+    
+    <main id="main-content" class="site-main" role="main">
         {% block content %}{% endblock %}
-
-        {# Global javascript #}
-        <script type="text/javascript" src="{% static 'js/ubongo.js' %}"></script>
-
-        {% block extra_js %}
-        {# Override this in templates to add extra javascript #}
-        {% endblock %}
-    </body>
+    </main>
+    
+    <footer class="site-footer" role="contentinfo">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3 class="footer-title">Ubongo IQ</h3>
+                    <p class="footer-description">
+                        Insights on technology, development, and innovation. 
+                        Stay updated with the latest trends and best practices.
+                    </p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3 class="footer-title">Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/blog/">Blog</a></li>
+                        <li><a href="/about/">About</a></li>
+                        <li><a href="/contact/">Contact</a></li>
+                        <li><a href="/privacy/">Privacy</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3 class="footer-title">Categories</h3>
+                    <ul class="footer-links" 
+                        hx-get="/blog/api/categories/" 
+                        hx-target="this" 
+                        hx-trigger="load">
+                        <li>Loading categories...</li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3 class="footer-title">Stay Connected</h3>
+                    <div class="social-links">
+                        <a href="#" class="social-link" aria-label="Twitter">
+                            <svg fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="social-link" aria-label="LinkedIn">
+                            <svg fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                            </svg>
+                        </a>
+                        <a href="/blog/feed/" class="social-link" aria-label="RSS Feed">
+                            <svg fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M3.429 14.286A3.429 3.429 0 0 0 0 17.714a3.429 3.429 0 0 0 3.429 3.429 3.429 3.429 0 0 0 3.428-3.429 3.429 3.429 0 0 0-3.428-3.428zM0 4.571v6.857c5.714 0 10.286 4.572 10.286 10.286h6.857C17.143 14.857 10.857 8.571 4.571 8.571V4.57L0 4.571zM0 0v6.571C10.286 6.571 21.714 18 21.714 18v6.571H24c0-13.255-10.745-24-24-24z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; {% now "Y" %} Ubongo IQ. All rights reserved.</p>
+                <p>Built with Django & Wagtail</p>
+            </div>
+        </div>
+    </footer>
+    
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-spinner"></div>
+    </div>
+    
+    <script src="{% static 'js/modern-blog.js' %}" defer></script>
+    <script src="{% static 'js/ubongo.js' %}" defer></script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
 </html>

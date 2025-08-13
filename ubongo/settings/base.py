@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.sites",
 ]
 
 MIDDLEWARE = [
@@ -85,6 +86,13 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+PASSWORD_HASHERS = [
+    'django.contrib.auth.hashers.Argon2PasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',
+    'django.contrib.auth.hashers.ScryptPasswordHasher',
+]
+
 LANGUAGE_CODE = "en-us"
 
 TIME_ZONE = "UTC"
@@ -92,6 +100,8 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 
 USE_TZ = True
+
+SITE_ID = 1
 
 STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
@@ -102,7 +112,7 @@ STATICFILES_DIRS = [
     os.path.join(PROJECT_DIR, "static"),
 ]
 
-STATIC_ROOT = os.path.join(BASE_DIR, "static")
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATIC_URL = "/static/"
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")

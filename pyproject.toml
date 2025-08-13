@@ -27,12 +27,19 @@ dependencies = [
     "redis (>=6.2.0,<7.0.0)",
     "pydantic (>=2.11.7,<3.0.0)",
     "pillow-avif-plugin (>=1.5.2,<2.0.0)",
-    "readtime (>=3.0.0,<4.0.0)"
+    "readtime (>=3.0.0,<4.0.0)",
+    "sentry-sdk[django] (>=2.34.1,<3.0.0)",
+    "pytest (>=8.4.1,<9.0.0)",
+    "selenium (>=4.35.0,<5.0.0)"
 ]
 
 [tool.poetry]
 packages = [{include = "ubongo_iq", from = "src"}]
 
+
+[tool.poetry.group.dev.dependencies]
+pytest-django = "^4.11.1"
+webdriver-manager = "^4.0.2"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]

@@ -1,0 +1,547 @@
+{% extends "base.html" %}
+{% load static wagtailcore_tags wagtailimages_tags seo_tags %}
+
+{% block body_class %}category-page{% endblock %}
+
+{% block extra_css %}
+    {% include 'blog/category_styles.html' %}
+{% endblock %}
+
+{% block content %}
+<div class="reading-progress" id="readingProgress"></div>
+
+<!-- Category Hero Section -->
+<section class="category-hero">
+    <div class="category-hero-content">
+        <!-- Breadcrumbs -->
+        <nav class="breadcrumbs" style="margin-bottom: var(--space-4); font-size: var(--font-size-sm);">
+            <a href="/" style="color: var(--gray-500); text-decoration: none;">Home</a>
+            <span style="color: var(--gray-400); margin: 0 var(--space-2);">/</span>
+            <a href="/blog/" style="color: var(--gray-500); text-decoration: none;">Blog</a>
+            <span style="color: var(--gray-400); margin: 0 var(--space-2);">/</span>
+            <span style="color: var(--gray-700); font-weight: 500;">{{ category.name }}</span>
+        </nav>
+
+        <!-- Category Badge -->
+        <div class="category-badge" style="background: {{ category.color|default:'#2563eb' }};">
+            {{ category.name }}
+        </div>
+        
+        <!-- Category Title -->
+        <h1 class="category-title">
+            {{ category.name }} Articles
+        </h1>
+        
+        <!-- Category Description -->
+        {% if category.description %}
+        <p class="category-description">
+            {{ category.description }}
+        </p>
+        {% else %}
+        <p class="category-description">
+            Explore our collection of articles about {{ category.name|lower }}. 
+            Stay updated with the latest insights, trends, and best practices.
+        </p>
+        {% endif %}
+        
+        <!-- Category Stats -->
+        <div class="category-stats">
+            <div class="category-stat">
+                <span class="category-stat-icon">📄</span>
+                <span id="total-articles-count">{{ paginator.count|default:0 }}</span> 
+                <span>article{{ paginator.count|pluralize }}</span>
+            </div>
+            {% if articles.0.last_published_at %}
+            <div class="category-stat">
+                <span class="category-stat-icon">📅</span>
+                <span>Updated {{ articles.0.last_published_at|date:"M d, Y" }}</span>
+            </div>
+            {% endif %}
+            <div class="category-stat">
+                <span class="category-stat-icon">🏷️</span>
+                <span>{{ category.name }} Category</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Filters Section -->
+<div class="container">
+    <section class="category-filters">
+        <div class="filters-container">
+            <div class="filters-grid">
+                <!-- Sort Filter -->
+                <div class="filter-group">
+                    <label class="filter-label" for="sort-filter">Sort Articles</label>
+                    <select id="sort-filter" class="filter-select" name="sort">
+                        <option value="latest">Latest First</option>
+                        <option value="popular">Most Popular</option>
+                        <option value="oldest">Oldest First</option>
+                        <option value="title">Title A-Z</option>
+                    </select>
+                </div>
+
+                <!-- Search Filter -->
+                <div class="filter-group">
+                    <label class="filter-label" for="search-filter">Search Articles</label>
+                    <input type="search" 
+                           id="search-filter"
+                           class="filter-input"
+                           placeholder="Search {{ category.name|lower }} articles..."
+                           name="search"
+                           value="{{ search_query|default:'' }}">
+                </div>
+                
+                <!-- View Options -->
+                <div class="filter-group">
+                    <label class="filter-label">View Style</label>
+                    <div class="view-options">
+                        <button class="view-toggle active" data-view="grid" title="Grid view">
+                            <svg fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/>
+                            </svg>
+                        </button>
+                        <button class="view-toggle" data-view="list" title="List view">
+                            <svg fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M4 14h4v-4H4v4zm0 5h4v-4H4v4zM4 9h4V5H4v4zm5 5h12v-2H9v2zm0 5h12v-2H9v2zM9 5v2h12V5H9z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- Articles Section -->
+<section class="category-articles-section">
+    <div id="articles-container" class="articles-grid">
+        {% for article in articles %}
+            <article class="article-card animate-on-scroll">
+                <div class="article-card-image">
+                    {% if article.featured_image %}
+                        {% image article.featured_image width-400 height-250 as card_img %}
+                        <img src="{{ card_img.url }}" alt="{{ article.title }}" loading="lazy">
+                    {% else %}
+                        <div style="background: linear-gradient(135deg, {{ category.color|default:'#2563eb' }}, {{ category.color|default:'#10b981' }}); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem;">
+                            {{ category.name|first|upper }}
+                        </div>
+                    {% endif %}
+                    <div class="card-overlay"></div>
+                </div>
+                
+                <div class="article-card-content">
+                    <div class="article-card-meta" style="margin-bottom: var(--space-2);">
+                        <span class="article-category" style="background: {{ category.color|default:'#2563eb' }}; color: white; padding: var(--space-1) var(--space-2); border-radius: var(--border-radius); font-size: var(--font-size-xs); font-weight: 500;">
+                            {{ category.name }}
+                        </span>
+                        <time class="article-date" style="color: var(--gray-500); font-size: var(--font-size-sm); margin-left: var(--space-2);">
+                            {{ article.first_published_at|date:"M j, Y" }}
+                        </time>
+                    </div>
+                    
+                    <h2 class="article-card-title">
+                        <a href="{{ article.url }}" style="text-decoration: none; color: inherit;">
+                            {{ article.title }}
+                        </a>
+                    </h2>
+                    
+                    {% if article.intro %}
+                    <p class="article-card-excerpt">
+                        {{ article.intro|truncatewords:20 }}
+                    </p>
+                    {% endif %}
+                    
+                    <div class="article-card-footer" style="margin-top: auto; padding-top: var(--space-3); border-top: 1px solid var(--gray-200); display: flex; justify-content: space-between; align-items: center;">
+                        <div class="article-reading-time" style="color: var(--gray-500); font-size: var(--font-size-sm);">
+                            <span>📖</span>
+                            <span>{{ article.reading_time_minutes|default:5 }} min read</span>
+                        </div>
+                        <div class="article-views" style="color: var(--gray-500); font-size: var(--font-size-sm);">
+                            <span>👁</span>
+                            <span>{{ article.view_count|default:0 }}</span>
+                        </div>
+                    </div>
+                </div>
+            </article>
+        {% empty %}
+            <div class="loading-placeholder">
+                <div style="font-size: 3rem; margin-bottom: var(--space-4);">📚</div>
+                <h3 style="font-family: var(--font-display); font-size: var(--font-size-xl); color: var(--gray-700); margin-bottom: var(--space-2);">
+                    No articles found
+                </h3>
+                <p style="color: var(--gray-500); margin-bottom: var(--space-6);">
+                    There are no articles in the {{ category.name }} category yet.
+                </p>
+                <a href="/blog/" class="load-more-btn">
+                    Explore All Articles
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Load More Section -->
+    {% if paginator.num_pages > 1 %}
+    <div class="load-more-section" id="load-more-section">
+        <button class="load-more-btn" id="load-more-btn" data-page="2">
+            <span class="btn-text">Load More {{ category.name }} Articles</span>
+            <span>↓</span>
+        </button>
+    </div>
+    {% endif %}
+</section>
+
+<!-- Related Categories Section -->
+<div class="container">
+    <section class="related-categories">
+        <div class="related-categories-header">
+            <h2 class="related-categories-title">
+                Explore Other Categories
+            </h2>
+            <p class="related-categories-subtitle">
+                Discover more topics that might interest you
+            </p>
+        </div>
+        
+        <div class="categories-grid" id="related-categories-grid">
+            <!-- Categories will be loaded dynamically -->
+        </div>
+    </section>
+</div>
+
+<!-- Floating Actions -->
+<div class="floating-actions">
+    <button class="floating-btn scroll-to-top" id="scrollToTop" title="Scroll to top">
+        ↑
+    </button>
+    <button class="floating-btn newsletter-toggle" id="newsletterToggle" title="Subscribe to newsletter">
+        ✉️
+    </button>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize variables
+    const categorySlug = '{{ category.slug }}';
+    const articlesContainer = document.getElementById('articles-container');
+    const loadMoreBtn = document.getElementById('load-more-btn');
+    const sortFilter = document.getElementById('sort-filter');
+    const searchFilter = document.getElementById('search-filter');
+    const viewToggles = document.querySelectorAll('.view-toggle');
+    
+    let currentPage = 1;
+    let isLoading = false;
+    let currentSort = 'latest';
+    let currentSearch = '{{ search_query|default:"" }}';
+
+    // Update reading progress
+    const progressBar = document.getElementById('readingProgress');
+    function updateProgress() {
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const scrollPercent = (scrollTop / docHeight) * 100;
+        progressBar.style.width = Math.min(scrollPercent, 100) + '%';
+    }
+    window.addEventListener('scroll', updateProgress);
+
+    // Scroll to top functionality
+    const scrollToTopBtn = document.getElementById('scrollToTop');
+    if (scrollToTopBtn) {
+        scrollToTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+        
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 500) {
+                scrollToTopBtn.style.opacity = '1';
+                scrollToTopBtn.style.pointerEvents = 'auto';
+            } else {
+                scrollToTopBtn.style.opacity = '0';
+                scrollToTopBtn.style.pointerEvents = 'none';
+            }
+        });
+        
+        // Initialize scroll to top button
+        scrollToTopBtn.style.opacity = '0';
+        scrollToTopBtn.style.pointerEvents = 'none';
+        scrollToTopBtn.style.transition = 'opacity 0.3s ease';
+    }
+
+    // Newsletter toggle
+    const newsletterToggle = document.getElementById('newsletterToggle');
+    if (newsletterToggle) {
+        newsletterToggle.addEventListener('click', () => {
+            // Scroll to footer or show newsletter modal
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        });
+    }
+
+    // View toggle functionality
+    viewToggles.forEach(toggle => {
+        toggle.addEventListener('click', function() {
+            viewToggles.forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+            
+            const view = this.dataset.view;
+            if (view === 'list') {
+                articlesContainer.className = 'articles-list';
+            } else {
+                articlesContainer.className = 'articles-grid';
+            }
+        });
+    });
+
+    // Sort filter functionality
+    if (sortFilter) {
+        sortFilter.addEventListener('change', function() {
+            currentSort = this.value;
+            currentPage = 1;
+            loadArticles(true);
+        });
+    }
+
+    // Search functionality with debouncing
+    if (searchFilter) {
+        let searchTimeout;
+        searchFilter.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                currentSearch = this.value;
+                currentPage = 1;
+                loadArticles(true);
+            }, 500);
+        });
+    }
+
+    // Load more functionality
+    if (loadMoreBtn) {
+        loadMoreBtn.addEventListener('click', function() {
+            if (!isLoading) {
+                currentPage++;
+                loadArticles(false);
+            }
+        });
+    }
+
+    // Load articles function
+    async function loadArticles(replace = false) {
+        if (isLoading) return;
+        
+        isLoading = true;
+        
+        // Show loading state
+        if (loadMoreBtn) {
+            const btnText = loadMoreBtn.querySelector('.btn-text');
+            if (btnText) btnText.textContent = 'Loading...';
+            loadMoreBtn.disabled = true;
+        }
+
+        if (replace) {
+            articlesContainer.innerHTML = `
+                <div class="loading-placeholder">
+                    <div class="loading-spinner"></div>
+                    <p style="margin-top: 1rem; color: var(--gray-500);">Loading ${categorySlug} articles...</p>
+                </div>
+            `;
+        }
+
+        try {
+            const params = new URLSearchParams({
+                category: categorySlug,
+                page: currentPage,
+                sort: currentSort,
+                search: currentSearch
+            });
+
+            const response = await fetch(`/blog/api/load_more_articles/?${params.toString()}`);
+            const data = await response.json();
+
+            if (data.articles && data.articles.length > 0) {
+                let articlesHtml = '';
+                
+                data.articles.forEach(article => {
+                    articlesHtml += `
+                        <article class="article-card animate-on-scroll">
+                            <div class="article-card-image">
+                                ${article.featured_image ? 
+                                    `<img src="${article.featured_image}" alt="${article.title}" loading="lazy">` :
+                                    `<div style="background: linear-gradient(135deg, {{ category.color|default:'#2563eb' }}, {{ category.color|default:'#10b981' }}); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem;">{{ category.name|first|upper }}</div>`
+                                }
+                                <div class="card-overlay"></div>
+                            </div>
+                            
+                            <div class="article-card-content">
+                                <div class="article-card-meta" style="margin-bottom: var(--space-2);">
+                                    <span class="article-category" style="background: {{ category.color|default:'#2563eb' }}; color: white; padding: var(--space-1) var(--space-2); border-radius: var(--border-radius); font-size: var(--font-size-xs); font-weight: 500;">
+                                        {{ category.name }}
+                                    </span>
+                                    <time class="article-date" style="color: var(--gray-500); font-size: var(--font-size-sm); margin-left: var(--space-2);">
+                                        ${article.published_date}
+                                    </time>
+                                </div>
+                                
+                                <h2 class="article-card-title">
+                                    <a href="${article.url}" style="text-decoration: none; color: inherit;">
+                                        ${article.title}
+                                    </a>
+                                </h2>
+                                
+                                ${article.intro ? `<p class="article-card-excerpt">${article.intro}</p>` : ''}
+                                
+                                <div class="article-card-footer" style="margin-top: auto; padding-top: var(--space-3); border-top: 1px solid var(--gray-200); display: flex; justify-content: space-between; align-items: center;">
+                                    <div class="article-reading-time" style="color: var(--gray-500); font-size: var(--font-size-sm);">
+                                        <span>📖</span>
+                                        <span>${article.reading_time || 5} min read</span>
+                                    </div>
+                                    <div class="article-views" style="color: var(--gray-500); font-size: var(--font-size-sm);">
+                                        <span>👁</span>
+                                        <span>${article.view_count || 0}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
+                    `;
+                });
+
+                if (replace) {
+                    articlesContainer.innerHTML = articlesHtml;
+                } else {
+                    articlesContainer.insertAdjacentHTML('beforeend', articlesHtml);
+                }
+
+                // Update article count
+                const totalCountEl = document.getElementById('total-articles-count');
+                if (totalCountEl && data.pagination) {
+                    totalCountEl.textContent = data.pagination.total_count || 0;
+                }
+
+                // Show/hide load more button
+                if (loadMoreBtn) {
+                    if (data.pagination && data.pagination.has_next) {
+                        loadMoreBtn.style.display = 'inline-flex';
+                        loadMoreBtn.dataset.page = data.pagination.current_page + 1;
+                    } else {
+                        loadMoreBtn.style.display = 'none';
+                    }
+                }
+
+                // Initialize animation observer for new articles
+                initializeAnimationObserver();
+            } else if (replace) {
+                articlesContainer.innerHTML = `
+                    <div class="loading-placeholder">
+                        <div style="font-size: 3rem; margin-bottom: var(--space-4);">🔍</div>
+                        <h3 style="font-family: var(--font-display); font-size: var(--font-size-xl); color: var(--gray-700); margin-bottom: var(--space-2);">
+                            No articles found
+                        </h3>
+                        <p style="color: var(--gray-500); margin-bottom: var(--space-6);">
+                            Try adjusting your search terms or browse all articles.
+                        </p>
+                        <a href="/blog/" class="load-more-btn">
+                            Browse All Articles
+                        </a>
+                    </div>
+                `;
+            }
+        } catch (error) {
+            console.error('Error loading articles:', error);
+            if (replace) {
+                articlesContainer.innerHTML = `
+                    <div class="loading-placeholder">
+                        <div style="font-size: 3rem; margin-bottom: var(--space-4);">⚠️</div>
+                        <h3 style="font-family: var(--font-display); font-size: var(--font-size-xl); color: var(--gray-700); margin-bottom: var(--space-2);">
+                            Error loading articles
+                        </h3>
+                        <p style="color: var(--gray-500); margin-bottom: var(--space-6);">
+                            Please try again later or refresh the page.
+                        </p>
+                        <button onclick="location.reload()" class="load-more-btn">
+                            Refresh Page
+                        </button>
+                    </div>
+                `;
+            }
+        } finally {
+            isLoading = false;
+            
+            // Reset button state
+            if (loadMoreBtn) {
+                const btnText = loadMoreBtn.querySelector('.btn-text');
+                if (btnText) btnText.textContent = `Load More {{ category.name }} Articles`;
+                loadMoreBtn.disabled = false;
+            }
+        }
+    }
+
+    // Animation observer for scroll animations
+    function initializeAnimationObserver() {
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('in-view');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.animate-on-scroll:not(.in-view)').forEach(el => {
+            observer.observe(el);
+        });
+    }
+
+    // Load related categories
+    async function loadRelatedCategories() {
+        try {
+            const response = await fetch('/blog/api/categories/');
+            const data = await response.json();
+            
+            if (data.categories) {
+                const relatedCategoriesGrid = document.getElementById('related-categories-grid');
+                const otherCategories = data.categories.filter(cat => cat.slug !== categorySlug);
+                
+                if (otherCategories.length > 0) {
+                    relatedCategoriesGrid.innerHTML = otherCategories.slice(0, 6).map(category => `
+                        <a href="/blog/category/${category.slug}/" class="category-card">
+                            <div class="category-icon" style="background: ${category.color || '#2563eb'};">
+                                ${category.name.charAt(0).toUpperCase()}
+                            </div>
+                            <h3 class="category-card-title">${category.name}</h3>
+                            <p class="category-card-count">${category.count || 0} article${category.count !== 1 ? 's' : ''}</p>
+                        </a>
+                    `).join('');
+                } else {
+                    document.querySelector('.related-categories').style.display = 'none';
+                }
+            }
+        } catch (error) {
+            console.error('Error loading related categories:', error);
+            document.querySelector('.related-categories').style.display = 'none';
+        }
+    }
+
+    // Initialize
+    initializeAnimationObserver();
+    loadRelatedCategories();
+    
+    // Set initial sort value from URL if present
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialSort = urlParams.get('sort');
+    if (initialSort && sortFilter) {
+        sortFilter.value = initialSort;
+        currentSort = initialSort;
+    }
+    
+    const initialSearch = urlParams.get('search');
+    if (initialSearch && searchFilter) {
+        searchFilter.value = initialSearch;
+        currentSearch = initialSearch;
+    }
+});
+</script>
+{% endblock %}

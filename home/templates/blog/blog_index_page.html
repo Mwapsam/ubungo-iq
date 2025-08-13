@@ -22,53 +22,7 @@
         background-color: #fff;
     }
 
-    /* Header Styles */
-    header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 1rem 2rem;
-        border-bottom: 1px solid #eee;
-        background: white;
-        position: sticky;
-        top: 0;
-        z-index: 100;
-    }
-
-    .logo {
-        font-size: 1.5rem;
-        font-weight: bold;
-        color: #333;
-    }
-
-    nav {
-        display: flex;
-        gap: 2rem;
-        align-items: center;
-    }
-
-    nav a {
-        text-decoration: none;
-        color: #666;
-        font-weight: 500;
-        transition: color 0.3s ease;
-    }
-
-    nav a:hover {
-        color: #333;
-    }
-
-    .subscribe {
-        background: #007bff;
-        color: white !important;
-        padding: 0.5rem 1rem;
-        border-radius: 4px;
-        transition: background 0.3s ease;
-    }
-
-    .subscribe:hover {
-        background: #0056b3;
-    }
+    /* Header styles removed - using base.html styles instead */
 
     /* Hero Section */
     .hero {
@@ -280,36 +234,7 @@
         background: #f8f9fa;
     }
 
-    /* Footer */
-    footer {
-        background: #333;
-        color: white;
-        padding: 2rem;
-        text-align: center;
-    }
-
-    .footer-content {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        max-width: 1200px;
-        margin: 0 auto;
-    }
-
-    .footer-links {
-        display: flex;
-        gap: 2rem;
-    }
-
-    .footer-links a {
-        color: #ccc;
-        text-decoration: none;
-        transition: color 0.3s ease;
-    }
-
-    .footer-links a:hover {
-        color: white;
-    }
+    /* Footer styles removed - using base.html styles instead */
 
     /* Responsive Design */
     @media (max-width: 768px) {
@@ -339,17 +264,7 @@
 
 {% block content %}
 
-  <!-- Header -->
-  <header>
-    <div class="logo">ubongo</div>
-    <nav>
-      <a href="/">Home</a>
-      <a href="#">Blogs</a>
-      <a href="#">Marketplace</a>
-      <a href="#">IQ4RM</a>
-      <a href="#" class="subscribe">Subscribe</a>
-    </nav>
-  </header>
+  <!-- Header removed - using base.html header instead -->
 
   <!-- Hero Section -->
   <section class="hero">
@@ -394,20 +309,7 @@
     </form>
   </section>
 
-  <!-- Footer -->
-  <footer>
-    <div class="footer-content">
-      <div class="footer-links">
-        <a href="#">Blogs</a>
-        <a href="#">Marketplace</a>
-        <a href="#">IQ4RM</a>
-        <a href="#">Collaboration</a>
-      </div>
-      <div>
-        <p>&copy; 2025 All Rights Reserved | Powered by Ubongo AI</p>
-      </div>
-    </div>
-  </footer>
+  <!-- Footer removed - using base.html footer instead -->
 
 {% endblock %}
 

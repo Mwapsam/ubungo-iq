@@ -1,0 +1,64 @@
+{% if articles %}
+    {% for article in articles %}
+    <a href="{{ article.get_url }}" class="search-result" style="display: block; padding: 1rem; border-bottom: 1px solid var(--color-gray-200); text-decoration: none; color: inherit; transition: background-color var(--transition-fast);">
+        <h4 style="font-size: var(--font-size-base); font-weight: 600; margin: 0 0 0.5rem 0; color: var(--color-gray-900);">
+            {{ article.title }}
+        </h4>
+        {% if article.intro %}
+        <p style="font-size: var(--font-size-sm); color: var(--color-gray-600); margin: 0 0 0.5rem 0; line-height: var(--leading-normal);">
+            {{ article.intro|truncatewords:20 }}
+        </p>
+        {% endif %}
+        <div class="search-meta" style="display: flex; align-items: center; gap: 0.75rem; font-size: var(--font-size-xs); color: var(--color-gray-500);">
+            {% if article.category %}
+            <span class="category" style="background: var(--color-primary); color: white; padding: 0.125rem 0.5rem; border-radius: var(--radius); font-weight: 500;">
+                {{ article.category.name }}
+            </span>
+            {% endif %}
+            <time>{{ article.first_published_at|date:"M d, Y" }}</time>
+        </div>
+    </a>
+    {% endfor %}
+    
+    {% if articles|length >= 10 %}
+    <div class="search-more" style="padding: 1rem; text-align: center; border-top: 1px solid var(--color-gray-200);">
+        <a href="/blog/?search={{ query }}" class="btn btn-outline" style="font-size: var(--font-size-sm);">
+            View All Results
+        </a>
+    </div>
+    {% endif %}
+    
+{% elif query %}
+    <div class="no-results" style="padding: 2rem; text-align: center; color: var(--color-gray-500);">
+        <svg style="width: 3rem; height: 3rem; margin: 0 auto 1rem; opacity: 0.5;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+        </svg>
+        <p style="margin: 0;">No articles found for "<strong>{{ query }}</strong>"</p>
+    </div>
+{% else %}
+    <div class="search-suggestions" style="padding: 1rem;">
+        <p style="font-size: var(--font-size-sm); color: var(--color-gray-500); margin: 0 0 0.75rem 0;">
+            Popular searches:
+        </p>
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <a href="/blog/?search=django" class="suggestion-tag" style="background: var(--color-gray-100); color: var(--color-gray-700); padding: 0.25rem 0.75rem; border-radius: var(--radius-full); text-decoration: none; font-size: var(--font-size-xs); transition: all var(--transition-fast);">Django</a>
+            <a href="/blog/?search=python" class="suggestion-tag" style="background: var(--color-gray-100); color: var(--color-gray-700); padding: 0.25rem 0.75rem; border-radius: var(--radius-full); text-decoration: none; font-size: var(--font-size-xs); transition: all var(--transition-fast);">Python</a>
+            <a href="/blog/?search=web" class="suggestion-tag" style="background: var(--color-gray-100); color: var(--color-gray-700); padding: 0.25rem 0.75rem; border-radius: var(--radius-full); text-decoration: none; font-size: var(--font-size-xs); transition: all var(--transition-fast);">Web Development</a>
+        </div>
+    </div>
+{% endif %}
+
+<style>
+.search-result:hover {
+    background: var(--color-gray-50);
+}
+
+.search-result:hover h4 {
+    color: var(--color-primary);
+}
+
+.suggestion-tag:hover {
+    background: var(--color-primary);
+    color: white;
+}
+</style>

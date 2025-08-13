@@ -1,0 +1,87 @@
+<!-- Title -->
+<title>{{ meta_title }}</title>
+
+<!-- Basic Meta Tags -->
+<meta name="description" content="{{ meta_description }}">
+<meta name="keywords" content="{% if page.tags.all %}{% for tag in page.tags.all %}{{ tag.name }}{% if not forloop.last %}, {% endif %}{% endfor %}{% endif %}">
+<meta name="author" content="Ubongo IQ">
+
+<!-- Preconnect to external domains -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+<!-- Canonical URL -->
+{% if canonical_url %}
+<link rel="canonical" href="{{ canonical_url }}">
+{% endif %}
+
+<!-- Open Graph Meta Tags -->
+{% if og_data %}
+<meta property="og:title" content="{{ og_data.title }}">
+<meta property="og:description" content="{{ og_data.description }}">
+<meta property="og:url" content="{{ og_data.url }}">
+<meta property="og:type" content="{{ og_data.type }}">
+<meta property="og:site_name" content="{{ og_data.site_name }}">
+{% if og_data.image %}
+<meta property="og:image" content="{{ og_data.image }}">
+<meta property="og:image:width" content="{{ og_data.image_width|default:'1200' }}">
+<meta property="og:image:height" content="{{ og_data.image_height|default:'630' }}">
+<meta property="og:image:alt" content="{{ page.title }}">
+{% endif %}
+{% endif %}
+
+<!-- Twitter Card Meta Tags -->
+{% if twitter_data %}
+<meta name="twitter:card" content="{{ twitter_data.card }}">
+<meta name="twitter:title" content="{{ twitter_data.title }}">
+<meta name="twitter:description" content="{{ twitter_data.description }}">
+{% if twitter_data.image %}
+<meta name="twitter:image" content="{{ twitter_data.image }}">
+<meta name="twitter:image:alt" content="{{ page.title }}">
+{% endif %}
+<meta name="twitter:site" content="@ubongoiq">
+<meta name="twitter:creator" content="@ubongoiq">
+{% endif %}
+
+<!-- Article-specific meta tags -->
+{% if page.content_type.model == 'articlepage' %}
+<meta property="article:published_time" content="{{ page.first_published_at|date:'c' }}">
+<meta property="article:modified_time" content="{{ page.last_published_at|date:'c' }}">
+<meta property="article:author" content="Ubongo IQ Team">
+{% if page.category %}
+<meta property="article:section" content="{{ page.category.name }}">
+{% endif %}
+{% for tag in page.tags.all %}
+<meta property="article:tag" content="{{ tag.name }}">
+{% endfor %}
+{% endif %}
+
+<!-- Additional SEO Meta Tags -->
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+<meta name="googlebot" content="index, follow">
+<meta name="bingbot" content="index, follow">
+
+<!-- Language and Locale -->
+<meta property="og:locale" content="en_US">
+<meta name="language" content="en">
+
+<!-- Mobile Optimization -->
+<meta name="theme-color" content="#2563eb">
+<meta name="msapplication-TileColor" content="#2563eb">
+
+<!-- Favicon -->
+{% load static %}
+<link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
+<link rel="icon" type="image/png" sizes="32x32" href="{% static 'img/favicon-32x32.png' %}">
+<link rel="icon" type="image/png" sizes="16x16" href="{% static 'img/favicon-16x16.png' %}">
+<link rel="apple-touch-icon" sizes="180x180" href="{% static 'img/apple-touch-icon.png' %}">
+
+<!-- RSS Feed -->
+<link rel="alternate" type="application/rss+xml" title="Ubongo IQ Blog" href="/blog/feed/">
+
+<!-- Preload critical resources -->
+<link rel="preload" href="{% static 'css/modern-blog.css' %}" as="style">
+<!-- Font preload removed to avoid duplication -->

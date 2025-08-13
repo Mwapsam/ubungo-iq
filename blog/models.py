@@ -10,6 +10,8 @@ from modelcluster.tags import ClusterTaggableManager
 from django_extensions.db.fields import AutoSlugField
 import readtime
 
+from blog.managers import CategoryManager, OptimizedArticleManager
+from blog.seo import ArticleSEOMixin
 from utils.generators import slugify_function
 
 
@@ -21,6 +23,8 @@ class Category(models.Model):
     )
     color = models.CharField(max_length=7, default="#3b82f6")
     description = models.TextField(blank=True, null=True)
+
+    objects = CategoryManager()
 
     panels = [FieldPanel("name"), FieldPanel("description"), FieldPanel("color")]
 
@@ -58,7 +62,7 @@ class BlogIndexPage(Page):
 
 
 # --- Article Page ---
-class ArticlePage(Page):
+class ArticlePage(Page, ArticleSEOMixin):
     intro = models.CharField(max_length=250, blank=True)
     body = RichTextField()
     summary = models.TextField(blank=True, null=True)
@@ -79,9 +83,14 @@ class ArticlePage(Page):
     )
     published_at = models.DateTimeField(auto_now_add=True)
     view_count = models.PositiveIntegerField(default=0)
-    featured = models.BooleanField(default=False)
+    featured = models.BooleanField(default=False) 
+    meta_description = models.TextField(blank=True, null=True)
+
+    objects = OptimizedArticleManager()
 
     content_panels = Page.content_panels + [
+        FieldPanel("seo_title"),
+        FieldPanel("meta_description"),
         FieldPanel("intro"),
         FieldPanel("body"),
         FieldPanel("summary"),
