@@ -67,6 +67,36 @@ class ContentGenerationRequest(models.Model):
         verbose_name = "Content Generation Request"
         verbose_name_plural = "Content Generation Requests"
 
+    panels = [
+        MultiFieldPanel([
+            FieldPanel('topic'),
+            FieldPanel('category'),
+            FieldPanel('status'),
+        ], heading='Request Details'),
+        
+        MultiFieldPanel([
+            FieldPanel('generated_title'),
+            FieldPanel('generated_outline'),
+            FieldPanel('generated_content'),
+            FieldPanel('generated_meta_description'),
+            FieldPanel('generated_tags'),
+        ], heading='Generated Content'),
+        
+        MultiFieldPanel([
+            FieldPanel('requested_by'),
+            FieldPanel('reviewed_by'),
+            FieldPanel('review_notes'),
+            FieldPanel('published_article'),
+        ], heading='Workflow'),
+        
+        MultiFieldPanel([
+            FieldPanel('model_used'),
+            FieldPanel('prompt_used'),
+            FieldPanel('word_count'),
+            FieldPanel('generation_time_seconds'),
+        ], heading='Generation Metadata'),
+    ]
+
     def __str__(self):
         return f"{self.topic} ({self.get_status_display()})"
 
@@ -121,6 +151,31 @@ class AIContentMetrics(models.Model):
     engagement_score = models.FloatField(null=True, blank=True)
     
     created_at = models.DateTimeField(auto_now_add=True)
+    
+    panels = [
+        MultiFieldPanel([
+            FieldPanel('article'),
+            FieldPanel('generation_request'),
+        ], heading='Article Information'),
+        
+        MultiFieldPanel([
+            FieldPanel('total_generation_time'),
+            FieldPanel('outline_generation_time'),
+            FieldPanel('content_generation_time'),
+        ], heading='Generation Timing'),
+        
+        MultiFieldPanel([
+            FieldPanel('original_word_count'),
+            FieldPanel('final_word_count'),
+            FieldPanel('human_edit_percentage'),
+        ], heading='Content Quality'),
+        
+        MultiFieldPanel([
+            FieldPanel('avg_reading_time'),
+            FieldPanel('bounce_rate'),
+            FieldPanel('engagement_score'),
+        ], heading='Performance Metrics'),
+    ]
     
     class Meta:
         verbose_name = "AI Content Metrics"

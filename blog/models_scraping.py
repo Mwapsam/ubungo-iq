@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from datetime import timedelta
 from wagtail.snippets.models import register_snippet
+from wagtail.admin.panels import FieldPanel, MultiFieldPanel
 
 
 @register_snippet
@@ -46,6 +47,29 @@ class ScrapingSource(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    panels = [
+        MultiFieldPanel([
+            FieldPanel('name'),
+            FieldPanel('website'),
+            FieldPanel('base_url'),
+            FieldPanel('enabled'),
+        ], heading='Basic Information'),
+        
+        MultiFieldPanel([
+            FieldPanel('scrape_frequency_hours'),
+            FieldPanel('max_items_per_scrape'),
+            FieldPanel('request_delay_seconds'),
+            FieldPanel('user_agent'),
+            FieldPanel('scraping_config'),
+        ], heading='Scraping Configuration'),
+        
+        MultiFieldPanel([
+            FieldPanel('last_scraped'),
+            FieldPanel('last_success'),
+            FieldPanel('consecutive_failures'),
+        ], heading='Status Information'),
+    ]
+    
     class Meta:
         verbose_name = "Scraping Source"
         verbose_name_plural = "Scraping Sources"
@@ -118,6 +142,37 @@ class ScrapedData(models.Model):
             models.Index(fields=['category']),
         ]
 
+    panels = [
+        MultiFieldPanel([
+            FieldPanel('source'),
+            FieldPanel('title'),
+            FieldPanel('url'),
+            FieldPanel('external_id'),
+        ], heading='Item Information'),
+        
+        MultiFieldPanel([
+            FieldPanel('description'),
+            FieldPanel('price'),
+            FieldPanel('category'),
+            FieldPanel('tags'),
+            FieldPanel('image_urls'),
+        ], heading='Content Data'),
+        
+        MultiFieldPanel([
+            FieldPanel('views'),
+            FieldPanel('likes'),
+            FieldPanel('sales'),
+            FieldPanel('rating'),
+        ], heading='Metrics'),
+        
+        MultiFieldPanel([
+            FieldPanel('content_generated'),
+            FieldPanel('content_generation_request'),
+        ], heading='Content Generation'),
+        
+        FieldPanel('raw_data'),
+    ]
+
     def __str__(self):
         return f"{self.title} ({self.source.website})"
 
@@ -164,6 +219,28 @@ class TrendingTopic(models.Model):
     class Meta:
         unique_together = ['source', 'topic', 'category']
         ordering = ['-frequency', '-total_views']
+
+    panels = [
+        MultiFieldPanel([
+            FieldPanel('source'),
+            FieldPanel('topic'),
+            FieldPanel('category'),
+        ], heading='Topic Information'),
+        
+        MultiFieldPanel([
+            FieldPanel('frequency'),
+            FieldPanel('total_views'),
+            FieldPanel('total_sales'),
+            FieldPanel('average_rating'),
+        ], heading='Trend Metrics'),
+        
+        MultiFieldPanel([
+            FieldPanel('content_generated'),
+            FieldPanel('content_generation_request'),
+        ], heading='Content Generation'),
+        
+        FieldPanel('sample_items'),
+    ]
 
     def __str__(self):
         return f"{self.topic} ({self.frequency} items)"
@@ -213,6 +290,26 @@ class ScrapingLog(models.Model):
 
     class Meta:
         ordering = ['-started_at']
+
+    panels = [
+        MultiFieldPanel([
+            FieldPanel('source'),
+            FieldPanel('status'),
+        ], heading='Basic Information'),
+        
+        MultiFieldPanel([
+            FieldPanel('items_found'),
+            FieldPanel('items_new'),
+            FieldPanel('items_updated'),
+            FieldPanel('items_failed'),
+        ], heading='Results'),
+        
+        MultiFieldPanel([
+            FieldPanel('error_message'),
+            FieldPanel('error_traceback'),
+            FieldPanel('notes'),
+        ], heading='Error Information'),
+    ]
 
     def __str__(self):
         return f"{self.source.name} - {self.get_status_display()} ({self.started_at})"
@@ -265,5 +362,28 @@ class ContentGenerationQueue(models.Model):
     class Meta:
         ordering = ['-priority', 'scheduled_for']
     
+    panels = [
+        MultiFieldPanel([
+            FieldPanel('content_type'),
+            FieldPanel('title'),
+            FieldPanel('priority'),
+            FieldPanel('target_category'),
+        ], heading='Content Details'),
+        
+        MultiFieldPanel([
+            FieldPanel('trending_topic'),
+        ], heading='Data Sources'),
+        
+        MultiFieldPanel([
+            FieldPanel('context_data'),
+            FieldPanel('processed'),
+            FieldPanel('content_request'),
+        ], heading='Processing'),
+        
+        MultiFieldPanel([
+            FieldPanel('scheduled_for'),
+        ], heading='Scheduling'),
+    ]
+
     def __str__(self):
         return f"{self.get_content_type_display()}: {self.title}"
