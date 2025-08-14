@@ -42,6 +42,10 @@ class FunctionalTestCase(LiveServerTestCase):
         chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
         chrome_options.add_experimental_option('useAutomationExtension', False)
         
+        # Set Chrome binary path for macOS
+        if os.path.exists("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"):
+            chrome_options.binary_location = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+        
         try:
             # Use webdriver-manager to automatically download and manage ChromeDriver
             service = Service(ChromeDriverManager().install())

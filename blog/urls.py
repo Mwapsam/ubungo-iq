@@ -26,6 +26,6 @@ urlpatterns = [
     path("feed/", BlogFeed(), name="feed"),
     path("category/<slug:category_slug>/feed/", CategoryFeed(), name="category_feed"),
     
-    # Legacy API (keep for backwards compatibility)
-    path("api/categories/", views.get_categories_with_counts, name="get_categories_legacy"),
+    # Legacy API (keep for backwards compatibility) - moved to different endpoint
+    path("api/legacy/categories/", views.get_categories_with_counts, name="get_categories_legacy"),
 ]
