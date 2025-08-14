@@ -54,6 +54,8 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "ubongo.middleware.SecurityHeadersMiddleware",
+    "ubongo.middleware.RateLimitMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -61,6 +63,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
+    "ubongo.middleware.ViewCountMiddleware",
 ]
 
 ROOT_URLCONF = "ubongo.urls"
@@ -151,7 +154,7 @@ WAGTAILSEARCH_BACKENDS = {
     }
 }
 
-WAGTAILADMIN_BASE_URL = "http://example.com"
+WAGTAILADMIN_BASE_URL = "https://ubongoiq.com"
 
 WAGTAILIMAGES_JPEG_QUALITY = 85
 WAGTAILIMAGES_WEBP_QUALITY = 80
@@ -176,12 +179,10 @@ INSTALLED_APPS += ["django_celery_results"]
 
 CELERY_TIMEZONE = TIME_ZONE
 
-# AI Content Generation Settings
 OLLAMA_BASE_URL = os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434")
 OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL", "llama3.2:1b")
 CONTENT_GENERATION_ENABLED = os.environ.get("CONTENT_GENERATION_ENABLED", "True").lower() == "true"
 
-# AI Content Generation Prompts
 AI_PROMPTS = {
     "article_outline": """Create an outline for: {topic}
 
@@ -202,16 +203,15 @@ Requirements:
 - Ready for publication"""
 }
 
-# Celery Beat Schedule for Web Scraping
 from celery.schedules import crontab
 
 CELERY_BEAT_SCHEDULE = {
     'periodic-web-scraping': {
         'task': 'blog.tasks_scraping.periodic_scraping_scheduler',
-        'schedule': crontab(hour=2, minute=0),  # Run every day at 2 AM
+        'schedule': crontab(),  
     },
     'process-content-queue': {
         'task': 'blog.tasks_scraping.process_content_queue',
-        'schedule': crontab(minute='*/30'),  # Run every 30 minutes
+        'schedule': crontab(),  
     },
 }

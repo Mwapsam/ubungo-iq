@@ -3,7 +3,7 @@ import os
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": os.getenv("REDIS_URL", "redis://127.0.0.1:6379/1"),
+        "LOCATION": os.getenv("REDIS_URL", "redis://redis:6379/1"),
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "SERIALIZER": "django_redis.serializers.json.JSONSerializer",
@@ -18,7 +18,7 @@ CACHES = {
     },
     "sessions": {
         "BACKEND": "django_redis.cache.RedisCache", 
-        "LOCATION": os.getenv("REDIS_URL", "redis://127.0.0.1:6379/2"),
+        "LOCATION": os.getenv("REDIS_URL", "redis://redis:6379/2"),
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         },
@@ -27,7 +27,7 @@ CACHES = {
     },
     "wagtail_cache": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": os.getenv("REDIS_URL", "redis://127.0.0.1:6379/3"),
+        "LOCATION": os.getenv("REDIS_URL", "redis://redis:6379/3"),
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         },

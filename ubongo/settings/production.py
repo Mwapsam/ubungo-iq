@@ -1,4 +1,5 @@
 from .base import *
+from .caching import *
 
 DEBUG = False
 
@@ -121,7 +122,52 @@ CHANNEL_LAYERS = {
     },
 }
 
+CACHES["default"]["LOCATION"] = REDIS_URL
+CACHES["sessions"]["LOCATION"] = os.getenv("REDIS_URL", "redis://redis:6379/1")
+CACHES["wagtail_cache"]["LOCATION"] = os.getenv("REDIS_URL", "redis://redis:6379/2")
 
 CELERY_BROKER_URL = os.getenv("REDIS_URL", "redis://redis:6379")
 CELERY_RESULT_BACKEND = "django-db"
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
+
+
+CSP_DEFAULT_SRC = ["'self'"]
+CSP_SCRIPT_SRC = ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com"]
+CSP_STYLE_SRC = ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"]
+CSP_FONT_SRC = ["'self'", "https://fonts.gstatic.com"]
+CSP_IMG_SRC = ["'self'", "data:", "https:"]
+CSP_CONNECT_SRC = ["'self'"]
+CSP_FRAME_SRC = ["'none'"]
+CSP_OBJECT_SRC = ["'none'"]
+
+SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
+SESSION_CACHE_ALIAS = "sessions"
+
+MONITORING_SETTINGS = {
+    "SENTRY_DSN": os.getenv("SENTRY_DSN"),
+    "NEW_RELIC_LICENSE_KEY": os.getenv("NEW_RELIC_LICENSE_KEY"),
+    "DATADOG_API_KEY": os.getenv("DATADOG_API_KEY"),
+}
+
+if MONITORING_SETTINGS["SENTRY_DSN"]:
+    import sentry_sdk
+    from sentry_sdk.integrations.django import DjangoIntegration
+    from sentry_sdk.integrations.celery import CeleryIntegration
+    from sentry_sdk.integrations.redis import RedisIntegration
+
+    sentry_sdk.init(
+        dsn=MONITORING_SETTINGS["SENTRY_DSN"],
+        integrations=[
+            DjangoIntegration(
+                transaction_style="url",
+                middleware_spans=False,
+                signals_spans=False,
+            ),
+            CeleryIntegration(),
+            RedisIntegration(),
+        ],
+        traces_sample_rate=0.1,
+        send_default_pii=False,
+        environment=ENVIRONMENT,
+        release=os.getenv("APP_VERSION", "unknown"),
+    )

@@ -1,14 +1,15 @@
-# ubongo/middleware.py
 import time
 from django.core.cache import cache
-from django.http import HttpResponseTooManyRequests
 from django.conf import settings
 from django.utils.deprecation import MiddlewareMixin
+from django.http import HttpResponse
+
+
+class HttpResponseTooManyRequests(HttpResponse):
+    status_code = 429
 
 
 class RateLimitMiddleware(MiddlewareMixin):
-    """Rate limiting middleware to prevent abuse."""
-    
     def __init__(self, get_response):
         self.get_response = get_response
         super().__init__(get_response)
@@ -17,19 +18,16 @@ class RateLimitMiddleware(MiddlewareMixin):
         if settings.DEBUG:
             return None
             
-        # Get client IP
         ip = self.get_client_ip(request)
         
-        # Different limits for different endpoints
         if request.path.startswith('/api/'):
-            return self.check_rate_limit(ip, 'api', 60, 120)  # 60 requests per 2 minutes for API
+            return self.check_rate_limit(ip, 'api', 60, 120)  
         elif request.method == 'POST':
-            return self.check_rate_limit(ip, 'post', 20, 300)  # 20 POST requests per 5 minutes
+            return self.check_rate_limit(ip, 'post', 20, 300)  
         else:
-            return self.check_rate_limit(ip, 'general', 200, 300)  # 200 requests per 5 minutes
+            return self.check_rate_limit(ip, 'general', 200, 300) 
     
     def get_client_ip(self, request):
-        """Get client IP address."""
         x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
         if x_forwarded_for:
             ip = x_forwarded_for.split(',')[0]
@@ -38,7 +36,6 @@ class RateLimitMiddleware(MiddlewareMixin):
         return ip
     
     def check_rate_limit(self, ip, prefix, limit, window):
-        """Check if request exceeds rate limit."""
         cache_key = f"rate_limit_{prefix}_{ip}"
         current_requests = cache.get(cache_key, 0)
         
@@ -52,10 +49,7 @@ class RateLimitMiddleware(MiddlewareMixin):
 
 
 class SecurityHeadersMiddleware(MiddlewareMixin):
-    """Add comprehensive security headers."""
-    
     def process_response(self, request, response):
-        # Content Security Policy
         csp_directives = [
             "default-src 'self'",
             "script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net",
@@ -72,7 +66,6 @@ class SecurityHeadersMiddleware(MiddlewareMixin):
         
         response['Content-Security-Policy'] = '; '.join(csp_directives)
         
-        # Additional security headers
         response['X-Content-Type-Options'] = 'nosniff'
         response['X-XSS-Protection'] = '1; mode=block'
         response['Referrer-Policy'] = 'strict-origin-when-cross-origin'
@@ -82,10 +75,7 @@ class SecurityHeadersMiddleware(MiddlewareMixin):
 
 
 class ViewCountMiddleware(MiddlewareMixin):
-    """Middleware to handle view counting efficiently."""
-    
     def process_response(self, request, response):
-        # Only count views for successful GET requests to article pages
         if (request.method == 'GET' and 
             response.status_code == 200 and
             hasattr(request, '_view_count_data')):
