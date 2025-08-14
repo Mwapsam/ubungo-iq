@@ -1,0 +1,89 @@
+<section class="category-highlight-section">
+    {% if show_title %}
+    <div class="section-header" style="text-align: center; margin-bottom: 3rem;">
+        <h2 style="font-family: var(--font-display); font-size: var(--font-size-3xl); font-weight: 600; color: var(--color-gray-900); margin-bottom: 0.5rem;">
+            {{ block_title }}
+        </h2>
+        <p style="color: var(--color-gray-600); font-size: var(--font-size-lg);">
+            Discover content across different topics
+        </p>
+    </div>
+    {% endif %}
+    
+    {% if categories %}
+    <div class="categories-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+        {% for category in categories %}
+        <a href="/blog/category/{{ category.slug }}/" class="category-card" style="background: white; border-radius: var(--radius-xl); padding: 2rem 1.5rem; text-decoration: none; box-shadow: var(--shadow); border: 1px solid var(--color-gray-100); transition: all var(--transition-normal); text-align: center;">
+            <div class="category-icon" style="width: 4rem; height: 4rem; background: {{ category.color|default:'var(--color-primary)' }}; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; color: white; font-size: 1.5rem; font-weight: 700;">
+                {{ category.name|first|upper }}
+            </div>
+            
+            <h3 class="category-name" style="font-family: var(--font-display); font-size: var(--font-size-lg); font-weight: 600; color: var(--color-gray-900); margin-bottom: 0.5rem;">
+                {{ category.name }}
+            </h3>
+            
+            <p class="category-description" style="color: var(--color-gray-600); font-size: var(--font-size-sm); line-height: var(--leading-relaxed); margin-bottom: 1rem;">
+                {% if category.description %}
+                    {{ category.description|truncatewords:12 }}
+                {% else %}
+                    Explore articles in {{ category.name|lower }}
+                {% endif %}
+            </p>
+            
+            <div class="category-stats" style="display: flex; justify-content: center; align-items: center; gap: 1rem; font-size: var(--font-size-xs); color: var(--color-gray-500);">
+                <span>{{ category.article_count }} article{{ category.article_count|pluralize }}</span>
+                <span style="color: {{ category.color|default:'var(--color-primary)' }}; font-weight: 600;">
+                    View All →
+                </span>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    
+    <div class="section-footer" style="text-align: center; margin-top: 3rem;">
+        <a href="/blog/categories/" class="explore-btn" style="display: inline-flex; align-items: center; gap: 0.5rem; border: 2px solid var(--color-primary); color: var(--color-primary); padding: 0.75rem 2rem; border-radius: var(--radius-full); text-decoration: none; font-weight: 600; transition: all var(--transition-fast);">
+            Explore All Categories
+            <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+        </a>
+    </div>
+    {% else %}
+    <div class="no-content" style="text-align: center; padding: 3rem; color: var(--color-gray-500);">
+        <div style="font-size: 3rem; margin-bottom: 1rem;">📁</div>
+        <p>No categories available at the moment.</p>
+    </div>
+    {% endif %}
+</section>
+
+<style>
+.category-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-xl);
+}
+
+.category-card:hover .category-icon {
+    transform: scale(1.1);
+}
+
+.category-card:hover .category-name {
+    color: var(--color-primary);
+}
+
+.explore-btn:hover {
+    background: var(--color-primary);
+    color: white;
+    transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+    .categories-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+        gap: 1rem !important;
+    }
+    
+    .category-card {
+        padding: 1.5rem 1rem !important;
+    }
+}
+</style>

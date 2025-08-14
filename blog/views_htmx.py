@@ -46,8 +46,12 @@ def load_more_articles(request):
             Q(tags__name__icontains=search)
         ).distinct()
         
-        # Track search
-        analytics.track_search(request, search, articles.count())
+        # Track search (only if session is available)
+        try:
+            analytics.track_search(request, search, articles.count())
+        except (AttributeError, KeyError):
+            # Session not available, skip analytics
+            pass
     
     # Apply sorting
     if sort == 'popular':
@@ -189,8 +193,12 @@ def search_articles(request):
         title__icontains=query
     ).values_list('title', flat=True)[:5]
     
-    # Track search
-    analytics.track_search(request, query, articles.count())
+    # Track search (only if session is available)
+    try:
+        analytics.track_search(request, query, articles.count())
+    except (AttributeError, KeyError):
+        # Session not available, skip analytics
+        pass
     
     if request.headers.get('HX-Request'):
         # Return HTML for HTMX

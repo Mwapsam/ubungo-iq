@@ -1,0 +1,14 @@
+<div class="latest-articles-block">
+    <div id="latest-articles-block" 
+         hx-get="/home/api/latest-articles/?title={{ value.title|urlencode }}&show_title={{ value.show_title|yesno:'true,false' }}&count={{ value.number_of_articles }}"
+         hx-target="this"
+         hx-trigger="load"
+         style="min-height: 400px;">
+        <div class="loading-placeholder" style="display: flex; align-items: center; justify-content: center; min-height: 400px; color: var(--color-gray-500);">
+            <div style="text-align: center;">
+                <div class="loading-spinner" style="margin: 0 auto 1rem;"></div>
+                <p>Loading latest articles...</p>
+            </div>
+        </div>
+    </div>
+</div>

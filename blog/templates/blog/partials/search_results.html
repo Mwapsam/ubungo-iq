@@ -1,21 +1,40 @@
 {% if articles %}
-    {% for article in articles %}
-    <a href="{{ article.get_url }}" class="search-result" style="display: block; padding: 1rem; border-bottom: 1px solid var(--color-gray-200); text-decoration: none; color: inherit; transition: background-color var(--transition-fast);">
-        <h4 style="font-size: var(--font-size-base); font-weight: 600; margin: 0 0 0.5rem 0; color: var(--color-gray-900);">
-            {{ article.title }}
-        </h4>
-        {% if article.intro %}
-        <p style="font-size: var(--font-size-sm); color: var(--color-gray-600); margin: 0 0 0.5rem 0; line-height: var(--leading-normal);">
-            {{ article.intro|truncatewords:20 }}
-        </p>
+    <div class="search-results-header" style="padding: 0.75rem 1rem; border-bottom: 1px solid var(--color-gray-200); background: var(--color-gray-50); font-size: var(--font-size-sm); color: var(--color-gray-600);">
+        {% if query %}
+        Found {{ articles|length }} result{{ articles|length|pluralize }} for "<strong style="color: var(--color-gray-900);">{{ query }}</strong>"
+        {% else %}
+        {{ articles|length }} result{{ articles|length|pluralize }}
         {% endif %}
-        <div class="search-meta" style="display: flex; align-items: center; gap: 0.75rem; font-size: var(--font-size-xs); color: var(--color-gray-500);">
-            {% if article.category %}
-            <span class="category" style="background: var(--color-primary); color: white; padding: 0.125rem 0.5rem; border-radius: var(--radius); font-weight: 500;">
-                {{ article.category.name }}
-            </span>
+    </div>
+    {% for article in articles %}
+    <a href="{{ article.get_url }}" class="search-result" style="display: block; padding: 1rem; border-bottom: 1px solid var(--color-gray-200); text-decoration: none; color: inherit; transition: all var(--transition-fast);">
+        <div style="display: flex; gap: 1rem; align-items: flex-start;">
+            <div style="flex: 1; min-width: 0;">
+                <h4 style="font-size: var(--font-size-base); font-weight: 600; margin: 0 0 0.5rem 0; color: var(--color-gray-900); line-height: var(--leading-tight);">
+                    {{ article.title }}
+                </h4>
+                {% if article.intro %}
+                <p style="font-size: var(--font-size-sm); color: var(--color-gray-600); margin: 0 0 0.5rem 0; line-height: var(--leading-normal);">
+                    {{ article.intro|truncatewords:20 }}
+                </p>
+                {% endif %}
+                <div class="search-meta" style="display: flex; align-items: center; gap: 0.75rem; font-size: var(--font-size-xs); color: var(--color-gray-500);">
+                    {% if article.category %}
+                    <span class="category" style="background: {{ article.category.color|default:'var(--color-primary)' }}; color: white; padding: 0.125rem 0.5rem; border-radius: var(--radius); font-weight: 500;">
+                        {{ article.category.name }}
+                    </span>
+                    {% endif %}
+                    <time>{{ article.first_published_at|date:"M d, Y" }}</time>
+                    <span>{{ article.reading_time_minutes|default:"5" }} min read</span>
+                </div>
+            </div>
+            {% if article.featured_image %}
+            <div style="width: 60px; height: 40px; border-radius: var(--radius); overflow: hidden; flex-shrink: 0; background: var(--color-gray-200);">
+                {% load wagtailimages_tags %}
+                {% image article.featured_image width-120 height-80 as thumb %}
+                <img src="{{ thumb.url }}" alt="{{ article.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
             {% endif %}
-            <time>{{ article.first_published_at|date:"M d, Y" }}</time>
         </div>
     </a>
     {% endfor %}
@@ -31,19 +50,29 @@
 {% elif query %}
     <div class="no-results" style="padding: 2rem; text-align: center; color: var(--color-gray-500);">
         <svg style="width: 3rem; height: 3rem; margin: 0 auto 1rem; opacity: 0.5;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
         </svg>
-        <p style="margin: 0;">No articles found for "<strong>{{ query }}</strong>"</p>
+        <h4 style="font-size: var(--font-size-lg); font-weight: 600; margin: 0 0 0.5rem 0; color: var(--color-gray-700);">No results found</h4>
+        <p style="margin: 0 0 1rem 0;">No articles found for "<strong style="color: var(--color-gray-900);">{{ query }}</strong>"</p>
+        <div style="font-size: var(--font-size-sm);">
+            <p style="margin: 0 0 0.5rem 0;">Try:</p>
+            <ul style="list-style: none; padding: 0; margin: 0;">
+                <li>• Using different keywords</li>
+                <li>• Checking your spelling</li>
+                <li>• Using more general terms</li>
+            </ul>
+        </div>
     </div>
-{% else %}
+{% elif query == '' %}
     <div class="search-suggestions" style="padding: 1rem;">
         <p style="font-size: var(--font-size-sm); color: var(--color-gray-500); margin: 0 0 0.75rem 0;">
-            Popular searches:
+            <strong>Popular searches:</strong>
         </p>
         <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-            <a href="/blog/?search=django" class="suggestion-tag" style="background: var(--color-gray-100); color: var(--color-gray-700); padding: 0.25rem 0.75rem; border-radius: var(--radius-full); text-decoration: none; font-size: var(--font-size-xs); transition: all var(--transition-fast);">Django</a>
-            <a href="/blog/?search=python" class="suggestion-tag" style="background: var(--color-gray-100); color: var(--color-gray-700); padding: 0.25rem 0.75rem; border-radius: var(--radius-full); text-decoration: none; font-size: var(--font-size-xs); transition: all var(--transition-fast);">Python</a>
-            <a href="/blog/?search=web" class="suggestion-tag" style="background: var(--color-gray-100); color: var(--color-gray-700); padding: 0.25rem 0.75rem; border-radius: var(--radius-full); text-decoration: none; font-size: var(--font-size-xs); transition: all var(--transition-fast);">Web Development</a>
+            <button onclick="searchFor('django')" class="suggestion-tag" style="background: var(--color-gray-100); color: var(--color-gray-700); padding: 0.25rem 0.75rem; border-radius: var(--radius-full); border: none; font-size: var(--font-size-xs); transition: all var(--transition-fast); cursor: pointer;">Django</button>
+            <button onclick="searchFor('python')" class="suggestion-tag" style="background: var(--color-gray-100); color: var(--color-gray-700); padding: 0.25rem 0.75rem; border-radius: var(--radius-full); border: none; font-size: var(--font-size-xs); transition: all var(--transition-fast); cursor: pointer;">Python</button>
+            <button onclick="searchFor('web development')" class="suggestion-tag" style="background: var(--color-gray-100); color: var(--color-gray-700); padding: 0.25rem 0.75rem; border-radius: var(--radius-full); border: none; font-size: var(--font-size-xs); transition: all var(--transition-fast); cursor: pointer;">Web Development</button>
+            <button onclick="searchFor('javascript')" class="suggestion-tag" style="background: var(--color-gray-100); color: var(--color-gray-700); padding: 0.25rem 0.75rem; border-radius: var(--radius-full); border: none; font-size: var(--font-size-xs); transition: all var(--transition-fast); cursor: pointer;">JavaScript</button>
         </div>
     </div>
 {% endif %}

@@ -1,0 +1,116 @@
+{% load wagtailimages_tags %}
+
+<section class="popular-articles-section">
+    {% if show_title %}
+    <div class="section-header" style="text-align: center; margin-bottom: 3rem;">
+        <h2 style="font-family: var(--font-display); font-size: var(--font-size-3xl); font-weight: 600; color: var(--color-gray-900); margin-bottom: 0.5rem;">
+            {{ block_title }}
+        </h2>
+        <p style="color: var(--color-gray-600); font-size: var(--font-size-lg);">
+            Most read articles 
+            {% if time_period == 'week' %}this week
+            {% elif time_period == 'month' %}this month
+            {% else %}of all time{% endif %}
+        </p>
+    </div>
+    {% endif %}
+    
+    {% if articles %}
+    <div class="popular-articles-list" style="display: grid; gap: 1.5rem;">
+        {% for article in articles %}
+        <article class="popular-article-item" style="display: flex; gap: 1.5rem; background: white; border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm); transition: all var(--transition-normal); border: 1px solid var(--color-gray-100); padding: 1rem;">
+            <div class="article-rank" style="display: flex; align-items: center; justify-content: center; width: 3rem; height: 3rem; background: var(--color-primary); color: white; border-radius: 50%; font-weight: 700; font-size: var(--font-size-lg); flex-shrink: 0;">
+                {{ forloop.counter }}
+            </div>
+            
+            {% if article.featured_image %}
+            <div class="article-image" style="width: 120px; height: 80px; border-radius: var(--radius); overflow: hidden; flex-shrink: 0;">
+                <a href="{{ article.get_url }}">
+                    {% image article.featured_image width-200 height-130 as thumb_img %}
+                    <img src="{{ thumb_img.url }}" alt="{{ article.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                </a>
+            </div>
+            {% endif %}
+            
+            <div class="article-info" style="flex: 1; min-width: 0;">
+                <div class="article-meta" style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem; font-size: var(--font-size-xs); color: var(--color-gray-500);">
+                    {% if article.category %}
+                    <span class="category-badge" style="background: {{ article.category.color|default:'var(--color-primary)' }}; color: white; padding: 0.125rem 0.5rem; border-radius: var(--radius-full); font-weight: 500;">
+                        {{ article.category.name }}
+                    </span>
+                    {% endif %}
+                    <span>{{ article.first_published_at|date:"M d" }}</span>
+                    <span>{{ article.reading_time_minutes }} min</span>
+                </div>
+                
+                <h3 class="article-title" style="font-family: var(--font-display); font-size: var(--font-size-base); font-weight: 600; line-height: var(--leading-tight); margin-bottom: 0.5rem;">
+                    <a href="{{ article.get_url }}" style="color: var(--color-gray-900); text-decoration: none;">
+                        {{ article.title|truncatechars:80 }}
+                    </a>
+                </h3>
+                
+                <div class="article-stats" style="display: flex; align-items: center; gap: 1rem; font-size: var(--font-size-xs); color: var(--color-gray-500);">
+                    <div style="display: flex; align-items: center; gap: 0.25rem;">
+                        <span>👁</span>
+                        <span>{{ article.view_count|default:"0" }} views</span>
+                    </div>
+                    {% if article.tags.all %}
+                    <div style="display: flex; gap: 0.5rem;">
+                        {% for tag in article.tags.all|slice:":2" %}
+                        <span style="color: var(--color-primary);">#{{ tag.name }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+    
+    <div class="section-footer" style="text-align: center; margin-top: 3rem;">
+        <a href="/blog/" class="view-all-btn" style="display: inline-flex; align-items: center; gap: 0.5rem; background: var(--color-primary); color: white; padding: 0.75rem 2rem; border-radius: var(--radius-full); text-decoration: none; font-weight: 600; transition: all var(--transition-fast);">
+            View All Articles
+            <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+        </a>
+    </div>
+    {% else %}
+    <div class="no-content" style="text-align: center; padding: 3rem; color: var(--color-gray-500);">
+        <div style="font-size: 3rem; margin-bottom: 1rem;">📊</div>
+        <p>No popular articles found for the selected time period.</p>
+    </div>
+    {% endif %}
+</section>
+
+<style>
+.popular-article-item:hover {
+    transform: translateX(8px);
+    box-shadow: var(--shadow-lg);
+}
+
+.article-title a:hover {
+    color: var(--color-primary);
+}
+
+.view-all-btn:hover {
+    background: var(--color-primary-dark);
+    transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+    .popular-article-item {
+        flex-direction: column !important;
+        gap: 1rem !important;
+    }
+    
+    .article-image {
+        width: 100% !important;
+        height: 150px !important;
+    }
+    
+    .article-rank {
+        align-self: flex-start;
+    }
+}
+</style>

@@ -1,0 +1,96 @@
+{% load wagtailimages_tags %}
+
+<section class="latest-articles-section">
+    {% if show_title %}
+    <div class="section-header" style="text-align: center; margin-bottom: 3rem;">
+        <h2 style="font-family: var(--font-display); font-size: var(--font-size-3xl); font-weight: 600; color: var(--color-gray-900); margin-bottom: 0.5rem;">
+            {{ block_title }}
+        </h2>
+        <p style="color: var(--color-gray-600); font-size: var(--font-size-lg);">
+            Stay updated with our freshest content
+        </p>
+    </div>
+    {% endif %}
+    
+    {% if articles %}
+    <div class="articles-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem;">
+        {% for article in articles %}
+        <article class="latest-article-card" style="background: white; border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow); transition: all var(--transition-normal); border: 1px solid var(--color-gray-100);">
+            {% if article.featured_image %}
+            <div class="article-image" style="aspect-ratio: 16/10; overflow: hidden;">
+                <a href="{{ article.get_url }}">
+                    {% image article.featured_image width-400 height-250 as card_img %}
+                    <img src="{{ card_img.url }}" alt="{{ article.title }}" style="width: 100%; height: 100%; object-fit: cover; transition: transform var(--transition-normal);">
+                </a>
+            </div>
+            {% endif %}
+            
+            <div class="article-content" style="padding: 1.5rem;">
+                <div class="article-meta" style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; font-size: var(--font-size-sm); color: var(--color-gray-500);">
+                    {% if article.category %}
+                    <a href="/blog/category/{{ article.category.slug }}/" style="background: {{ article.category.color|default:'var(--color-primary)' }}; color: white; padding: 0.25rem 0.75rem; border-radius: var(--radius-full); text-decoration: none; font-weight: 500; font-size: var(--font-size-xs);">
+                        {{ article.category.name }}
+                    </a>
+                    {% endif %}
+                    <span>{{ article.first_published_at|date:"M d" }}</span>
+                    <span>{{ article.reading_time_minutes }} min</span>
+                </div>
+                
+                <h3 class="article-title" style="font-family: var(--font-display); font-size: var(--font-size-lg); font-weight: 600; line-height: var(--leading-tight); margin-bottom: 0.75rem;">
+                    <a href="{{ article.get_url }}" style="color: var(--color-gray-900); text-decoration: none;">
+                        {{ article.title|truncatechars:60 }}
+                    </a>
+                </h3>
+                
+                {% if article.intro %}
+                <p class="article-excerpt" style="color: var(--color-gray-600); line-height: var(--leading-relaxed); margin-bottom: 1rem; font-size: var(--font-size-sm);">
+                    {{ article.intro|truncatewords:15 }}
+                </p>
+                {% endif %}
+                
+                <div class="article-footer" style="display: flex; justify-content: space-between; align-items: center;">
+                    <a href="{{ article.get_url }}" class="read-more" style="color: var(--color-primary); font-weight: 500; text-decoration: none; font-size: var(--font-size-sm);">
+                        Read More →
+                    </a>
+                    <div class="article-stats" style="display: flex; align-items: center; gap: 0.5rem; color: var(--color-gray-400); font-size: var(--font-size-xs);">
+                        <span>👁</span>
+                        <span>{{ article.view_count|default:"0" }}</span>
+                    </div>
+                </div>
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="no-content" style="text-align: center; padding: 3rem; color: var(--color-gray-500);">
+        <div style="font-size: 3rem; margin-bottom: 1rem;">📝</div>
+        <p>No articles available yet. Check back soon for fresh content!</p>
+    </div>
+    {% endif %}
+</section>
+
+<style>
+.latest-article-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-xl);
+}
+
+.latest-article-card:hover .article-image img {
+    transform: scale(1.05);
+}
+
+.article-title a:hover {
+    color: var(--color-primary);
+}
+
+.read-more:hover {
+    color: var(--color-primary-dark);
+}
+
+@media (max-width: 768px) {
+    .articles-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1.5rem !important;
+    }
+}
+</style>

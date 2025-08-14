@@ -118,6 +118,99 @@
     {% endif %}
 </main>
 
+<!-- Dynamic Content Sections -->
+<div class="dynamic-sections" style="margin: 4rem auto;">
+    <!-- Featured Article Section -->
+    <div class="section-container" style="margin-bottom: 4rem;">
+        <div id="featured-section" 
+             hx-get="/home/api/featured-article/?title=Featured%20Article&show_title=true"
+             hx-target="this"
+             hx-trigger="load"
+             hx-indicator="#featured-loading"
+             style="min-height: 300px;">
+            <div id="featured-loading" class="section-loading" style="display: flex; align-items: center; justify-content: center; min-height: 300px; color: var(--color-gray-500);">
+                <div style="text-align: center;">
+                    <div class="loading-spinner" style="margin: 0 auto 1rem;"></div>
+                    <p>Loading featured article...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Latest Articles Section -->
+    <div class="section-container" style="margin-bottom: 4rem;">
+        <div id="latest-section" 
+             hx-get="/home/api/latest-articles/?title=Latest%20Articles&show_title=true&count=6"
+             hx-target="this"
+             hx-trigger="load delay:500ms"
+             hx-indicator="#latest-loading"
+             style="min-height: 400px;">
+            <div id="latest-loading" class="section-loading" style="display: flex; align-items: center; justify-content: center; min-height: 400px; color: var(--color-gray-500);">
+                <div style="text-align: center;">
+                    <div class="loading-spinner" style="margin: 0 auto 1rem;"></div>
+                    <p>Loading latest articles...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ad Space Section -->
+    <div class="section-container" style="margin-bottom: 4rem;">
+        <div id="ad-section" 
+             hx-get="/home/api/ad-space/?type=banner"
+             hx-target="this"
+             hx-trigger="load delay:1s"
+             style="min-height: 120px;">
+            <!-- Ad loads silently -->
+        </div>
+    </div>
+
+    <!-- Popular Articles Section -->
+    <div class="section-container" style="margin-bottom: 4rem;">
+        <div id="popular-section" 
+             hx-get="/home/api/popular-articles/?title=Popular%20Articles&show_title=true&count=5&period=month"
+             hx-target="this"
+             hx-trigger="load delay:1500ms"
+             hx-indicator="#popular-loading"
+             style="min-height: 400px;">
+            <div id="popular-loading" class="section-loading" style="display: flex; align-items: center; justify-content: center; min-height: 400px; color: var(--color-gray-500);">
+                <div style="text-align: center;">
+                    <div class="loading-spinner" style="margin: 0 auto 1rem;"></div>
+                    <p>Loading popular articles...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Category Highlight Section -->
+    <div class="section-container" style="margin-bottom: 4rem;">
+        <div id="categories-section" 
+             hx-get="/home/api/category-highlight/?title=Explore%20Categories&show_title=true&count=6"
+             hx-target="this"
+             hx-trigger="load delay:2s"
+             hx-indicator="#categories-loading"
+             style="min-height: 300px;">
+            <div id="categories-loading" class="section-loading" style="display: flex; align-items: center; justify-content: center; min-height: 300px; color: var(--color-gray-500);">
+                <div style="text-align: center;">
+                    <div class="loading-spinner" style="margin: 0 auto 1rem;"></div>
+                    <p>Loading categories...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Newsletter Signup Section -->
+    <div class="section-container" style="margin-bottom: 4rem;">
+        <div id="newsletter-section" 
+             hx-get="/home/api/newsletter-signup/?title=Stay%20Updated&subtitle=Get%20the%20latest%20articles%20delivered%20to%20your%20inbox&bg_color=primary"
+             hx-target="this"
+             hx-trigger="load delay:2500ms"
+             style="min-height: 200px;">
+            <!-- Newsletter loads silently -->
+        </div>
+    </div>
+</div>
+
 <div class="floating-actions">
     <button class="floating-btn scroll-to-top" id="scrollToTop" title="Scroll to top">
         ↑
@@ -361,13 +454,7 @@ document.addEventListener('DOMContentLoaded', () => {
         scrollToTopBtn.style.transition = 'opacity 0.3s ease';
     }
     
-    if (newsletterToggle) {
-        newsletterToggle.addEventListener('click', () => {
-            document.querySelector('.newsletter-section').scrollIntoView({
-                behavior: 'smooth'
-            });
-        });
-    }
+    // Newsletter toggle is now handled by global modal in base.html
 
     let lastScrollY = window.scrollY;
     window.addEventListener('scroll', () => {
@@ -415,6 +502,129 @@ document.addEventListener('DOMContentLoaded', () => {
             imageObserver.observe(img);
         });
     }
+
+    // Enhanced AJAX loading for dynamic sections
+    // Add intersection observer for section animations
+    const sectionObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('section-visible');
+            }
+        });
+    }, {
+        threshold: 0.1,
+        rootMargin: '50px'
+    });
+
+    // Observe all section containers
+    document.querySelectorAll('.section-container').forEach(section => {
+        sectionObserver.observe(section);
+    });
+
+    // Handle HTMX events for better UX
+    document.body.addEventListener('htmx:beforeRequest', function(e) {
+        if (e.target.id && e.target.id.includes('section')) {
+            console.log('Loading section:', e.target.id);
+        }
+    });
+
+    document.body.addEventListener('htmx:afterRequest', function(e) {
+        if (e.target.id && e.target.id.includes('section')) {
+            e.target.classList.add('section-loaded');
+            
+            // Re-observe new content for animations
+            const newElements = e.target.querySelectorAll('.animate-on-scroll');
+            newElements.forEach(el => {
+                observer.observe(el);
+            });
+        }
+    });
+
+    document.body.addEventListener('htmx:responseError', function(e) {
+        if (e.target.id && e.target.id.includes('section')) {
+            e.target.innerHTML = `
+                <div style="text-align: center; padding: 2rem; color: var(--color-gray-500);">
+                    <p>Failed to load content. <button onclick="location.reload()" style="color: var(--color-primary); background: none; border: none; cursor: pointer; text-decoration: underline;">Retry</button></p>
+                </div>
+            `;
+        }
+    });
 });
 </script>
+
+<style>
+/* Dynamic Sections Styling */
+.dynamic-sections {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.section-container {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.6s ease;
+}
+
+.section-container.section-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.section-container.section-loaded {
+    animation: sectionFadeIn 0.5s ease-in-out;
+}
+
+@keyframes sectionFadeIn {
+    from {
+        opacity: 0.5;
+        transform: scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.section-loading {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading-shimmer 2s infinite;
+    border-radius: var(--radius-lg);
+}
+
+@keyframes loading-shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+.loading-spinner {
+    width: 2rem;
+    height: 2rem;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid var(--color-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .dynamic-sections {
+        padding: 0 0.5rem;
+    }
+    
+    .section-container {
+        margin-bottom: 2rem !important;
+    }
+}
+</style>
 {% endblock %}

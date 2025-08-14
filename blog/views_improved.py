@@ -244,6 +244,99 @@ def search_suggestions(request):
     return JsonResponse({'suggestions': suggestions})
 
 
+@require_http_methods(["GET"])
+@cache_page(60 * 15)
+def tag_detail(request, tag_slug):
+    from taggit.models import Tag
+    tag = get_object_or_404(Tag, slug=tag_slug)
+    
+    view_mixin = BlogViewMixin()
+    queryset = view_mixin.get_base_queryset().filter(tags__slug=tag_slug)
+    
+    # Remove tag filter from request to avoid double filtering
+    request_copy = request.GET.copy()
+    request_copy.pop('tag', None)
+    
+    temp_request = type('', (), {'GET': request_copy})()
+    queryset, search_query = view_mixin.apply_filters(queryset, temp_request)
+    queryset = view_mixin.apply_sorting(queryset, temp_request)
+    
+    page_num = request.GET.get('page', 1)
+    page_obj, paginator = view_mixin.get_pagination_data(queryset, page_num)
+    
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return JsonResponse({
+            'articles': [serialize_article(article) for article in page_obj],
+            'pagination': {
+                'current_page': page_obj.number,
+                'total_pages': paginator.num_pages,
+                'has_next': page_obj.has_next(),
+                'has_previous': page_obj.has_previous(),
+                'total_count': paginator.count,
+            },
+            'tag': {
+                'name': tag.name,
+                'slug': tag.slug,
+            }
+        })
+    
+    # Get related tags (tags that appear on articles with this tag)
+    from taggit.models import Tag
+    article_ids = queryset.values_list('id', flat=True)
+    related_tags = Tag.objects.filter(
+        blog_articlepagetag_items__content_object_id__in=article_ids
+    ).exclude(id=tag.id).annotate(
+        usage_count=Count('blog_articlepagetag_items')
+    ).order_by('-usage_count')[:8]
+    
+    context = {
+        'tag': tag,
+        'articles': page_obj,
+        'paginator': paginator,
+        'search_query': search_query,
+        'related_tags': related_tags,
+        'total_articles': paginator.count,
+    }
+    
+    return TemplateResponse(request, 'blog/tag_detail.html', context)
+
+
+@require_http_methods(["GET"])
+@cache_page(60 * 30)  # Cache for 30 minutes
+def categories_page(request):
+    """Dedicated categories page showing all categories with descriptions and stats."""
+    # Get categories with article counts and recent articles
+    categories = Category.objects.annotate(
+        article_count=Count('articles', filter=Q(articles__live=True))
+    ).filter(article_count__gt=0).order_by('-article_count')
+    
+    # Add recent articles for each category
+    categories_with_articles = []
+    for category in categories:
+        recent_articles = ArticlePage.objects.live().filter(
+            category=category
+        ).order_by('-first_published_at')[:3]
+        
+        categories_with_articles.append({
+            'category': category,
+            'recent_articles': recent_articles
+        })
+    
+    # Get total statistics
+    total_articles = ArticlePage.objects.live().count()
+    total_categories = categories.count()
+    
+    context = {
+        'categories_data': categories_with_articles,
+        'total_articles': total_articles,
+        'total_categories': total_categories,
+        'page_title': 'Explore Categories',
+        'page_description': 'Discover articles across different topics and categories.',
+    }
+    
+    return TemplateResponse(request, 'blog/categories_page.html', context)
+
+
 @require_http_methods(["GET"]) 
 def get_filter_options(request):
     """Get available filter options for the frontend."""

@@ -25,6 +25,115 @@
     <link rel="stylesheet" href="{% static 'css/modern-blog.css' %}">
     <link rel="stylesheet" href="{% static 'css/ubongo.css' %}">
     
+    <!-- Search Enhancement Styles -->
+    <style>
+    .search-container {
+        position: relative;
+    }
+    
+    .search-results {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        border: 1px solid var(--color-gray-200);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-xl);
+        max-height: 400px;
+        overflow-y: auto;
+        z-index: 1000;
+        display: none;
+        margin-top: 0.25rem;
+    }
+    
+    .search-container.search-active .search-results {
+        display: block !important;
+    }
+    
+    .search-results:empty {
+        display: none !important;
+    }
+    
+    .search-results.htmx-request {
+        display: block !important;
+    }
+    
+    .search-input:focus {
+        outline: none;
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    
+    .search-button:hover {
+        background: var(--color-gray-100);
+        border-radius: var(--radius);
+    }
+    
+    @media (max-width: 768px) {
+        .search-container {
+            position: static;
+        }
+        
+        .search-results {
+            position: fixed;
+            top: auto;
+            left: 1rem;
+            right: 1rem;
+            margin-top: 0.5rem;
+            max-height: 50vh;
+        }
+    }
+    </style>
+    
+    <!-- Newsletter Modal Styles -->
+    <style>
+    .modal-overlay {
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+    }
+    
+    .modal-content {
+        transform: scale(0.9);
+        opacity: 0;
+        animation: modalFadeIn 0.3s ease forwards;
+    }
+    
+    @keyframes modalFadeIn {
+        to {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+    
+    .modal-close:hover {
+        background: var(--color-gray-100) !important;
+        color: var(--color-gray-700) !important;
+    }
+    
+    .newsletter-form input:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    
+    .newsletter-form button:hover {
+        background: var(--color-primary-dark) !important;
+        transform: translateY(-1px);
+        box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.3);
+    }
+    
+    .newsletter-form button:active {
+        transform: translateY(0);
+    }
+    
+    @media (max-width: 768px) {
+        .modal-content {
+            padding: 2rem !important;
+            margin: 1rem !important;
+        }
+    }
+    </style>
+    
     {% block extra_css %}{% endblock %}
 </head>
 
@@ -45,7 +154,7 @@
                 <nav class="main-nav" role="navigation" aria-label="Main navigation">
                     <ul class="nav-list">
                         <li><a href="/" class="nav-link">Home</a></li>
-                        <li><a href="/blog/" class="nav-link">Blog</a></li>
+                        <li><a href="/articles/" class="nav-link">Articles</a></li>
                         <li class="dropdown">
                             <a class="nav-link dropdown" aria-expanded="false">Categories</a>
                             <ul class="dropdown-menu" id="categories-menu"
@@ -61,7 +170,7 @@
                 </nav>
                 
                 <div class="search-container">
-                    <form class="search-form">
+                    <form class="search-form" onsubmit="return false;">
                         <div class="search-input-wrapper">
                             <input type="search" 
                                    name="q" 
@@ -70,14 +179,16 @@
                                    aria-label="Search articles"
                                    hx-get="/blog/api/search/"
                                    hx-target="#search-results"
-                                   hx-trigger="input changed delay:500ms">
-                            <button type="submit" class="search-button" aria-label="Search">
+                                   hx-trigger="input changed delay:300ms"
+                                   hx-vals='js:{"q": document.querySelector(".search-input").value}'
+                                   autocomplete="off">
+                            <button type="button" class="search-button" aria-label="Search" onclick="triggerSearch()">
                                 <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 1 1-14 0 7 7 0 0 1 14 0z"></path>
                                 </svg>
                             </button>
                         </div>
-                        <div id="search-results" class="search-results" data-loading-class="loading"></div>
+                        <div id="search-results" class="search-results"></div>
                     </form>
                 </div>
                 
@@ -159,8 +270,252 @@
         <div class="loading-spinner"></div>
     </div>
     
+    <!-- Newsletter Modal -->
+    <div class="modal-overlay" id="newsletterModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 9999; align-items: center; justify-content: center;">
+        <div class="modal-content" style="background: white; border-radius: var(--radius-2xl); padding: 3rem; max-width: 500px; width: 90%; margin: 2rem; position: relative; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);">
+            <button class="modal-close" id="closeNewsletterModal" style="position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--color-gray-500); padding: 0.5rem; border-radius: 50%; transition: all var(--transition-fast);">
+                ✕
+            </button>
+            
+            <div class="modal-header" style="text-align: center; margin-bottom: 2rem;">
+                <div style="width: 4rem; height: 4rem; background: var(--color-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-size: 1.5rem;">
+                    ✉️
+                </div>
+                <h2 style="font-family: var(--font-display); font-size: var(--font-size-2xl); font-weight: 700; margin-bottom: 0.5rem; color: var(--color-gray-900);">
+                    Stay Updated
+                </h2>
+                <p style="color: var(--color-gray-600); font-size: var(--font-size-base);">
+                    Get the latest articles and insights delivered straight to your inbox. No spam, unsubscribe anytime.
+                </p>
+            </div>
+            
+            <form class="newsletter-form" id="modalNewsletterForm" hx-post="/api/newsletter/" hx-target="#modal-newsletter-response">
+                <div>
+                    <input type="email" 
+                           name="email"
+                           placeholder="Enter your email address" 
+                           required
+                           style="width: 100%; padding: var(--space-3); border: 2px solid var(--color-gray-200); border-radius: var(--radius-lg); font-size: var(--font-size-base); transition: border-color var(--transition-fast);"
+                           onfocus="this.style.borderColor='var(--color-primary)'"
+                           onblur="this.style.borderColor='var(--color-gray-200)'">
+                </div>
+                <button type="submit" 
+                        class="btn btn-primary"
+                        style="width: 100%; background: var(--color-primary); color: white; font-weight: 600; padding: var(--space-3); border: none; border-radius: var(--radius-lg); font-size: var(--font-size-base); cursor: pointer; transition: all var(--transition-fast); flex: 1; display: block;">
+                    Subscribe
+                </button>
+                <div id="modal-newsletter-response" style="margin-top: 1rem; text-align: center;"></div>
+            </form>
+            
+            <p style="text-align: center; margin-top: 1.5rem; font-size: var(--font-size-sm); color: var(--color-gray-500);">
+                By subscribing, you agree to our privacy policy and consent to receive updates from our company.
+            </p>
+        </div>
+    </div>
+    
     <script src="{% static 'js/modern-blog.js' %}" defer></script>
     <script src="{% static 'js/ubongo.js' %}" defer></script>
+    
+    <!-- Search Enhancement Script -->
+    <script>
+    // Search functionality
+    function triggerSearch() {
+        const searchInput = document.querySelector('.search-input');
+        const searchResults = document.querySelector('#search-results');
+        const searchContainer = document.querySelector('.search-container');
+        const query = searchInput.value.trim();
+        
+        if (query.length >= 1) {
+            // Show loading state immediately
+            searchResults.innerHTML = '<div style="padding: 1rem; text-align: center; color: var(--color-gray-500);"><div style="display: inline-block; width: 20px; height: 20px; border: 2px solid #f3f3f3; border-top: 2px solid var(--color-primary); border-radius: 50%; animation: spin 1s linear infinite; margin-right: 0.5rem;"></div>Searching...</div>';
+            searchResults.style.display = 'block';
+            searchContainer.classList.add('search-active');
+            
+            // Trigger HTMX request
+            htmx.ajax('GET', `/blog/api/search/?q=${encodeURIComponent(query)}`, {
+                target: '#search-results',
+                headers: {'HX-Request': 'true'}
+            });
+        } else if (query.length === 0) {
+            searchResults.style.display = 'none';
+            searchContainer.classList.remove('search-active');
+        }
+    }
+    
+    // Enhanced search functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.querySelector('.search-input');
+        const searchResults = document.querySelector('#search-results');
+        const searchContainer = document.querySelector('.search-container');
+        
+        if (searchInput && searchResults) {
+            // Show search container on focus
+            searchInput.addEventListener('focus', function() {
+                searchContainer.classList.add('search-active');
+                // Trigger initial search if there's already content
+                const currentValue = searchInput.value.trim();
+                if (currentValue.length >= 2) {
+                    triggerSearch();
+                } else if (currentValue.length === 0) {
+                    // Show suggestions on empty focus
+                    searchResults.innerHTML = '<div class="search-suggestions" style="padding: 1rem;"><p style="font-size: var(--font-size-sm); color: var(--color-gray-500); margin: 0 0 0.75rem 0;"><strong>Popular searches:</strong></p><div style="display: flex; gap: 0.5rem; flex-wrap: wrap;"><button onclick="searchFor(\'django\')" class="suggestion-tag" style="background: var(--color-gray-100); color: var(--color-gray-700); padding: 0.25rem 0.75rem; border-radius: var(--radius-full); border: none; font-size: var(--font-size-xs); transition: all var(--transition-fast); cursor: pointer;">Django</button><button onclick="searchFor(\'python\')" class="suggestion-tag" style="background: var(--color-gray-100); color: var(--color-gray-700); padding: 0.25rem 0.75rem; border-radius: var(--radius-full); border: none; font-size: var(--font-size-xs); transition: all var(--transition-fast); cursor: pointer;">Python</button><button onclick="searchFor(\'javascript\')" class="suggestion-tag" style="background: var(--color-gray-100); color: var(--color-gray-700); padding: 0.25rem 0.75rem; border-radius: var(--radius-full); border: none; font-size: var(--font-size-xs); transition: all var(--transition-fast); cursor: pointer;">JavaScript</button></div></div>';
+                    searchResults.style.display = 'block';
+                }
+            });
+            
+            // Monitor input changes for real-time display
+            searchInput.addEventListener('input', function() {
+                const query = searchInput.value.trim();
+                if (query.length === 0) {
+                    searchResults.style.display = 'none';
+                } else if (query.length >= 2) {
+                    // Results will be shown after HTMX request
+                    searchContainer.classList.add('search-active');
+                }
+            });
+            
+            // Handle Enter key
+            searchInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    triggerSearch();
+                }
+            });
+            
+            // Clear search on escape
+            searchInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    searchInput.value = '';
+                    searchResults.style.display = 'none';
+                    searchContainer.classList.remove('search-active');
+                    searchResults.innerHTML = '';
+                }
+            });
+            
+            // Click outside to close
+            document.addEventListener('click', function(e) {
+                if (!searchContainer.contains(e.target)) {
+                    searchResults.style.display = 'none';
+                    searchContainer.classList.remove('search-active');
+                }
+            });
+            
+            // Show loading indicator when search starts
+            document.body.addEventListener('htmx:beforeRequest', function(e) {
+                if (e.target.classList.contains('search-input') || e.target.id === 'search-results') {
+                    searchResults.innerHTML = '<div style="padding: 1rem; text-align: center; color: var(--color-gray-500);"><div style="display: inline-block; width: 20px; height: 20px; border: 2px solid #f3f3f3; border-top: 2px solid var(--color-primary); border-radius: 50%; animation: spin 1s linear infinite; margin-right: 0.5rem;"></div>Searching...</div>';
+                    searchResults.style.display = 'block';
+                    searchContainer.classList.add('search-active');
+                }
+            });
+            
+            // Show results after HTMX loads content
+            document.body.addEventListener('htmx:afterRequest', function(e) {
+                if (e.target.classList.contains('search-input') || e.target.id === 'search-results') {
+                    const query = searchInput.value.trim();
+                    if (query.length >= 1) {
+                        searchResults.style.display = 'block';
+                        searchContainer.classList.add('search-active');
+                    } else {
+                        searchResults.style.display = 'none';
+                        searchContainer.classList.remove('search-active');
+                    }
+                }
+            });
+            
+            // Handle HTMX errors
+            document.body.addEventListener('htmx:responseError', function(e) {
+                if (e.target.classList.contains('search-input') || e.target.id === 'search-results') {
+                    searchResults.innerHTML = '<div style="padding: 1rem; text-align: center; color: var(--color-red-500);">Search unavailable. Please try again.</div>';
+                    searchResults.style.display = 'block';
+                }
+            });
+        }
+        
+        // Global search helper function
+        window.searchFor = function(term) {
+            if (searchInput) {
+                searchInput.value = term;
+                triggerSearch();
+                searchInput.focus();
+            }
+        };
+    });
+    </script>
+    
+    <!-- Newsletter Modal Script -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const newsletterModal = document.getElementById('newsletterModal');
+        const closeModalBtn = document.getElementById('closeNewsletterModal');
+        
+        // Function to show modal
+        function showNewsletterModal() {
+            newsletterModal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            // Add animation
+            requestAnimationFrame(() => {
+                newsletterModal.style.opacity = '0';
+                newsletterModal.style.transform = 'scale(0.9)';
+                newsletterModal.style.transition = 'all 0.3s ease';
+                requestAnimationFrame(() => {
+                    newsletterModal.style.opacity = '1';
+                    newsletterModal.style.transform = 'scale(1)';
+                });
+            });
+        }
+        
+        // Function to hide modal
+        function hideNewsletterModal() {
+            newsletterModal.style.opacity = '0';
+            newsletterModal.style.transform = 'scale(0.9)';
+            setTimeout(() => {
+                newsletterModal.style.display = 'none';
+                document.body.style.overflow = '';
+            }, 300);
+        }
+        
+        // Close modal when clicking the close button
+        if (closeModalBtn) {
+            closeModalBtn.addEventListener('click', hideNewsletterModal);
+        }
+        
+        // Close modal when clicking outside the modal content
+        newsletterModal.addEventListener('click', function(e) {
+            if (e.target === newsletterModal) {
+                hideNewsletterModal();
+            }
+        });
+        
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && newsletterModal.style.display === 'flex') {
+                hideNewsletterModal();
+            }
+        });
+        
+        // Attach to all newsletter toggle buttons
+        document.addEventListener('click', function(e) {
+            if (e.target.matches('.newsletter-toggle, #newsletterToggle')) {
+                e.preventDefault();
+                showNewsletterModal();
+            }
+        });
+        
+        // Handle form submission success
+        document.body.addEventListener('htmx:afterRequest', function(e) {
+            if (e.target.id === 'modalNewsletterForm') {
+                const response = e.detail.xhr.response;
+                if (e.detail.xhr.status === 200) {
+                    // Show success message and close modal after delay
+                    setTimeout(() => {
+                        hideNewsletterModal();
+                    }, 2000);
+                }
+            }
+        });
+    });
+    </script>
     
     {% block extra_js %}{% endblock %}
 </body>

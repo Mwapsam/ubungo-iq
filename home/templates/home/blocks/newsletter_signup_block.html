@@ -1,0 +1,9 @@
+<div class="newsletter-signup-block">
+    <div id="newsletter-signup-block" 
+         hx-get="/home/api/newsletter-signup/?title={{ value.title|urlencode }}&subtitle={{ value.subtitle|urlencode }}&bg_color={{ value.background_color }}"
+         hx-target="this"
+         hx-trigger="load"
+         style="min-height: 200px;">
+        <!-- Newsletter loads silently -->
+    </div>
+</div>

@@ -1,0 +1,227 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ page_title }} - {{ block.super }}{% endblock %}
+
+{% block meta_description %}{{ page_description }}{% endblock %}
+
+{% block body_class %}contact-page{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Hero Section -->
+    <section class="hero-section" style="text-align: center; padding: 4rem 0; margin-bottom: 4rem;">
+        <h1 style="font-family: var(--font-display); font-size: var(--font-size-5xl); font-weight: 700; margin-bottom: 1rem; color: var(--color-gray-900);">
+            Get In Touch
+        </h1>
+        <p style="font-size: var(--font-size-xl); color: var(--color-gray-600); max-width: 600px; margin: 0 auto;">
+            Have a question, feedback, or just want to say hello? We'd love to hear from you.
+        </p>
+    </section>
+
+    <div class="contact-wrapper" style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; max-width: 1000px; margin: 0 auto;">
+        <!-- Contact Form -->
+        <div class="contact-form-section">
+            <h2 style="font-family: var(--font-display); font-size: var(--font-size-2xl); font-weight: 600; margin-bottom: 2rem; color: var(--color-gray-900);">
+                Send us a message
+            </h2>
+
+            {% if success_message %}
+            <div class="alert alert-success" style="background: #d4edda; color: #155724; padding: 1rem; border-radius: var(--radius-lg); border: 1px solid #c3e6cb; margin-bottom: 2rem;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span style="color: #28a745; font-size: 1.2rem;">✓</span>
+                    {{ success_message }}
+                </div>
+            </div>
+            {% elif error_message %}
+            <div class="alert alert-error" style="background: #f8d7da; color: #721c24; padding: 1rem; border-radius: var(--radius-lg); border: 1px solid #f5c6cb; margin-bottom: 2rem;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span style="color: #dc3545; font-size: 1.2rem;">⚠</span>
+                    {{ error_message }}
+                </div>
+            </div>
+            {% endif %}
+
+            <form method="post" class="contact-form" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="name" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: var(--color-gray-700);">
+                        Name *
+                    </label>
+                    <input type="text" 
+                           id="name" 
+                           name="name" 
+                           required
+                           value="{{ form_data.name|default:'' }}"
+                           style="width: 100%; padding: var(--space-3); border: 2px solid var(--color-gray-200); border-radius: var(--radius-lg); font-size: var(--font-size-base); transition: border-color var(--transition-fast);"
+                           onfocus="this.style.borderColor='var(--color-primary)'"
+                           onblur="this.style.borderColor='var(--color-gray-200)'">
+                </div>
+
+                <div class="form-group">
+                    <label for="email" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: var(--color-gray-700);">
+                        Email *
+                    </label>
+                    <input type="email" 
+                           id="email" 
+                           name="email" 
+                           required
+                           value="{{ form_data.email|default:'' }}"
+                           style="width: 100%; padding: var(--space-3); border: 2px solid var(--color-gray-200); border-radius: var(--radius-lg); font-size: var(--font-size-base); transition: border-color var(--transition-fast);"
+                           onfocus="this.style.borderColor='var(--color-primary)'"
+                           onblur="this.style.borderColor='var(--color-gray-200)'">
+                </div>
+
+                <div class="form-group">
+                    <label for="subject" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: var(--color-gray-700);">
+                        Subject *
+                    </label>
+                    <input type="text" 
+                           id="subject" 
+                           name="subject" 
+                           required
+                           value="{{ form_data.subject|default:'' }}"
+                           style="width: 100%; padding: var(--space-3); border: 2px solid var(--color-gray-200); border-radius: var(--radius-lg); font-size: var(--font-size-base); transition: border-color var(--transition-fast);"
+                           onfocus="this.style.borderColor='var(--color-primary)'"
+                           onblur="this.style.borderColor='var(--color-gray-200)'">
+                </div>
+
+                <div class="form-group">
+                    <label for="message" style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: var(--color-gray-700);">
+                        Message *
+                    </label>
+                    <textarea id="message" 
+                              name="message" 
+                              required
+                              rows="6"
+                              style="width: 100%; padding: var(--space-3); border: 2px solid var(--color-gray-200); border-radius: var(--radius-lg); font-size: var(--font-size-base); transition: border-color var(--transition-fast); resize: vertical; min-height: 120px;"
+                              onfocus="this.style.borderColor='var(--color-primary)'"
+                              onblur="this.style.borderColor='var(--color-gray-200)'">{{ form_data.message|default:'' }}</textarea>
+                </div>
+
+                <button type="submit" 
+                        class="submit-btn"
+                        style="background: var(--color-primary); color: white; font-weight: 600; padding: var(--space-3) var(--space-6); border: none; border-radius: var(--radius-lg); font-size: var(--font-size-base); cursor: pointer; transition: all var(--transition-fast); align-self: flex-start;">
+                    Send Message
+                </button>
+            </form>
+        </div>
+
+        <!-- Contact Info -->
+        <div class="contact-info-section">
+            <h2 style="font-family: var(--font-display); font-size: var(--font-size-2xl); font-weight: 600; margin-bottom: 2rem; color: var(--color-gray-900);">
+                Other ways to reach us
+            </h2>
+
+            <div class="contact-methods" style="display: flex; flex-direction: column; gap: 2rem;">
+                <div class="contact-method" style="display: flex; gap: 1rem; align-items: flex-start;">
+                    <div style="width: 3rem; height: 3rem; background: var(--color-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: white; font-size: 1.2rem;">
+                        📧
+                    </div>
+                    <div>
+                        <h3 style="font-weight: 600; margin-bottom: 0.5rem; color: var(--color-gray-900);">Email</h3>
+                        <p style="color: var(--color-gray-600); margin: 0;">
+                            <a href="mailto:hello@ubongoiq.com" style="color: var(--color-primary); text-decoration: none;">
+                                hello@ubongoiq.com
+                            </a>
+                        </p>
+                        <p style="color: var(--color-gray-500); font-size: var(--font-size-sm); margin: 0.25rem 0 0 0;">
+                            We typically respond within 24 hours
+                        </p>
+                    </div>
+                </div>
+
+                <div class="contact-method" style="display: flex; gap: 1rem; align-items: flex-start;">
+                    <div style="width: 3rem; height: 3rem; background: var(--color-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: white; font-size: 1.2rem;">
+                        🐦
+                    </div>
+                    <div>
+                        <h3 style="font-weight: 600; margin-bottom: 0.5rem; color: var(--color-gray-900);">Social Media</h3>
+                        <p style="color: var(--color-gray-600); margin: 0;">
+                            <a href="https://twitter.com/ubongoiq" style="color: var(--color-primary); text-decoration: none;">
+                                @ubongoiq
+                            </a>
+                        </p>
+                        <p style="color: var(--color-gray-500); font-size: var(--font-size-sm); margin: 0.25rem 0 0 0;">
+                            Follow us for updates and insights
+                        </p>
+                    </div>
+                </div>
+
+                <div class="contact-method" style="display: flex; gap: 1rem; align-items: flex-start;">
+                    <div style="width: 3rem; height: 3rem; background: var(--color-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: white; font-size: 1.2rem;">
+                        💬
+                    </div>
+                    <div>
+                        <h3 style="font-weight: 600; margin-bottom: 0.5rem; color: var(--color-gray-900);">Community</h3>
+                        <p style="color: var(--color-gray-600); margin: 0;">
+                            Join our discussions in the comments section of our articles
+                        </p>
+                        <p style="color: var(--color-gray-500); font-size: var(--font-size-sm); margin: 0.25rem 0 0 0;">
+                            Engage with our community
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ Section -->
+            <div class="faq-section" style="margin-top: 3rem; background: var(--color-gray-50); padding: 2rem; border-radius: var(--radius-xl);">
+                <h3 style="font-weight: 600; margin-bottom: 1rem; color: var(--color-gray-900);">
+                    Frequently Asked Questions
+                </h3>
+                <div class="faq-item" style="margin-bottom: 1rem;">
+                    <h4 style="font-weight: 600; color: var(--color-gray-800); margin-bottom: 0.5rem; font-size: var(--font-size-sm);">
+                        How often do you publish new articles?
+                    </h4>
+                    <p style="color: var(--color-gray-600); font-size: var(--font-size-sm); margin: 0;">
+                        We publish new content weekly, covering the latest trends and insights.
+                    </p>
+                </div>
+                <div class="faq-item" style="margin-bottom: 1rem;">
+                    <h4 style="font-weight: 600; color: var(--color-gray-800); margin-bottom: 0.5rem; font-size: var(--font-size-sm);">
+                        Can I suggest topics for articles?
+                    </h4>
+                    <p style="color: var(--color-gray-600); font-size: var(--font-size-sm); margin: 0;">
+                        Absolutely! Send us your suggestions using the form, and we'll consider them for future content.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.submit-btn:hover {
+    background: var(--color-primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.3);
+}
+
+.contact-method:hover {
+    transform: translateX(8px);
+    transition: transform var(--transition-fast);
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+@media (max-width: 768px) {
+    .contact-wrapper {
+        grid-template-columns: 1fr !important;
+        gap: 2rem !important;
+    }
+    
+    .hero-section {
+        padding: 2rem 0 !important;
+    }
+    
+    .contact-info-section {
+        order: -1;
+    }
+}
+</style>
+{% endblock %}

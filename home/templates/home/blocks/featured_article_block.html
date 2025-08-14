@@ -1,0 +1,18 @@
+{% load wagtailimages_tags %}
+
+<div class="featured-article-block">
+    <!-- This template would be rendered when using StreamField in Wagtail admin -->
+    <!-- For AJAX loading, we use the separate AJAX templates -->
+    <div id="featured-article-block" 
+         hx-get="/home/api/featured-article/?title={{ value.title|urlencode }}&show_title={{ value.show_title|yesno:'true,false' }}"
+         hx-target="this"
+         hx-trigger="load"
+         style="min-height: 300px;">
+        <div class="loading-placeholder" style="display: flex; align-items: center; justify-content: center; min-height: 300px; color: var(--color-gray-500);">
+            <div style="text-align: center;">
+                <div class="loading-spinner" style="margin: 0 auto 1rem;"></div>
+                <p>Loading featured article...</p>
+            </div>
+        </div>
+    </div>
+</div>

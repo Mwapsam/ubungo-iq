@@ -1,0 +1,13 @@
+<div class="ad-space-block">
+    <div id="ad-space-block" 
+         hx-get="/home/api/ad-space/?type={{ value.ad_type }}"
+         hx-target="this"
+         hx-trigger="load"
+         style="min-height: 
+            {% if value.ad_type == 'banner' %}120px
+            {% elif value.ad_type == 'square' %}250px
+            {% elif value.ad_type == 'sidebar' %}400px
+            {% else %}150px{% endif %};">
+        <!-- Ad loads silently -->
+    </div>
+</div>

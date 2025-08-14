@@ -7,7 +7,11 @@ app_name = 'blog'
 
 urlpatterns = [
     # Category pages
+    path("categories/", views_improved.categories_page, name="categories_page"),
     path("category/<slug:category_slug>/", views_improved.category_detail, name="category_detail"),
+    
+    # Tag pages
+    path("tag/<slug:tag_slug>/", views_improved.tag_detail, name="tag_detail"),
     
     # HTMX API endpoints
     path("api/load_more_articles/", views_htmx.load_more_articles, name="load_more_articles"),

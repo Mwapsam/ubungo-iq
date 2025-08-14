@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ page_title }} - {{ block.super }}{% endblock %}
+
+{% block meta_description %}{{ page_description }}{% endblock %}
+
+{% block body_class %}about-page{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Hero Section -->
+    <section class="hero-section" style="text-align: center; padding: 4rem 0; margin-bottom: 4rem; background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark)); color: white; border-radius: var(--radius-2xl);">
+        <h1 style="font-family: var(--font-display); font-size: var(--font-size-5xl); font-weight: 700; margin-bottom: 1rem;">
+            About Ubongo IQ
+        </h1>
+        <p style="font-size: var(--font-size-xl); opacity: 0.9; max-width: 600px; margin: 0 auto;">
+            Empowering minds through knowledge sharing and insightful content
+        </p>
+    </section>
+
+    <!-- Main Content -->
+    <div class="about-content" style="max-width: 800px; margin: 0 auto;">
+        <!-- Mission Section -->
+        <section class="content-section" style="margin-bottom: 4rem;">
+            <h2 style="font-family: var(--font-display); font-size: var(--font-size-3xl); font-weight: 600; margin-bottom: 2rem; color: var(--color-gray-900); text-align: center;">
+                Our Mission
+            </h2>
+            <div style="font-size: var(--font-size-lg); line-height: var(--leading-relaxed); color: var(--color-gray-700); text-align: center;">
+                <p style="margin-bottom: 1.5rem;">
+                    At Ubongo IQ, we believe that knowledge is the key to unlocking human potential. Our mission is to create a platform where complex ideas are made accessible, where learning never stops, and where every reader can find something that challenges their thinking.
+                </p>
+                <p style="margin-bottom: 1.5rem;">
+                    We curate and create content that spans technology, business, science, and innovation, bringing you the insights that matter most in our rapidly evolving world.
+                </p>
+            </div>
+        </section>
+
+        <!-- Values Grid -->
+        <section class="values-section" style="margin-bottom: 4rem;">
+            <h2 style="font-family: var(--font-display); font-size: var(--font-size-3xl); font-weight: 600; margin-bottom: 3rem; color: var(--color-gray-900); text-align: center;">
+                Our Values
+            </h2>
+            <div class="values-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem;">
+                <div class="value-card" style="background: white; padding: 2rem; border-radius: var(--radius-xl); box-shadow: var(--shadow); text-align: center; border: 1px solid var(--color-gray-100);">
+                    <div style="width: 4rem; height: 4rem; background: var(--color-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-size: 1.5rem;">
+                        🧠
+                    </div>
+                    <h3 style="font-size: var(--font-size-lg); font-weight: 600; margin-bottom: 1rem; color: var(--color-gray-900);">
+                        Intellectual Curiosity
+                    </h3>
+                    <p style="color: var(--color-gray-600); line-height: var(--leading-relaxed);">
+                        We encourage questioning, exploring, and diving deep into topics that shape our world.
+                    </p>
+                </div>
+
+                <div class="value-card" style="background: white; padding: 2rem; border-radius: var(--radius-xl); box-shadow: var(--shadow); text-align: center; border: 1px solid var(--color-gray-100);">
+                    <div style="width: 4rem; height: 4rem; background: var(--color-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-size: 1.5rem;">
+                        🎯
+                    </div>
+                    <h3 style="font-size: var(--font-size-lg); font-weight: 600; margin-bottom: 1rem; color: var(--color-gray-900);">
+                        Quality Content
+                    </h3>
+                    <p style="color: var(--color-gray-600); line-height: var(--leading-relaxed);">
+                        Every piece of content is carefully researched, fact-checked, and crafted to provide real value.
+                    </p>
+                </div>
+
+                <div class="value-card" style="background: white; padding: 2rem; border-radius: var(--radius-xl); box-shadow: var(--shadow); text-align: center; border: 1px solid var(--color-gray-100);">
+                    <div style="width: 4rem; height: 4rem; background: var(--color-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-size: 1.5rem;">
+                        🌍
+                    </div>
+                    <h3 style="font-size: var(--font-size-lg); font-weight: 600; margin-bottom: 1rem; color: var(--color-gray-900);">
+                        Global Perspective
+                    </h3>
+                    <p style="color: var(--color-gray-600); line-height: var(--leading-relaxed);">
+                        We bring insights from around the world, connecting global trends with local impact.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Team Section -->
+        <section class="team-section" style="margin-bottom: 4rem; text-align: center;">
+            <h2 style="font-family: var(--font-display); font-size: var(--font-size-3xl); font-weight: 600; margin-bottom: 2rem; color: var(--color-gray-900);">
+                Our Approach
+            </h2>
+            <div style="background: var(--color-gray-50); padding: 3rem; border-radius: var(--radius-2xl);">
+                <p style="font-size: var(--font-size-lg); line-height: var(--leading-relaxed); color: var(--color-gray-700); margin-bottom: 1.5rem;">
+                    We combine rigorous research with accessible storytelling to make complex topics understandable for everyone. Our content spans multiple disciplines because we believe that the most interesting insights often emerge at the intersection of different fields.
+                </p>
+                <p style="font-size: var(--font-size-lg); line-height: var(--leading-relaxed); color: var(--color-gray-700);">
+                    Whether you're a seasoned professional, a curious student, or someone who simply loves to learn, you'll find content that challenges your assumptions and expands your perspective.
+                </p>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="cta-section" style="background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark)); color: white; padding: 3rem; border-radius: var(--radius-2xl); text-align: center;">
+            <h2 style="font-family: var(--font-display); font-size: var(--font-size-2xl); font-weight: 600; margin-bottom: 1rem;">
+                Join Our Community
+            </h2>
+            <p style="font-size: var(--font-size-lg); opacity: 0.9; margin-bottom: 2rem;">
+                Stay updated with our latest articles and insights.
+            </p>
+            <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+                <a href="/articles/" class="cta-btn" style="background: white; color: var(--color-primary); padding: 0.75rem 2rem; border-radius: var(--radius-full); text-decoration: none; font-weight: 600; transition: all var(--transition-fast);">
+                    Read Articles
+                </a>
+                <button onclick="document.querySelector('.newsletter-toggle').click()" class="cta-btn" style="background: rgba(255, 255, 255, 0.2); color: white; border: 2px solid rgba(255, 255, 255, 0.3); padding: 0.75rem 2rem; border-radius: var(--radius-full); font-weight: 600; cursor: pointer; transition: all var(--transition-fast);">
+                    Subscribe Newsletter
+                </button>
+            </div>
+        </section>
+    </div>
+</div>
+
+<style>
+.value-card {
+    transition: all var(--transition-normal);
+}
+
+.value-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-xl);
+}
+
+.cta-btn:hover {
+    transform: translateY(-2px);
+}
+
+.cta-btn:first-child:hover {
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+}
+
+.cta-btn:last-child:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 2rem 1rem !important;
+    }
+    
+    .values-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1.5rem !important;
+    }
+    
+    .cta-section {
+        padding: 2rem 1rem !important;
+    }
+}
+</style>
+{% endblock %}

@@ -1,0 +1,87 @@
+<section class="newsletter-signup-section">
+    <div class="newsletter-container" style="background: 
+        {% if background_color == 'primary' %}var(--color-primary)
+        {% elif background_color == 'secondary' %}var(--color-secondary)
+        {% elif background_color == 'gray' %}var(--color-gray-800)
+        {% elif background_color == 'dark' %}var(--color-gray-900)
+        {% else %}var(--color-primary){% endif %}; 
+        border-radius: var(--radius-2xl); padding: 3rem; text-align: center; color: white; position: relative; overflow: hidden;">
+        
+        <!-- Background pattern -->
+        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.1; background-image: radial-gradient(circle at 25% 25%, white 2px, transparent 2px); background-size: 30px 30px;"></div>
+        
+        <div class="newsletter-content" style="position: relative; z-index: 2; max-width: 500px; margin: 0 auto;">
+            <div class="newsletter-icon" style="width: 4rem; height: 4rem; background: rgba(255, 255, 255, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; font-size: 1.5rem;">
+                ✉️
+            </div>
+            
+            <h2 style="font-family: var(--font-display); font-size: var(--font-size-3xl); font-weight: 700; margin-bottom: 0.75rem;">
+                {{ block_title }}
+            </h2>
+            
+            <p style="font-size: var(--font-size-lg); opacity: 0.9; line-height: var(--leading-relaxed); margin-bottom: 2rem;">
+                {{ subtitle }}
+            </p>
+            
+            <form class="newsletter-form" hx-post="/api/newsletter/" hx-target="#newsletter-response" style="max-width: 400px; margin: 0 auto;">
+                <div style="display: flex; gap: 0.75rem; margin-bottom: 1rem;">
+                    <input type="email" 
+                           name="email"
+                           placeholder="Enter your email" 
+                           required
+                           style="flex: 1; padding: var(--space-3); border: none; border-radius: var(--radius-lg); font-size: var(--font-size-base); background: rgba(255, 255, 255, 0.9); color: var(--color-gray-900);">
+                    <button type="submit" 
+                            style="background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); color: white; border: 2px solid rgba(255, 255, 255, 0.3); padding: var(--space-3) var(--space-4); border-radius: var(--radius-lg); font-weight: 600; cursor: pointer; transition: all var(--transition-fast); white-space: nowrap;">
+                        Subscribe
+                    </button>
+                </div>
+                <div id="newsletter-response" style="margin-top: 1rem;"></div>
+            </form>
+            
+            <div class="newsletter-features" style="display: flex; justify-content: center; gap: 2rem; margin-top: 2rem; font-size: var(--font-size-sm); opacity: 0.8;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span>✓</span>
+                    <span>Weekly digest</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span>✓</span>
+                    <span>No spam</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span>✓</span>
+                    <span>Unsubscribe anytime</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+.newsletter-form button:hover {
+    background: rgba(255, 255, 255, 0.3) !important;
+    border-color: rgba(255, 255, 255, 0.5) !important;
+    transform: translateY(-1px);
+}
+
+.newsletter-form input:focus {
+    outline: none;
+    background: white !important;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+}
+
+@media (max-width: 768px) {
+    .newsletter-container {
+        padding: 2rem 1.5rem !important;
+    }
+    
+    .newsletter-form > div {
+        flex-direction: column !important;
+        gap: 1rem !important;
+    }
+    
+    .newsletter-features {
+        flex-direction: column !important;
+        gap: 1rem !important;
+    }
+}
+</style>

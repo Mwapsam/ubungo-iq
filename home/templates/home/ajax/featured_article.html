@@ -1,0 +1,82 @@
+{% load wagtailimages_tags %}
+
+<section class="featured-article-section">
+    {% if show_title %}
+    <div class="section-header" style="text-align: center; margin-bottom: 2rem;">
+        <h2 style="font-family: var(--font-display); font-size: var(--font-size-3xl); font-weight: 600; color: var(--color-gray-900);">
+            {{ block_title }}
+        </h2>
+    </div>
+    {% endif %}
+    
+    {% if featured_article %}
+    <article class="featured-article-card" style="background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark)); border-radius: var(--radius-2xl); overflow: hidden; color: white; position: relative;">
+        {% if featured_article.featured_image %}
+        <div class="featured-image" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.2;">
+            {% image featured_article.featured_image width-1200 height-600 as hero_img %}
+            <img src="{{ hero_img.url }}" alt="{{ featured_article.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+        {% endif %}
+        
+        <div class="featured-content" style="position: relative; z-index: 2; padding: 4rem 3rem;">
+            <div class="featured-meta" style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; font-size: var(--font-size-sm);">
+                {% if featured_article.category %}
+                <span class="featured-category" style="background: rgba(255, 255, 255, 0.2); padding: 0.25rem 0.75rem; border-radius: var(--radius-full); font-weight: 500;">
+                    {{ featured_article.category.name }}
+                </span>
+                {% endif %}
+                <span>{{ featured_article.first_published_at|date:"M d, Y" }}</span>
+                <span>{{ featured_article.reading_time_minutes }} min read</span>
+            </div>
+            
+            <h1 class="featured-title" style="font-family: var(--font-display); font-size: var(--font-size-4xl); font-weight: 700; line-height: var(--leading-tight); margin-bottom: 1rem;">
+                {{ featured_article.title }}
+            </h1>
+            
+            {% if featured_article.intro %}
+            <p class="featured-excerpt" style="font-size: var(--font-size-lg); opacity: 0.9; line-height: var(--leading-relaxed); margin-bottom: 2rem;">
+                {{ featured_article.intro|truncatewords:25 }}
+            </p>
+            {% endif %}
+            
+            <div class="featured-actions" style="display: flex; gap: 1rem; align-items: center;">
+                <a href="{{ featured_article.get_url }}" class="featured-btn" style="background: white; color: var(--color-primary); padding: 0.75rem 2rem; border-radius: var(--radius-full); font-weight: 600; text-decoration: none; transition: all var(--transition-fast);">
+                    Read Article →
+                </a>
+                <div class="featured-stats" style="display: flex; align-items: center; gap: 1rem; opacity: 0.8;">
+                    <span>👁 {{ featured_article.view_count|default:"0" }}</span>
+                    {% if featured_article.tags.all %}
+                    <span>#{{ featured_article.tags.all.0.name }}</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </article>
+    {% else %}
+    <div class="no-content" style="text-align: center; padding: 3rem; color: var(--color-gray-500);">
+        <p>No featured article available at the moment.</p>
+    </div>
+    {% endif %}
+</section>
+
+<style>
+.featured-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 768px) {
+    .featured-content {
+        padding: 2rem 1.5rem !important;
+    }
+    
+    .featured-title {
+        font-size: var(--font-size-2xl) !important;
+    }
+    
+    .featured-actions {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+    }
+}
+</style>

@@ -1,0 +1,14 @@
+<div class="category-highlight-block">
+    <div id="category-highlight-block" 
+         hx-get="/home/api/category-highlight/?title={{ value.title|urlencode }}&show_title={{ value.show_title|yesno:'true,false' }}&count={{ value.number_of_categories }}"
+         hx-target="this"
+         hx-trigger="load"
+         style="min-height: 300px;">
+        <div class="loading-placeholder" style="display: flex; align-items: center; justify-content: center; min-height: 300px; color: var(--color-gray-500);">
+            <div style="text-align: center;">
+                <div class="loading-spinner" style="margin: 0 auto 1rem;"></div>
+                <p>Loading categories...</p>
+            </div>
+        </div>
+    </div>
+</div>
