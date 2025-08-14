@@ -1,6 +1,5 @@
 import os
 
-# Fix for Wagtail/asgiref compatibility issue
 import logging
 logger = logging.getLogger(__name__)
 
@@ -19,7 +18,7 @@ try:
     
     local._CVar.__delattr__ = patched_delattr
 except ImportError:
-    pass  # asgiref not available
+    pass  
 
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = os.path.dirname(PROJECT_DIR)
