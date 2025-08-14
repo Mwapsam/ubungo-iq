@@ -167,10 +167,13 @@ class AIContentMetricsAdmin(admin.ModelAdmin):
 # Custom admin actions
 def generate_content_action(modeladmin, request, obj_id):
     """Custom admin action to generate content."""
-    from django.contrib.admin.views.main import IS_POPUP_VAR, TO_FIELD_VAR
+    # from django.contrib.admin.views.main import IS_POPUP_VAR, TO_FIELD_VAR
     from django.http import HttpResponseRedirect
     
     try:
+        from django.utils import timezone
+        from utils.ai_client import ai_client
+        
         req = ContentGenerationRequest.objects.get(id=obj_id)
         if req.status != 'pending':
             messages.error(request, "Content can only be generated for pending requests.")

@@ -444,6 +444,8 @@ def create_data_driven_prompt(queue_item: ContentGenerationQueue) -> Dict[str, s
 @shared_task
 def periodic_scraping_scheduler():
     """Schedule scraping tasks for all enabled sources that are due."""
+    from django.db import models
+    
     sources_due = ScrapingSource.objects.filter(
         enabled=True
     ).filter(

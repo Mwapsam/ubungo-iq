@@ -1,5 +1,26 @@
 import os
 
+# Fix for Wagtail/asgiref compatibility issue
+import logging
+logger = logging.getLogger(__name__)
+
+try:
+    from asgiref import local
+    original_delattr = local._CVar.__delattr__
+    
+    def patched_delattr(self, name):
+        try:
+            return original_delattr(self, name)
+        except AttributeError as e:
+            if "object has no attribute 'value'" in str(e):
+                logger.debug(f"Ignored asgiref AttributeError: {e}")
+                return None
+            raise
+    
+    local._CVar.__delattr__ = patched_delattr
+except ImportError:
+    pass  # asgiref not available
+
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = os.path.dirname(PROJECT_DIR)
 
