@@ -15,12 +15,12 @@
     {% if articles %}
     <div class="articles-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem;">
         {% for article in articles %}
-        <article class="latest-article-card" style="background: white; border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow); transition: all var(--transition-normal); border: 1px solid var(--color-gray-100);">
+        <article class="latest-article-card" style="background: white; overflow: hidden; box-shadow: var(--shadow);">
             {% if article.featured_image %}
             <div class="article-image" style="aspect-ratio: 16/10; overflow: hidden;">
                 <a href="{{ article.get_url }}">
                     {% image article.featured_image width-400 height-250 as card_img %}
-                    <img src="{{ card_img.url }}" alt="{{ article.title }}" style="width: 100%; height: 100%; object-fit: cover; transition: transform var(--transition-normal);">
+                    <img src="{{ card_img.url }}" alt="{{ article.title }}" style="width: 100%; height: 100%; object-fit: cover;">
                 </a>
             </div>
             {% endif %}
@@ -71,12 +71,7 @@
 
 <style>
 .latest-article-card:hover {
-    transform: translateY(-4px);
     box-shadow: var(--shadow-xl);
-}
-
-.latest-article-card:hover .article-image img {
-    transform: scale(1.05);
 }
 
 .article-title a:hover {
