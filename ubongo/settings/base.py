@@ -1,12 +1,14 @@
 import os
 
 import logging
+
 logger = logging.getLogger(__name__)
 
 try:
     from asgiref import local
+
     original_delattr = local._CVar.__delattr__
-    
+
     def patched_delattr(self, name):
         try:
             return original_delattr(self, name)
@@ -15,10 +17,10 @@ try:
                 logger.debug(f"Ignored asgiref AttributeError: {e}")
                 return None
             raise
-    
+
     local._CVar.__delattr__ = patched_delattr
 except ImportError:
-    pass  
+    pass
 
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = os.path.dirname(PROJECT_DIR)
@@ -181,7 +183,9 @@ CELERY_TIMEZONE = TIME_ZONE
 
 OLLAMA_BASE_URL = os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434")
 OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL", "llama3.2:1b")
-CONTENT_GENERATION_ENABLED = os.environ.get("CONTENT_GENERATION_ENABLED", "True").lower() == "true"
+CONTENT_GENERATION_ENABLED = (
+    os.environ.get("CONTENT_GENERATION_ENABLED", "True").lower() == "true"
+)
 
 AI_PROMPTS = {
     "article_outline": """Create an outline for: {topic}
@@ -190,7 +194,6 @@ AI_PROMPTS = {
 2. Intro
 3. Main points (3 sections)
 4. Conclusion""",
-
     "article_content": """Write a blog article based on this outline:
 
 {outline}
@@ -200,5 +203,5 @@ Requirements:
 - 600-800 words
 - Include examples
 - Use markdown formatting
-- Ready for publication"""
+- Ready for publication""",
 }
