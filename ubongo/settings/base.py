@@ -202,15 +202,3 @@ Requirements:
 - Ready for publication"""
 }
 
-from celery.schedules import crontab
-
-CELERY_BEAT_SCHEDULE = {
-    'periodic-web-scraping': {
-        'task': 'blog.tasks_scraping.periodic_scraping_scheduler',
-        'schedule': crontab(),  
-    },
-    'process-content-queue': {
-        'task': 'blog.tasks_scraping.process_content_queue',
-        'schedule': crontab(),  
-    },
-}
