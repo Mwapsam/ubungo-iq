@@ -127,3 +127,7 @@ class ArticlePage(Page, ArticleSEOMixin):
         ArticlePage.objects.filter(pk=self.pk).update(
             view_count=models.F("view_count") + 1
         )
+
+
+# Import AI content generation models
+from .models_ai import ContentGenerationRequest, AIContentMetrics

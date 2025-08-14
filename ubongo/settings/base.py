@@ -154,3 +154,29 @@ CELERY_RESULT_SERIALIZER = "json"
 INSTALLED_APPS += ["django_celery_results"]
 
 CELERY_TIMEZONE = TIME_ZONE
+
+# AI Content Generation Settings
+OLLAMA_BASE_URL = os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434")
+OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL", "llama3.2:latest")
+CONTENT_GENERATION_ENABLED = os.environ.get("CONTENT_GENERATION_ENABLED", "True").lower() == "true"
+
+# AI Content Generation Prompts
+AI_PROMPTS = {
+    "article_outline": """Create an outline for: {topic}
+
+1. Title
+2. Intro
+3. Main points (3 sections)
+4. Conclusion""",
+
+    "article_content": """Write a blog article based on this outline:
+
+{outline}
+
+Requirements:
+- Professional tone
+- 600-800 words
+- Include examples
+- Use markdown formatting
+- Ready for publication"""
+}
