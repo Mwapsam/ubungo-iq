@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "wagtail",
     "modelcluster",
     "taggit",
+    "django_celery_beat",
     "django_extensions",
     "django_filters",
     "django.contrib.admin",
@@ -201,4 +202,3 @@ Requirements:
 - Use markdown formatting
 - Ready for publication"""
 }
-
