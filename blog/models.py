@@ -131,3 +131,9 @@ class ArticlePage(Page, ArticleSEOMixin):
 
 # Import AI content generation models
 from .models_ai import ContentGenerationRequest, AIContentMetrics
+
+# Import web scraping models
+from .models_scraping import (
+    ScrapingSource, ScrapedData, TrendingTopic, 
+    ScrapingLog, ContentGenerationQueue
+)

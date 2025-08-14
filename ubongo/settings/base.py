@@ -180,3 +180,17 @@ Requirements:
 - Use markdown formatting
 - Ready for publication"""
 }
+
+# Celery Beat Schedule for Web Scraping
+from celery.schedules import crontab
+
+CELERY_BEAT_SCHEDULE = {
+    'periodic-web-scraping': {
+        'task': 'blog.tasks_scraping.periodic_scraping_scheduler',
+        'schedule': crontab(hour=2, minute=0),  # Run every day at 2 AM
+    },
+    'process-content-queue': {
+        'task': 'blog.tasks_scraping.process_content_queue',
+        'schedule': crontab(minute='*/30'),  # Run every 30 minutes
+    },
+}
