@@ -157,7 +157,7 @@ CELERY_TIMEZONE = TIME_ZONE
 
 # AI Content Generation Settings
 OLLAMA_BASE_URL = os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434")
-OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL", "llama3.2:latest")
+OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL", "llama3.2:1b")
 CONTENT_GENERATION_ENABLED = os.environ.get("CONTENT_GENERATION_ENABLED", "True").lower() == "true"
 
 # AI Content Generation Prompts
