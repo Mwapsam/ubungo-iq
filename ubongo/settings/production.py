@@ -33,8 +33,14 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760
 STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
-    "compressor.finders.CompressorFinder",
 ]
+
+# Disable compression to prevent JavaScript dependency loading issues
+COMPRESS_ENABLED = False
+COMPRESS_OFFLINE = False
+
+# Ensure JavaScript files are served in correct order without hashing issues
+STATICFILES_STORAGE = "ubongo.settings.storage_backends.StaticToS3Storage"
 
 AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID", "")
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY", "")
@@ -113,7 +119,6 @@ ENVIRONMENT = os.environ.get("ENVIRONMENT", "development").lower()
 
 REDIS_URL = os.getenv("REDIS_URL", "redis://redis:6379")
 
-# Override cache locations to use the production Redis URL
 CACHES["default"]["LOCATION"] = REDIS_URL + "/0"
 CACHES["sessions"]["LOCATION"] = REDIS_URL + "/1"
 CACHES["wagtail_cache"]["LOCATION"] = REDIS_URL + "/2"

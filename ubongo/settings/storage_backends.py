@@ -7,14 +7,19 @@ class StaticToS3Storage(S3Boto3Storage):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.local_storage = import_string("compressor.storage.CompressorFileStorage")()
+        # Disable compressor storage to prevent JavaScript dependency issues
+        try:
+            self.local_storage = import_string("django.core.files.storage.FileSystemStorage")()
+        except Exception:
+            self.local_storage = None
 
     def save(self, name, content):
         filename = super().save(name, content)
-        try:
-            self.local_storage.save(name, content)
-        except FileExistsError:
-            pass
+        if self.local_storage:
+            try:
+                self.local_storage.save(name, content)
+            except FileExistsError:
+                pass
         return filename
 
 
