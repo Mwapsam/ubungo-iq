@@ -51,6 +51,12 @@ class Command(BaseCommand):
         )
         
         parser.add_argument(
+            '--list-categories',
+            action='store_true',
+            help='List available categories'
+        )
+        
+        parser.add_argument(
             '--bulk-generate',
             type=str,
             nargs='+',
@@ -66,6 +72,11 @@ class Command(BaseCommand):
         # List models command  
         if options['list_models']:
             self.list_available_models()
+            return
+            
+        # List categories command
+        if options['list_categories']:
+            self.list_available_categories()
             return
         
         # Bulk generation
@@ -110,6 +121,19 @@ class Command(BaseCommand):
         else:
             self.stdout.write(
                 self.style.WARNING("No models found or Ollama not accessible")
+            )
+
+    def list_available_categories(self):
+        """List available categories."""
+        self.stdout.write("Available categories:")
+        
+        categories = Category.objects.all()
+        if categories:
+            for category in categories:
+                self.stdout.write(f"  - {category.name} (slug: {category.slug})")
+        else:
+            self.stdout.write(
+                self.style.WARNING("No categories found. Create one in the admin interface.")
             )
 
     def generate_single_content(self, options):
@@ -163,15 +187,41 @@ class Command(BaseCommand):
         
         self.stdout.write(f"Generating content for: {request_obj.topic}")
         
+        # Check AI client connection first
+        if not ai_client.check_connection():
+            raise Exception("Cannot connect to Ollama. Make sure it's running and accessible.")
+        
         # Step 1: Generate outline
         self.stdout.write("1. Generating outline...")
+        self.stdout.write(f"   Using model: {ai_client.model}")
+        self.stdout.write(f"   Base URL: {ai_client.base_url}")
+        
         outline = ai_client.generate_article_outline(
             request_obj.topic, 
             request_obj.category.name
         )
         
         if not outline:
-            raise Exception("Failed to generate outline")
+            # Get more detailed error information
+            self.stdout.write(self.style.ERROR("   ✗ Outline generation failed"))
+            self.stdout.write("   Checking Ollama status...")
+            
+            # Test basic connection
+            try:
+                import requests
+                response = requests.get(f"{ai_client.base_url}/api/tags", timeout=10)
+                if response.status_code == 200:
+                    models = response.json().get('models', [])
+                    model_names = [m.get('name') for m in models]
+                    self.stdout.write(f"   Available models: {model_names}")
+                    if ai_client.model not in model_names:
+                        raise Exception(f"Model '{ai_client.model}' not found. Available: {model_names}")
+                else:
+                    raise Exception(f"Ollama responded with status {response.status_code}")
+            except Exception as conn_error:
+                raise Exception(f"Ollama connection error: {conn_error}")
+                
+            raise Exception("Failed to generate outline - check logs for details")
             
         request_obj.generated_outline = outline
         request_obj.save()

@@ -58,16 +58,25 @@ class OllamaClient:
             
             if response.status_code == 200:
                 result = response.json()
-                return result.get("response", "").strip()
+                generated_text = result.get("response", "").strip()
+                if not generated_text:
+                    logger.error(f"Ollama returned empty response for prompt: {prompt[:100]}...")
+                return generated_text
             else:
-                logger.error(f"Ollama API error: {response.status_code} - {response.text}")
+                error_msg = f"Ollama API error: {response.status_code} - {response.text}"
+                logger.error(error_msg)
+                print(f"DEBUG: {error_msg}")  # Also print to stdout for debugging
                 return None
                 
         except requests.exceptions.RequestException as e:
-            logger.error(f"Error connecting to Ollama: {e}")
+            error_msg = f"Error connecting to Ollama: {e}"
+            logger.error(error_msg)
+            print(f"DEBUG: {error_msg}")  # Also print to stdout for debugging
             return None
         except json.JSONDecodeError as e:
-            logger.error(f"Error parsing Ollama response: {e}")
+            error_msg = f"Error parsing Ollama response: {e}"
+            logger.error(error_msg)
+            print(f"DEBUG: {error_msg}")  # Also print to stdout for debugging
             return None
     
     def generate_article_outline(self, topic: str, category: str) -> Optional[str]:
