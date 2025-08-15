@@ -132,10 +132,10 @@ CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 
 
 CSP_DEFAULT_SRC = ["'self'"]
-CSP_SCRIPT_SRC = ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com"]
-CSP_STYLE_SRC = ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"]
-CSP_FONT_SRC = ["'self'", "https://fonts.gstatic.com"]
-CSP_IMG_SRC = ["'self'", "data:", "https:"]
+CSP_SCRIPT_SRC = ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com", "https://dp7dk6iy0oxso.cloudfront.net"]
+CSP_STYLE_SRC = ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://dp7dk6iy0oxso.cloudfront.net"]
+CSP_FONT_SRC = ["'self'", "https://fonts.gstatic.com", "https://dp7dk6iy0oxso.cloudfront.net"]
+CSP_IMG_SRC = ["'self'", "data:", "https:", "https://dp7dk6iy0oxso.cloudfront.net"]
 CSP_CONNECT_SRC = ["'self'"]
 CSP_FRAME_SRC = ["'none'"]
 CSP_OBJECT_SRC = ["'none'"]
