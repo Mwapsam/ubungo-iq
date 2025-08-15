@@ -10,7 +10,7 @@ services:
     command: sh -c "python manage.py migrate && gunicorn ubongo.wsgi:application -b 0.0.0.0 -p 8000"
     environment:
       - OLLAMA_BASE_URL=http://ollama:11434
-      - OLLAMA_MODEL=qwen3:0.6b
+      - OLLAMA_MODEL=tinyllama:latest
       - CONTENT_GENERATION_ENABLED=true
     depends_on:
       - db
@@ -42,7 +42,7 @@ services:
       - .env
     environment:
       - OLLAMA_BASE_URL=http://ollama:11434
-      - OLLAMA_MODEL=qwen3:0.6b
+      - OLLAMA_MODEL=tinyllama:latest
       - CONTENT_GENERATION_ENABLED=true
     command: celery -A ubongo worker --loglevel=info
     depends_on:
@@ -57,7 +57,7 @@ services:
       - .env
     environment:
       - OLLAMA_BASE_URL=http://ollama:11434
-      - OLLAMA_MODEL=qwen3:0.6b
+      - OLLAMA_MODEL=tinyllama:latest
       - CONTENT_GENERATION_ENABLED=true
     command: celery -A ubongo beat --loglevel=info
     depends_on:

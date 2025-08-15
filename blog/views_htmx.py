@@ -188,7 +188,7 @@ def get_categories_api(request):
     
     json_data = {'categories': categories_data}
     # Cache the JSON data for 15 minutes
-    cache.set(cache_key, JsonResponse(json_data), 60 * 15)
+    cache.set(cache_key, json_data, 60 * 15)
     return JsonResponse(json_data)
 
 

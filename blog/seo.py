@@ -68,9 +68,13 @@ class SEOMixin:
         }
 
         if hasattr(self, 'featured_image') and self.featured_image:
-            og_data['image'] = self.featured_image.get_rendition('width-1200|height-630').url
-            og_data['image:width'] = '1200'
-            og_data['image:height'] = '630'
+            try:
+                rendition = self.featured_image.get_rendition('width-1200|height-630')
+                og_data['image'] = rendition.url
+                og_data['image:width'] = '1200'
+                og_data['image:height'] = '630'
+            except Exception:
+                pass
 
         return og_data
 
@@ -82,7 +86,11 @@ class SEOMixin:
         }
 
         if hasattr(self, 'featured_image') and self.featured_image:
-            twitter_data['image'] = self.featured_image.get_rendition('width-1200|height-600').url
+            try:
+                rendition = self.featured_image.get_rendition('width-1200|height-600')
+                twitter_data['image'] = rendition.url
+            except Exception:
+                pass
 
         return twitter_data
 
@@ -125,7 +133,11 @@ class ArticleSEOMixin(SEOMixin):
         }
 
         if hasattr(self, 'featured_image') and self.featured_image:
-            data['image'] = self.featured_image.get_rendition('width-1200|height-630').url
+            try:
+                rendition = self.featured_image.get_rendition('width-1200|height-630')
+                data['image'] = rendition.url
+            except Exception:
+                pass
 
         if hasattr(self, 'category') and self.category:
             data['articleSection'] = self.category.name
