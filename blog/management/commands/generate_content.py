@@ -147,7 +147,12 @@ class Command(BaseCommand):
         try:
             category = Category.objects.get(slug=category_slug)
         except Category.DoesNotExist:
-            raise CommandError(f'Category "{category_slug}" does not exist')
+            # Show available categories for debugging
+            available_cats = list(Category.objects.values_list('slug', flat=True))
+            if available_cats:
+                raise CommandError(f'Category "{category_slug}" does not exist. Available: {", ".join(available_cats)}')
+            else:
+                raise CommandError(f'Category "{category_slug}" does not exist. No categories found - create one in admin.')
 
         if dry_run:
             self.stdout.write(f"Would generate content for:")
@@ -161,12 +166,17 @@ class Command(BaseCommand):
         if not user:
             raise CommandError("No superuser found. Create one with: python manage.py createsuperuser")
 
+        # Validate and truncate topic if necessary (max 200 chars)
+        if len(topic) > 200:
+            topic = topic[:197] + "..."
+            self.stdout.write(f"⚠ Topic truncated to 200 characters")
+
         # Create generation request
         request_obj = ContentGenerationRequest.objects.create(
             topic=topic,
             category=category,
             status='generating',
-            model_used=ai_client.model,
+            model_used=ai_client.model[:50] if ai_client.model else "",  # max 50 chars
             requested_by=user,
             generation_started_at=timezone.now()
         )
@@ -246,11 +256,21 @@ class Command(BaseCommand):
         
         title = ai_client.generate_seo_title(content)
         if title:
-            request_obj.generated_title = title.strip().strip('"')
+            # Truncate title to fit database field (max 200 chars)
+            cleaned_title = title.strip().strip('"')
+            if len(cleaned_title) > 200:
+                cleaned_title = cleaned_title[:197] + "..."
+                self.stdout.write(f"   ⚠ Title truncated to 200 characters")
+            request_obj.generated_title = cleaned_title
             
         meta_desc = ai_client.generate_meta_description(content)
         if meta_desc:
-            request_obj.generated_meta_description = meta_desc.strip().strip('"')
+            # Truncate meta description to fit database field (max 160 chars)
+            cleaned_meta = meta_desc.strip().strip('"')
+            if len(cleaned_meta) > 160:
+                cleaned_meta = cleaned_meta[:157] + "..."
+                self.stdout.write(f"   ⚠ Meta description truncated to 160 characters")
+            request_obj.generated_meta_description = cleaned_meta
         
         # Mark completion
         end_time = time.time()
