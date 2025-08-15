@@ -6,7 +6,7 @@ CACHES = {
         "LOCATION": os.getenv("REDIS_URL", "redis://redis:6379/1"),
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            "SERIALIZER": "django_redis.serializers.json.JSONSerializer",
+            "SERIALIZER": "django_redis.serializers.pickle.PickleSerializer",
             "COMPRESSOR": "django_redis.compressors.zlib.ZlibCompressor",
             "CONNECTION_POOL_KWARGS": {
                 "max_connections": 20,
@@ -36,6 +36,16 @@ CACHES = {
     },
     "dummy": {
         "BACKEND": "django.core.cache.backends.dummy.DummyCache",
+    },
+    "wagtail_images": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": os.getenv("REDIS_URL", "redis://redis:6379/4"),
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "SERIALIZER": "django_redis.serializers.pickle.PickleSerializer",
+        },
+        "KEY_PREFIX": "wagtail_images",
+        "TIMEOUT": 3600,  # 1 hour
     }
 }
 

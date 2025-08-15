@@ -117,6 +117,7 @@ REDIS_URL = os.getenv("REDIS_URL", "redis://redis:6379")
 CACHES["default"]["LOCATION"] = REDIS_URL + "/0"
 CACHES["sessions"]["LOCATION"] = REDIS_URL + "/1"
 CACHES["wagtail_cache"]["LOCATION"] = REDIS_URL + "/2"
+CACHES["wagtail_images"]["LOCATION"] = REDIS_URL + "/4"
 
 CHANNEL_LAYERS = {
     "default": {

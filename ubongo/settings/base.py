@@ -172,9 +172,9 @@ WAGTAILIMAGES_FORMAT_CONVERSIONS = {
     "gif": "webp",
 }
 
-# Disable Wagtail image caching to prevent JSON serialization errors with Rendition objects
-# This prevents "Object of type Rendition is not JSON serializable" errors in Redis
-WAGTAILIMAGES_CACHE_BACKEND = "dummy"
+# Use pickle serializer for Wagtail image caching to handle Rendition objects
+# This prevents "Object of type Rendition is not JSON serializable" errors
+WAGTAILIMAGES_CACHE_BACKEND = "wagtail_images"
 
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
