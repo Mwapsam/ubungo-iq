@@ -16,7 +16,10 @@ ALLOWED_HOSTS = [
     "0.0.0.0",
 ]
 
-INSTALLED_APPS += ["storages"]
+INSTALLED_APPS += [
+    "storages",
+    "compressor",
+]
 
 SECURE_HSTS_SECONDS = 31536000
 SECURE_SSL_REDIRECT = True
@@ -33,13 +36,16 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760
 STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+    "compressor.finders.CompressorFinder",
 ]
 
-# Disable compression to prevent JavaScript dependency loading issues
-COMPRESS_ENABLED = False
-COMPRESS_OFFLINE = False
+COMPRESS_ENABLED = True
+COMPRESS_OFFLINE = True
+COMPRESS_ROOT = BASE_DIR / "static"
+COMPRESS_URL = STATIC_URL
+COMPRESS_CSS_HASHING_METHOD = "content"
+COMPRESS_STORAGE = "ubongo.settings.storage_backends.CachedS3Boto3Storage"
 
-# Ensure JavaScript files are served in correct order without hashing issues
 STATICFILES_STORAGE = "ubongo.settings.storage_backends.StaticToS3Storage"
 
 AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID", "")
