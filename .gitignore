@@ -6,3 +6,7 @@ staticfiles/
 media/
 CLAUDE.md
 README_TESTING.md
+8000
+.env.postgres
+chromedriver
+db.sqlite3
