@@ -33,6 +33,9 @@ CACHES = {
         },
         "KEY_PREFIX": "wagtail",
         "TIMEOUT": 3600,  # 1 hour
+    },
+    "dummy": {
+        "BACKEND": "django.core.cache.backends.dummy.DummyCache",
     }
 }
 
