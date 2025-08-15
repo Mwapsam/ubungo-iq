@@ -1,18 +1,18 @@
 from storages.backends.s3boto3 import S3Boto3Storage
-from django.core.files.storage import get_storage_class
+from django.utils.module_loading import import_string
 
 
 class StaticToS3Storage(S3Boto3Storage):
+    location = "static"
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.local_storage = get_storage_class(
-            "compressor.storage.CompressorFileStorage"
-        )()
+        self.local_storage = import_string("compressor.storage.CompressorFileStorage")()
 
     def save(self, name, content):
         filename = super().save(name, content)
         try:
-            self.local_storage._save(name, content)
+            self.local_storage.save(name, content)
         except FileExistsError:
             pass
         return filename
@@ -26,9 +26,7 @@ class mediaRootS3Boto3Storage(S3Boto3Storage):
 class CachedS3Boto3Storage(S3Boto3Storage):
     def __init__(self, *args, **kwargs):
         super(CachedS3Boto3Storage, self).__init__(*args, **kwargs)
-        self.local_storage = get_storage_class(
-            "compressor.storage.CompressorFileStorage"
-        )()
+        self.local_storage = import_string("compressor.storage.CompressorFileStorage")()
 
     def save(self, filename, content):
         filename = super(CachedS3Boto3Storage, self).save(filename, content)
