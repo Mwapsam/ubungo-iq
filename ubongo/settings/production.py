@@ -1,5 +1,4 @@
 from .base import *
-from .caching import *
 
 DEBUG = False
 
@@ -121,10 +120,6 @@ CHANNEL_LAYERS = {
         },
     },
 }
-
-CACHES["default"]["LOCATION"] = REDIS_URL
-CACHES["sessions"]["LOCATION"] = os.getenv("REDIS_URL", "redis://redis:6379/1")
-CACHES["wagtail_cache"]["LOCATION"] = os.getenv("REDIS_URL", "redis://redis:6379/2")
 
 CELERY_BROKER_URL = os.getenv("REDIS_URL", "redis://redis:6379")
 CELERY_RESULT_BACKEND = "django-db"
