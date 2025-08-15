@@ -39,6 +39,8 @@ STATICFILES_FINDERS = [
     "compressor.finders.CompressorFinder",
 ]
 
+WAGTAILADMIN_STATIC_FILE_VERSION_STRINGS = False
+
 COMPRESS_ENABLED = True
 COMPRESS_OFFLINE = True
 COMPRESS_ROOT = os.path.join(BASE_DIR, "static")
