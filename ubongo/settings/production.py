@@ -41,7 +41,7 @@ STATICFILES_FINDERS = [
 
 COMPRESS_ENABLED = True
 COMPRESS_OFFLINE = True
-COMPRESS_ROOT = BASE_DIR / "static"
+COMPRESS_ROOT = os.path.join(BASE_DIR, "static")
 COMPRESS_URL = STATIC_URL
 COMPRESS_CSS_HASHING_METHOD = "content"
 COMPRESS_STORAGE = "ubongo.settings.storage_backends.CachedS3Boto3Storage"
