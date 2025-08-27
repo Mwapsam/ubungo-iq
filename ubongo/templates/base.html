@@ -21,7 +21,7 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nexa:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="{% static 'css/modern-blog.css' %}">
     <link rel="stylesheet" href="{% static 'css/ubongo.css' %}">
@@ -153,6 +153,30 @@
                 </div>
                 
                 <nav class="main-nav" role="navigation" aria-label="Main navigation">
+                    <!-- Mobile Search (only visible on mobile) -->
+                    <div class="mobile-search" style="display: none;">
+                        <form class="search-form" onsubmit="return false;">
+                            <div class="search-input-wrapper">
+                                <input type="search" 
+                                       name="q" 
+                                       placeholder="Search articles..." 
+                                       class="search-input" 
+                                       aria-label="Search articles"
+                                       hx-get="/blog/api/search/"
+                                       hx-target="#mobile-search-results"
+                                       hx-trigger="input changed delay:300ms"
+                                       hx-vals='js:{"q": this.value}'
+                                       autocomplete="off">
+                                <button type="button" class="search-button" aria-label="Search">
+                                    <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 1 1-14 0 7 7 0 0 1 14 0z"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                            <div id="mobile-search-results" class="search-results"></div>
+                        </form>
+                    </div>
+
                     <ul class="nav-list">
                         <li><a href="/" class="nav-link">Home</a></li>
                         <li><a href="/articles/" class="nav-link">Articles</a></li>

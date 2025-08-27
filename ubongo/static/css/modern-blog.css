@@ -39,8 +39,8 @@
   --color-gray-900: #0f172a;
   
   /* Typography */
-  --font-display: 'Crimson Text', serif;
-  --font-body: 'Inter', sans-serif;
+  --font-display: 'Nexa', sans-serif;
+  --font-body: 'Nexa', sans-serif;
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;
   --font-size-base: 1rem;
@@ -505,7 +505,6 @@ select {
 
 .article-card-image {
   position: relative;
-  aspect-ratio: 16/16;
   overflow: hidden;
 }
 
@@ -694,9 +693,6 @@ select {
 
 /* Buttons */
 .btn {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
   padding: var(--space-3) var(--space-6);
   font-weight: 500;
   text-decoration: none;
@@ -705,6 +701,7 @@ select {
   border: none;
   cursor: pointer;
   font-size: var(--font-size-sm);
+  text-align: center;
 }
 
 .btn-primary {
