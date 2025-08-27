@@ -7,23 +7,39 @@
 <div class="container">
     <!-- Hero Section -->
     {% if page.intro %}
-    <section class="hero-section" style="margin-bottom: 3rem;">
-        <div class="hero-content" style="text-align: center; max-width: 800px; margin: 0 auto;">
-            <h1 class="hero-title" style="font-family: var(--font-display); font-size: var(--font-size-5xl); font-weight: 700; margin-bottom: 1.5rem; color: var(--color-gray-900);">
+    <section class="hero-section glass-morphism" style="margin-bottom: 4rem; padding: 4rem 2rem; border-radius: var(--radius-2xl); position: relative; overflow: hidden;">
+        <div class="hero-background" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, var(--aqua-light), var(--navy-light)); opacity: 0.1; z-index: -1;"></div>
+        <div class="hero-content floating-animation" style="text-align: center; max-width: 900px; margin: 0 auto; position: relative;">
+            <div class="hero-badge" style="display: inline-block; background: linear-gradient(135deg, var(--primary-aqua), var(--primary-navy)); color: white; padding: 0.5rem 1.5rem; border-radius: var(--radius-full); font-size: var(--font-size-sm); font-weight: 600; margin-bottom: 2rem; text-transform: uppercase; letter-spacing: 0.05em;">
+                ✨ Welcome to Ubongo IQ
+            </div>
+            <h1 class="hero-title gradient-text" style="font-family: var(--font-display); font-size: var(--font-size-6xl); font-weight: 700; margin-bottom: 1.5rem; line-height: 1.1;">
                 {{ page.title }}
             </h1>
-            <div class="hero-intro" style="font-size: var(--font-size-lg); color: var(--color-gray-600); line-height: var(--leading-relaxed);">
+            <div class="hero-intro" style="font-size: var(--font-size-xl); color: var(--gray-600); line-height: var(--leading-relaxed); margin-bottom: 2rem;">
                 {{ page.intro|richtext }}
+            </div>
+            <div class="hero-cta" style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <a href="#featured-articles" class="btn btn-primary micro-bounce">Explore Articles</a>
+                <a href="#article-filters" class="btn btn-outline">Browse Categories</a>
             </div>
         </div>
     </section>
     {% endif %}
 
     <!-- Featured Articles -->
-    <section class="featured-articles" id="featured-articles">
-        <h2 class="section-title" style="font-family: var(--font-display); font-size: var(--font-size-3xl); font-weight: 600; margin-bottom: 2rem; text-align: center;">
-            Featured Articles
-        </h2>
+    <section class="featured-articles" id="featured-articles" style="margin-bottom: 4rem;">
+        <div class="section-header" style="text-align: center; margin-bottom: 3rem;">
+            <div class="section-badge" style="display: inline-block; background: var(--aqua-light); color: var(--primary-navy); padding: 0.5rem 1rem; border-radius: var(--radius-full); font-size: var(--font-size-sm); font-weight: 600; margin-bottom: 1rem;">
+                🌟 Featured
+            </div>
+            <h2 class="section-title gradient-text" style="font-family: var(--font-display); font-size: var(--font-size-4xl); font-weight: 700; margin-bottom: 0.5rem;">
+                Featured Articles
+            </h2>
+            <p style="font-size: var(--font-size-lg); color: var(--gray-600); max-width: 600px; margin: 0 auto;">
+                Discover our most popular and trending articles handpicked for you
+            </p>
+        </div>
         
         <div id="featured-container" 
              hx-get="{% url 'blog:load_more_articles' %}?featured=true&per_page=3" 
@@ -39,12 +55,15 @@
     </section>
 
     <!-- Filters Section -->
-    <section class="filters-section" style="margin: 3rem 0;">
-        <div class="filters" id="article-filters">
+    <section class="filters-section" style="margin: 4rem 0;">
+        <div class="filters glass-morphism" id="article-filters" style="background: rgba(255, 255, 255, 0.9); border: 1px solid var(--gray-200); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);">
             <div class="filter-group">
-                <label class="filter-label" for="category-filter">Category</label>
+                <label class="filter-label" for="category-filter" style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span style="font-size: 1.2rem;">🏷️</span>
+                    Category
+                </label>
                 <select id="category-filter" 
-                        class="filter-select"
+                        class="filter-select interactive-focus"
                         hx-get="{% url 'blog:load_more_articles' %}"
                         hx-target="#articles-container"
                         hx-include="[name='search'], [name='sort']"
@@ -56,32 +75,43 @@
             </div>
 
             <div class="filter-group">
-                <label class="filter-label" for="sort-filter">Sort By</label>
+                <label class="filter-label" for="sort-filter" style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span style="font-size: 1.2rem;">📊</span>
+                    Sort By
+                </label>
                 <select id="sort-filter" 
-                        class="filter-select"
+                        class="filter-select interactive-focus"
                         hx-get="{% url 'blog:load_more_articles' %}"
                         hx-target="#articles-container"
                         hx-include="[name='search'], [name='category']"
                         hx-trigger="change"
                         name="sort">
-                    <option value="latest">Latest</option>
-                    <option value="popular">Most Popular</option>
-                    <option value="oldest">Oldest</option>
+                    <option value="latest">📅 Latest</option>
+                    <option value="popular">🔥 Most Popular</option>
+                    <option value="oldest">⏰ Oldest</option>
                 </select>
             </div>
 
             <div class="filter-group">
-                <label class="filter-label" for="search-filter">Search</label>
-                <input type="search" 
-                       id="search-filter"
-                       class="search-input"
-                       placeholder="Search articles..."
-                       hx-get="{% url 'blog:load_more_articles' %}"
-                       hx-target="#articles-container"
-                       hx-include="[name='category'], [name='sort']"
-                       hx-trigger="input changed delay:500ms"
-                       name="search"
-                       style="width: 100%; padding: var(--space-2) var(--space-3); border: 1px solid var(--color-gray-300); border-radius: var(--radius);">
+                <label class="filter-label" for="search-filter" style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span style="font-size: 1.2rem;">🔍</span>
+                    Search
+                </label>
+                <div style="position: relative;">
+                    <input type="search" 
+                           id="search-filter"
+                           class="search-input interactive-focus"
+                           placeholder="Search articles..."
+                           hx-get="{% url 'blog:load_more_articles' %}"
+                           hx-target="#articles-container"
+                           hx-include="[name='category'], [name='sort']"
+                           hx-trigger="input changed delay:500ms"
+                           name="search"
+                           style="width: 100%; padding: var(--space-3) var(--space-4); padding-right: 3rem; border: 2px solid var(--gray-300); border-radius: var(--radius-full); background: white; transition: all var(--transition-fast);">
+                    <div style="position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); color: var(--gray-400); pointer-events: none;">
+                        🔍
+                    </div>
+                </div>
             </div>
         </div>
     </section>

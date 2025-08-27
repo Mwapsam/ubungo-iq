@@ -93,7 +93,6 @@ def get_categories_with_counts(request):
         Category.objects.annotate(
             article_count=Count("articlepage", filter=Q(articlepage__live=True))
         )
-        .filter(article_count__gt=0)
         .order_by("name")
     )
 

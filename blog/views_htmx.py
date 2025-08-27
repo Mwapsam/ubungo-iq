@@ -147,49 +147,64 @@ def get_categories_api(request):
     """Get categories with article counts for dropdowns."""
     from django.core.cache import cache
     
-    # Create different cache keys for HTMX vs regular requests
-    is_htmx = bool(request.headers.get('HX-Request'))
-    cache_key = f"categories_api_{is_htmx}"
+    try:
+        # Create different cache keys for HTMX vs regular requests
+        is_htmx = bool(request.headers.get('HX-Request'))
+        cache_key = f"categories_api_v3_{is_htmx}"
+        
+        # Try to get from cache first
+        cached_content = cache.get(cache_key)
+        if cached_content:
+            if is_htmx:
+                from django.http import HttpResponse
+                return HttpResponse(cached_content, content_type='text/html')
+            else:
+                # Ensure we return a proper JsonResponse for cached JSON data
+                return JsonResponse(cached_content)
+        
+        categories_with_counts = Category.objects.annotate(
+            article_count=Count('articles', filter=Q(articles__live=True))
+        ).order_by('name')
+        
+        if is_htmx:
+            # Return HTML for HTMX - render the template to string for caching
+            html_content = render_to_string('blog/partials/category_dropdown.html', {
+                'categories': categories_with_counts
+            })
+            # Cache the HTML content for 15 minutes
+            cache.set(cache_key, html_content, 60 * 15)
+            
+            from django.http import HttpResponse
+            return HttpResponse(html_content, content_type='text/html')
+        
+        # Return JSON
+        categories_data = []
+        for category in categories_with_counts:
+            categories_data.append({
+                'name': category.name,
+                'slug': category.slug,
+                'color': category.color,
+                'count': category.article_count,
+                'description': category.description,
+            })
+        
+        json_data = {'categories': categories_data}
+        # Cache the JSON data for 15 minutes
+        cache.set(cache_key, json_data, 60 * 15)
+        return JsonResponse(json_data)
     
-    # Try to get from cache first
-    cached_content = cache.get(cache_key)
-    if cached_content:
+    except Exception as e:
+        # Log the error and return a safe response
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f"Error in get_categories_api: {str(e)}")
+        
         if is_htmx:
             from django.http import HttpResponse
-            return HttpResponse(cached_content, content_type='text/html')
+            return HttpResponse('<li style="color: var(--color-red-500);">Error loading categories</li>', 
+                              content_type='text/html')
         else:
-            return cached_content
-    
-    categories_with_counts = Category.objects.annotate(
-        article_count=Count('articles', filter=Q(articles__live=True))
-    ).filter(article_count__gt=0).order_by('name')
-    
-    if is_htmx:
-        # Return HTML for HTMX - render the template to string for caching
-        html_content = render_to_string('blog/partials/category_dropdown.html', {
-            'categories': categories_with_counts
-        })
-        # Cache the HTML content for 15 minutes
-        cache.set(cache_key, html_content, 60 * 15)
-        
-        from django.http import HttpResponse
-        return HttpResponse(html_content, content_type='text/html')
-    
-    # Return JSON
-    categories_data = []
-    for category in categories_with_counts:
-        categories_data.append({
-            'name': category.name,
-            'slug': category.slug,
-            'color': category.color,
-            'count': category.article_count,
-            'description': category.description,
-        })
-    
-    json_data = {'categories': categories_data}
-    # Cache the JSON data for 15 minutes
-    cache.set(cache_key, json_data, 60 * 15)
-    return JsonResponse(json_data)
+            return JsonResponse({'error': 'Failed to load categories', 'categories': []}, status=500)
 
 
 @require_http_methods(["GET"])
