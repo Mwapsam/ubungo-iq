@@ -36,7 +36,6 @@ class HomePage(Page):
     def get_context(self, request):
         context = super().get_context(request)
 
-        # Get featured article (most recent featured or first article)
         featured_article = ArticlePage.objects.live().filter(featured=True).first()
         if not featured_article:
             featured_article = ArticlePage.objects.live().first()
@@ -46,3 +45,5 @@ class HomePage(Page):
         context["categories"] = Category.objects.all()
 
         return context
+
+

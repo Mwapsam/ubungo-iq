@@ -25,5 +25,20 @@ CACHES = {
 
 CELERY_BROKER_URL = "memory://"
 CELERY_RESULT_BACKEND = "cache+memory://"
-CELERY_CACHE_BACKEND = "default" 
+CELERY_CACHE_BACKEND = "default"
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
+
+DATABASES = {
+    "default": {
+        "ENGINE": os.environ.get("DATABASE_ENGINE", "django.db.backends.postgresql"),
+        "NAME": os.environ.get("DATABASE_NAME", "ubongo_iq_user"),
+        "USER": os.environ.get("DATABASE_USER", "ubongo_iq_user"),
+        "PASSWORD": os.environ.get(
+            "DATABASE_PASSWORD",
+            "SuguASDJGHASFHGVXNZHJK78367834278adsg@#yugfeaugdsfghdfsfhgxdSAAFSGHVDghusdvd#@ugb",
+        ),
+        "HOST": os.environ.get("DATABASE_HOST", "db"),
+        "PORT": os.environ.get("DATABASE_PORT", "5432"),
+        "CONN_MAX_AGE": 600,
+    }
+}

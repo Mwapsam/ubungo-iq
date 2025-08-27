@@ -117,31 +117,100 @@ def scrape_website(self, source_id: int):
 
 
 def process_scraped_item(source: ScrapingSource, item_data: Dict[str, Any]) -> Dict[str, Any]:
-    """Process and store a single scraped item."""
+    """Process and store a comprehensive scraped item with enhanced data."""
     with transaction.atomic():
         # Try to get existing item
         scraped_item, created = ScrapedData.objects.get_or_create(
             source=source,
             external_id=item_data['external_id'],
             defaults={
+                # Basic info
                 'url': item_data.get('url', ''),
                 'title': item_data.get('title', '')[:500],
                 'description': item_data.get('description', ''),
-                'price': item_data.get('price', '')[:100],
                 'category': item_data.get('category', '')[:200],
                 'tags': item_data.get('tags', '')[:500],
-                'raw_data': item_data.get('raw_data', {}),
+                
+                # Enhanced pricing data
+                'current_price': item_data.get('current_price'),
+                'original_price': item_data.get('original_price'),
+                'discount_percentage': item_data.get('discount_percentage'),
+                'price_currency': item_data.get('price_currency', 'USD'),
+                'bulk_pricing_tiers': item_data.get('bulk_pricing_tiers', []),
+                
+                # Order specifications
+                'minimum_order_quantity': item_data.get('minimum_order_quantity'),
+                'order_units': item_data.get('order_units', ''),
+                'lead_time_days': item_data.get('lead_time_days'),
+                
+                # Product specifications
+                'material': item_data.get('material', ''),
+                'dimensions': item_data.get('dimensions', ''),
+                'certifications': item_data.get('certifications', []),
+                'quality_standards': item_data.get('quality_standards', []),
+                'color_options': item_data.get('color_options', []),
+                'product_features': item_data.get('product_features', []),
+                
+                # Customer feedback
+                'rating': item_data.get('rating'),
+                'rating_count': item_data.get('rating_count'),
+                'review_highlights': item_data.get('review_highlights', []),
+                'common_complaints': item_data.get('common_complaints', []),
+                
+                # Supplier data
+                'supplier_name': item_data.get('supplier_name', ''),
+                'supplier_location': item_data.get('supplier_location', ''),
+                'supplier_country': item_data.get('supplier_country', ''),
+                'supplier_region': item_data.get('supplier_region', ''),
+                'years_in_business': item_data.get('years_in_business'),
+                'verification_status': item_data.get('verification_status', ''),
+                'supplier_certifications': item_data.get('supplier_certifications', []),
+                'response_rate': item_data.get('response_rate'),
+                'supplier_rating': item_data.get('supplier_rating'),
+                
+                # Market intelligence
+                'views': item_data.get('views'),
+                'likes': item_data.get('likes'),
+                'sales': item_data.get('sales'),
+                'recent_orders': item_data.get('recent_orders'),
+                'trending_rank': item_data.get('trending_rank'),
+                'search_keywords': item_data.get('search_keywords', []),
+                'seasonal_demand': item_data.get('seasonal_demand', ''),
+                'price_trend': item_data.get('price_trend', ''),
+                
+                # Logistics
+                'shipping_cost': item_data.get('shipping_cost'),
+                'shipping_methods': item_data.get('shipping_methods', []),
+                'port_of_shipment': item_data.get('port_of_shipment', ''),
+                
+                # Media
                 'image_urls': item_data.get('image_urls', []),
+                'video_urls': item_data.get('video_urls', []),
+                
+                # Raw metadata
+                'raw_data': item_data.get('raw_data', {}),
             }
         )
         
         if not created:
-            # Update existing item
-            scraped_item.title = item_data.get('title', scraped_item.title)[:500]
-            scraped_item.description = item_data.get('description', scraped_item.description)
-            scraped_item.price = item_data.get('price', scraped_item.price)[:100]
-            scraped_item.category = item_data.get('category', scraped_item.category)[:200]
-            scraped_item.tags = item_data.get('tags', scraped_item.tags)[:500]
+            # Update existing item with new data
+            for field in ['title', 'description', 'category', 'tags', 'current_price', 'original_price', 
+                         'rating', 'rating_count', 'views', 'sales', 'recent_orders', 'trending_rank',
+                         'seasonal_demand', 'price_trend', 'shipping_cost']:
+                if field in item_data:
+                    value = item_data[field]
+                    if field in ['title', 'description', 'category', 'tags'] and value:
+                        value = str(value)[:500 if field in ['title', 'description'] else 200]
+                    setattr(scraped_item, field, value)
+            
+            # Update JSON fields
+            for json_field in ['bulk_pricing_tiers', 'certifications', 'quality_standards', 
+                              'color_options', 'product_features', 'review_highlights', 
+                              'common_complaints', 'supplier_certifications', 'search_keywords',
+                              'shipping_methods', 'image_urls', 'video_urls']:
+                if json_field in item_data:
+                    setattr(scraped_item, json_field, item_data[json_field])
+            
             scraped_item.raw_data.update(item_data.get('raw_data', {}))
             scraped_item.save()
         

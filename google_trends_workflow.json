@@ -1,0 +1,87 @@
+{
+  "name": "Google Trends Content Calendar",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "https://trends.google.com/trends/trendingsearches/daily/rss?geo=US",
+        "interval": 3600
+      },
+      "name": "RSS Feed Trigger",
+      "type": "",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "const keywords = [\"personal finance tips\",\"crypto regulations\",\"mobile money\",\"stock market news\",\"AI trading bots\",\"financial literacy\",\"best savings account\",\"forex rates\",\"AI productivity tools\",\"best smartphones\",\"VR headsets\",\"wearable technology\",\"cloud computing\",\"cybersecurity news\",\"tech gadgets\",\"electric cars\",\"small business ideas\",\"remote work\",\"startup funding\",\"entrepreneurship tips\",\"e-commerce trends\",\"digital marketing\",\"supply chain\",\"business automation\",\"funny memes\",\"office humor\",\"work memes\",\"AI generated memes\",\"funny quotes\",\"viral jokes\",\"meme trends\",\"funny TikTok\",\"cheap flights\",\"solo travel\",\"eco-friendly travel\",\"travel hacks\",\"digital nomad\",\"luxury travel\",\"hidden gems travel\",\"travel safety\"];\nconst title = $json[\"title\"].toLowerCase();\nif (keywords.some(k => title.includes(k))) {\n  return [{ json: $json }];\n}\nreturn [];"
+      },
+      "name": "Filter Keywords",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [500, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "const keyword = $json[\"title\"].toLowerCase();\nlet topic = '';\nif ([\"personal finance tips\",\"crypto regulations\"].some(k => keyword.includes(k))) {\n  topic = 'Finance';\n} else if ([\"AI productivity tools\"].some(k => keyword.includes(k))) {\n  topic = 'Tech';\n} else if ([\"small business ideas\"].some(k => keyword.includes(k))) {\n  topic = 'Business';\n} else if ([\"funny memes\",\"office humor\"].some(k => keyword.includes(k))) {\n  topic = 'Humor';\n} else if ([\"cheap flights\",\"solo travel\"].some(k => keyword.includes(k))) {\n  topic = 'Travel';\n}\nreturn [{ json: { topic, keyword: $json[\"title\"], link: $json[\"link\"], relatedQueries: '', status: 'Idea', dateFound: new Date() } }];"
+      },
+      "name": "Map Topic",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [750, 300]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "sheetId": "1OImxMAeBpQ7lktMVZGpibwtDW51BDxLvtP-l2yFnq3I",
+        "range": "Sheet1",
+        "fields": {
+          "Date Found": "={{$json[\"dateFound\"]}}",
+          "Keyword": "={{$json[\"keyword\"]}}",
+          "Topic": "={{$json[\"topic\"]}}",
+          "Source Link": "={{$json[\"link\"]}}",
+          "Related Queries": "={{$json[\"relatedQueries\"]}}",
+          "Status": "={{$json[\"status\"]}}"
+        }
+      },
+      "name": "Append to Google Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 1,
+      "position": [1000, 300]
+    }
+  ],
+  "connections": {
+    "RSS Feed Trigger": {
+      "main": [
+        [
+          {
+            "node": "Filter Keywords",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Keywords": {
+      "main": [
+        [
+          {
+            "node": "Map Topic",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Map Topic": {
+      "main": [
+        [
+          {
+            "node": "Append to Google Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

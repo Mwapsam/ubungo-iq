@@ -94,7 +94,7 @@ class ScrapingSource(models.Model):
 
 @register_snippet
 class ScrapedData(models.Model):
-    """Raw scraped data from various sources."""
+    """Enhanced scraped data with detailed product and market intelligence."""
 
     source = models.ForeignKey(ScrapingSource, on_delete=models.CASCADE, related_name='scraped_items')
 
@@ -103,22 +103,77 @@ class ScrapedData(models.Model):
     url = models.URLField()
     title = models.CharField(max_length=500)
 
-    # Content data
+    # Basic content data
     description = models.TextField(blank=True)
-    price = models.CharField(max_length=100, blank=True)
     category = models.CharField(max_length=200, blank=True)
     tags = models.CharField(max_length=500, blank=True)
 
-    # Images
-    image_urls = models.JSONField(default=list, help_text="List of image URLs")
+    # === 1. ENHANCED PRODUCT-LEVEL DATA ===
+    
+    # Pricing data
+    current_price = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    original_price = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    discount_percentage = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    price_currency = models.CharField(max_length=10, default='USD')
+    bulk_pricing_tiers = models.JSONField(default=list, help_text="List of quantity-price tiers")
+    
+    # Order specifications
+    minimum_order_quantity = models.IntegerField(null=True, blank=True, help_text="MOQ")
+    order_units = models.CharField(max_length=50, blank=True, help_text="pieces, kg, meters, etc.")
+    lead_time_days = models.IntegerField(null=True, blank=True)
+    
+    # Product specifications
+    material = models.CharField(max_length=200, blank=True)
+    dimensions = models.CharField(max_length=200, blank=True, help_text="Size, weight, etc.")
+    certifications = models.JSONField(default=list, help_text="CE, ISO, FDA, etc.")
+    quality_standards = models.JSONField(default=list, help_text="Standards compliance")
+    color_options = models.JSONField(default=list, help_text="Available colors")
+    
+    # Customer feedback
+    rating = models.FloatField(null=True, blank=True)
+    rating_count = models.IntegerField(null=True, blank=True)
+    review_highlights = models.JSONField(default=list, help_text="Key review points")
+    common_complaints = models.JSONField(default=list, help_text="Frequent issues mentioned")
 
-    # Metrics (for trending analysis)
+    # === 2. SELLER/MANUFACTURER DATA ===
+    
+    supplier_name = models.CharField(max_length=300, blank=True)
+    supplier_location = models.CharField(max_length=200, blank=True)
+    supplier_country = models.CharField(max_length=100, blank=True)
+    supplier_region = models.CharField(max_length=100, blank=True, help_text="Asia, Europe, etc.")
+    years_in_business = models.IntegerField(null=True, blank=True)
+    verification_status = models.CharField(max_length=100, blank=True, help_text="Gold, Verified, etc.")
+    supplier_certifications = models.JSONField(default=list, help_text="ISO9001, etc.")
+    response_rate = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    supplier_rating = models.FloatField(null=True, blank=True)
+
+    # === 3. MARKET INTELLIGENCE ===
+    
+    # Trending data
     views = models.IntegerField(null=True, blank=True)
     likes = models.IntegerField(null=True, blank=True)
     sales = models.IntegerField(null=True, blank=True)
-    rating = models.FloatField(null=True, blank=True)
-
-    # Additional metadata
+    recent_orders = models.IntegerField(null=True, blank=True)
+    trending_rank = models.IntegerField(null=True, blank=True)
+    
+    # Keyword data
+    search_keywords = models.JSONField(default=list, help_text="SEO keywords from listing")
+    product_features = models.JSONField(default=list, help_text="Key features listed")
+    
+    # Shipping & logistics
+    shipping_cost = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    shipping_methods = models.JSONField(default=list, help_text="Air, sea, express, etc.")
+    port_of_shipment = models.CharField(max_length=200, blank=True)
+    
+    # Visual content
+    image_urls = models.JSONField(default=list, help_text="Product image URLs")
+    video_urls = models.JSONField(default=list, help_text="Product video URLs")
+    
+    # Seasonal data
+    seasonal_demand = models.CharField(max_length=100, blank=True, help_text="High/Low season")
+    price_trend = models.CharField(max_length=20, blank=True, help_text="Rising/Falling/Stable")
+    
+    # Raw metadata
     raw_data = models.JSONField(default=dict, help_text="Full scraped data")
 
     # Content generation tracking
@@ -148,22 +203,68 @@ class ScrapedData(models.Model):
             FieldPanel('title'),
             FieldPanel('url'),
             FieldPanel('external_id'),
-        ], heading='Item Information'),
+            FieldPanel('category'),
+        ], heading='Basic Information'),
         
         MultiFieldPanel([
-            FieldPanel('description'),
-            FieldPanel('price'),
-            FieldPanel('category'),
-            FieldPanel('tags'),
-            FieldPanel('image_urls'),
-        ], heading='Content Data'),
+            FieldPanel('current_price'),
+            FieldPanel('original_price'),
+            FieldPanel('discount_percentage'),
+            FieldPanel('price_currency'),
+            FieldPanel('bulk_pricing_tiers'),
+            FieldPanel('minimum_order_quantity'),
+            FieldPanel('order_units'),
+            FieldPanel('lead_time_days'),
+        ], heading='Pricing & Order Details'),
+        
+        MultiFieldPanel([
+            FieldPanel('material'),
+            FieldPanel('dimensions'),
+            FieldPanel('certifications'),
+            FieldPanel('quality_standards'),
+            FieldPanel('color_options'),
+            FieldPanel('product_features'),
+        ], heading='Product Specifications'),
+        
+        MultiFieldPanel([
+            FieldPanel('rating'),
+            FieldPanel('rating_count'),
+            FieldPanel('review_highlights'),
+            FieldPanel('common_complaints'),
+        ], heading='Customer Feedback'),
+        
+        MultiFieldPanel([
+            FieldPanel('supplier_name'),
+            FieldPanel('supplier_location'),
+            FieldPanel('supplier_country'),
+            FieldPanel('supplier_region'),
+            FieldPanel('years_in_business'),
+            FieldPanel('verification_status'),
+            FieldPanel('supplier_certifications'),
+            FieldPanel('response_rate'),
+            FieldPanel('supplier_rating'),
+        ], heading='Supplier Information'),
         
         MultiFieldPanel([
             FieldPanel('views'),
-            FieldPanel('likes'),
             FieldPanel('sales'),
-            FieldPanel('rating'),
-        ], heading='Metrics'),
+            FieldPanel('recent_orders'),
+            FieldPanel('trending_rank'),
+            FieldPanel('search_keywords'),
+            FieldPanel('seasonal_demand'),
+            FieldPanel('price_trend'),
+        ], heading='Market Intelligence'),
+        
+        MultiFieldPanel([
+            FieldPanel('shipping_cost'),
+            FieldPanel('shipping_methods'),
+            FieldPanel('port_of_shipment'),
+        ], heading='Logistics'),
+        
+        MultiFieldPanel([
+            FieldPanel('image_urls'),
+            FieldPanel('video_urls'),
+        ], heading='Media'),
         
         MultiFieldPanel([
             FieldPanel('content_generated'),
@@ -178,13 +279,92 @@ class ScrapedData(models.Model):
 
     @property
     def is_trending(self):
-        """Simple trending calculation based on recent metrics."""
-        if not any([self.views, self.likes, self.sales]):
-            return False
+        """Enhanced trending calculation with multiple factors."""
+        factors = []
+        
+        # View metrics
+        if self.views and self.views > 100:
+            factors.append(self.views / 100)
+        
+        # Sales activity
+        if self.sales:
+            factors.append(self.sales * 5)
+        if self.recent_orders:
+            factors.append(self.recent_orders * 3)
+            
+        # Rating quality
+        if self.rating and self.rating >= 4.0:
+            factors.append(2)
+            
+        # Trending rank (lower is better)
+        if self.trending_rank and self.trending_rank <= 100:
+            factors.append((101 - self.trending_rank) / 20)
+            
+        return sum(factors) > 10
 
-        # Basic trending logic - can be made more sophisticated
-        score = (self.views or 0) + (self.likes or 0) * 2 + (self.sales or 0) * 5
-        return score > 100
+    @property 
+    def discount_amount(self):
+        """Calculate discount amount if both prices available."""
+        if self.original_price and self.current_price:
+            return self.original_price - self.current_price
+        return None
+
+    @property
+    def has_bulk_pricing(self):
+        """Check if product offers bulk pricing."""
+        return bool(self.bulk_pricing_tiers)
+
+    @property
+    def is_verified_supplier(self):
+        """Check if supplier has verification status."""
+        return bool(self.verification_status)
+
+    @property
+    def content_generation_value(self):
+        """Calculate how valuable this item is for content generation."""
+        score = 0
+        
+        # High ratings = good for reviews
+        if self.rating and self.rating >= 4.5:
+            score += 3
+        
+        # Many reviews = good data
+        if self.rating_count and self.rating_count >= 50:
+            score += 2
+            
+        # Verified supplier = trustworthy
+        if self.is_verified_supplier:
+            score += 2
+            
+        # Certifications = compliance articles
+        if self.certifications:
+            score += len(self.certifications)
+            
+        # Bulk pricing = business guides
+        if self.has_bulk_pricing:
+            score += 2
+            
+        # Trending = market analysis
+        if self.is_trending:
+            score += 3
+            
+        return score
+
+    @property
+    def regional_insights(self):
+        """Generate regional market insights."""
+        insights = []
+        
+        if self.supplier_country:
+            insights.append(f"Sourced from {self.supplier_country}")
+            
+        if self.supplier_region and self.shipping_cost:
+            insights.append(f"{self.supplier_region} supplier with ${self.shipping_cost} shipping")
+            
+        if self.port_of_shipment:
+            insights.append(f"Ships from {self.port_of_shipment}")
+            
+        return insights
 
 
 @register_snippet

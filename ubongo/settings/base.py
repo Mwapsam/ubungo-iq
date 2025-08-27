@@ -56,8 +56,6 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.contrib.sessions.middleware.SessionMiddleware",
-    "ubongo.middleware.SecurityHeadersMiddleware",
-    "ubongo.middleware.RateLimitMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -65,7 +63,6 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
-    "ubongo.middleware.ViewCountMiddleware",
 ]
 
 ROOT_URLCONF = "ubongo.urls"
@@ -172,8 +169,6 @@ WAGTAILIMAGES_FORMAT_CONVERSIONS = {
     "gif": "webp",
 }
 
-# Use pickle serializer for Wagtail image caching to handle Rendition objects
-# This prevents "Object of type Rendition is not JSON serializable" errors
 WAGTAILIMAGES_CACHE_BACKEND = "wagtail_images"
 
 CELERY_ACCEPT_CONTENT = ["json"]

@@ -65,6 +65,13 @@ jobs:
           AWS_S3_REGION_NAME=${{ secrets.AWS_S3_REGION_NAME }}
           ENVIRONMENT=${{ secrets.ENVIRONMENT }}
           SENTRY_DSN=${{ secrets.SENTRY_DSN }}
+          N8N_DB_USER=${{ secrets.N8N_DB_USER }}
+          N8N_DB_PASSWORD=${{ secrets.N8N_DB_PASSWORD }}
+          N8N_DB_NAME=${{ secrets.N8N_DB_NAME }}
+          N8N_DB_HOST=${{ secrets.N8N_DB_HOST }}
+          N8N_DB_PORT=${{ secrets.N8N_DB_PORT }}
+          N8N_USER=${{ secrets.N8N_USER }}
+          N8N_PASSWORD=${{ secrets.N8N_PASSWORD }}
           EOF
           "
           # Secure the .env file
