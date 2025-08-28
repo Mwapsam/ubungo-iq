@@ -266,7 +266,6 @@ select {
 
 /* Header */
 .site-header {
-  background: var(--theme-header-bg);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--theme-border);
@@ -1132,7 +1131,6 @@ select {
 
 /* Footer */
 .site-footer {
-  background: var(--theme-footer-bg);
   color: var(--theme-text-muted);
   padding: var(--space-16) 0 var(--space-8);
   margin-top: var(--space-20);

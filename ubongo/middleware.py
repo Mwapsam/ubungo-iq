@@ -84,13 +84,19 @@ class DisableCacheMiddleware(MiddlewareMixin):
     def process_response(self, request, response):
         # Only apply in development
         if settings.DEBUG:
-            # Disable caching for static files and pages
+            # Aggressive cache prevention for all requests
+            response['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0, private'
+            response['Pragma'] = 'no-cache'
+            response['Expires'] = '0'
+            response['Last-Modified'] = time.strftime('%a, %d %b %Y %H:%M:%S GMT', time.gmtime())
+            response['ETag'] = f'"{int(time.time())}"'
+            
+            # Additional headers to prevent caching
             if request.path.startswith('/static/') or request.path.startswith('/media/'):
-                response['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
-                response['Pragma'] = 'no-cache'
-                response['Expires'] = '0'
+                response['Vary'] = 'Accept-Encoding'
             else:
-                # For HTML pages, add no-cache headers
+                # For HTML pages, add additional no-cache headers
                 add_never_cache_headers(response)
+                response['X-Accel-Expires'] = '0'
                 
         return response

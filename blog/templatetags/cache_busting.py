@@ -15,10 +15,11 @@ def static_cachebust(path):
     Add cache busting parameter to static files in development
     """
     if settings.DEBUG:
-        timestamp = str(int(time.time()))
+        # Use microsecond precision for maximum cache busting
+        timestamp = str(int(time.time() * 1000000))
         static_url = static(path)
         separator = '&' if '?' in static_url else '?'
-        return f"{static_url}{separator}v={timestamp}"
+        return f"{static_url}{separator}v={timestamp}&cb={int(time.time())}"
     else:
         return static(path)
 

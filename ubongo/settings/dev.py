@@ -23,16 +23,12 @@ CACHES = {
     }
 }
 
-# Disable browser caching in development
+# Development static files - no caching
 STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
 
-# Add cache-busting headers for development
-USE_ETAGS = False
-
-# Add development middleware for cache busting
-MIDDLEWARE = [
-    'ubongo.middleware.DisableCacheMiddleware',
-] + MIDDLEWARE
+# Force template reloading in development
+TEMPLATES[0]['OPTIONS']['debug'] = DEBUG
+TEMPLATES[0]['OPTIONS']['auto_reload'] = True
 
 CELERY_BROKER_URL = "memory://"
 CELERY_RESULT_BACKEND = "cache+memory://"

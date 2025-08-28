@@ -1,10 +1,13 @@
-{% load static wagtailcore_tags wagtailuserbar seo_tags cache_busting %}
+{% load static wagtailcore_tags wagtailuserbar seo_tags %}
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <link rel="shortcut icon" href="{% static 'img/icon.png' %}" />
     
     {% if request.in_preview_panel %}
@@ -23,8 +26,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
-    <link rel="stylesheet" href="{% css_cachebust 'css/modern-blog.css' %}">
-    <link rel="stylesheet" href="{% css_cachebust 'css/ubongo.css' %}">
+    <link rel="stylesheet" href="{% static 'css/modern-blog.css' %}">
+    <link rel="stylesheet" href="{% static 'css/ubongo.css' %}">
     
     <!-- Search Enhancement Styles -->
     <style>
@@ -338,8 +341,8 @@
         </div>
     </div>
     
-    <script src="{% js_cachebust 'js/modern-blog.js' %}" defer></script>
-    <script src="{% js_cachebust 'js/ubongo.js' %}" defer></script>
+    <script src="{% static 'js/modern-blog.js' %}" defer></script>
+    <script src="{% static 'js/ubongo.js' %}" defer></script>
     
     
     <!-- Search Enhancement Script -->
