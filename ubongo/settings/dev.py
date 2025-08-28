@@ -19,9 +19,20 @@ CHANNEL_LAYERS = {
 
 CACHES = {
     "default": {
-        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "BACKEND": "django.core.cache.backends.dummy.DummyCache",
     }
 }
+
+# Disable browser caching in development
+STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
+
+# Add cache-busting headers for development
+USE_ETAGS = False
+
+# Add development middleware for cache busting
+MIDDLEWARE = [
+    'ubongo.middleware.DisableCacheMiddleware',
+] + MIDDLEWARE
 
 CELERY_BROKER_URL = "memory://"
 CELERY_RESULT_BACKEND = "cache+memory://"

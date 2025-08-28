@@ -1,4 +1,4 @@
-{% load static wagtailcore_tags wagtailuserbar seo_tags %}
+{% load static wagtailcore_tags wagtailuserbar seo_tags cache_busting %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -21,10 +21,10 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nexa:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
-    <link rel="stylesheet" href="{% static 'css/modern-blog.css' %}">
-    <link rel="stylesheet" href="{% static 'css/ubongo.css' %}">
+    <link rel="stylesheet" href="{% css_cachebust 'css/modern-blog.css' %}">
+    <link rel="stylesheet" href="{% css_cachebust 'css/ubongo.css' %}">
     
     <!-- Search Enhancement Styles -->
     <style>
@@ -286,7 +286,7 @@
             
             <div class="footer-bottom">
                 <p>&copy; {% now "Y" %} Ubongo IQ. All rights reserved.</p>
-                <p>Built with Django & Wagtail</p>
+                <p>Built with love</p>
             </div>
         </div>
     </footer>
@@ -338,8 +338,9 @@
         </div>
     </div>
     
-    <script src="{% static 'js/modern-blog.js' %}" defer></script>
-    <script src="{% static 'js/ubongo.js' %}" defer></script>
+    <script src="{% js_cachebust 'js/modern-blog.js' %}" defer></script>
+    <script src="{% js_cachebust 'js/ubongo.js' %}" defer></script>
+    
     
     <!-- Search Enhancement Script -->
     <script>

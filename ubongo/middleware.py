@@ -2,6 +2,7 @@ import time
 from django.core.cache import cache
 from django.conf import settings
 from django.utils.deprecation import MiddlewareMixin
+from django.utils.cache import add_never_cache_headers
 from django.http import HttpResponse
 
 
@@ -72,4 +73,24 @@ class ViewCountMiddleware(MiddlewareMixin):
                 request._view_count_data["ip_address"],
             )
 
+        return response
+
+
+class DisableCacheMiddleware(MiddlewareMixin):
+    """
+    Middleware to disable caching in development for better developer experience
+    """
+    
+    def process_response(self, request, response):
+        # Only apply in development
+        if settings.DEBUG:
+            # Disable caching for static files and pages
+            if request.path.startswith('/static/') or request.path.startswith('/media/'):
+                response['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
+                response['Pragma'] = 'no-cache'
+                response['Expires'] = '0'
+            else:
+                # For HTML pages, add no-cache headers
+                add_never_cache_headers(response)
+                
         return response

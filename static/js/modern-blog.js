@@ -331,32 +331,6 @@
         });
     }
 
-    // HTMX Event Handlers
-    document.body.addEventListener('htmx:beforeRequest', function(event) {
-        // Show loading state
-        const target = event.target;
-        if (target.hasAttribute('data-loading-class')) {
-            target.classList.add(target.getAttribute('data-loading-class'));
-        }
-    });
-
-    document.body.addEventListener('htmx:afterRequest', function(event) {
-        // Hide loading state
-        const target = event.target;
-        if (target.hasAttribute('data-loading-class')) {
-            target.classList.remove(target.getAttribute('data-loading-class'));
-        }
-
-        // Reinitialize components for new content
-        initLazyLoading();
-    });
-
-    document.body.addEventListener('htmx:responseError', function(event) {
-        console.error('HTMX request failed:', event.detail);
-        // Show user-friendly error message
-        showErrorMessage('Something went wrong. Please try again.');
-    });
-
     // Utility Functions
     function getCookie(name) {
         let cookieValue = null;
@@ -420,6 +394,32 @@
             timeout = setTimeout(later, wait);
         };
     }
+
+    // HTMX Event Handlers
+    document.body.addEventListener('htmx:beforeRequest', function(event) {
+        // Show loading state
+        const target = event.target;
+        if (target.hasAttribute('data-loading-class')) {
+            target.classList.add(target.getAttribute('data-loading-class'));
+        }
+    });
+
+    document.body.addEventListener('htmx:afterRequest', function(event) {
+        // Hide loading state
+        const target = event.target;
+        if (target.hasAttribute('data-loading-class')) {
+            target.classList.remove(target.getAttribute('data-loading-class'));
+        }
+
+        // Reinitialize components for new content
+        initLazyLoading();
+    });
+
+    document.body.addEventListener('htmx:responseError', function(event) {
+        console.error('HTMX request failed:', event.detail);
+        // Show user-friendly error message
+        showErrorMessage('Something went wrong. Please try again.');
+    });
 
     // Reading Progress Bar (for article pages)
     if (document.body.classList.contains('article-page')) {
