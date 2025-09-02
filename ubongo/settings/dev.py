@@ -28,7 +28,6 @@ STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
 
 # Force template reloading in development
 TEMPLATES[0]['OPTIONS']['debug'] = DEBUG
-TEMPLATES[0]['OPTIONS']['auto_reload'] = True
 
 CELERY_BROKER_URL = "memory://"
 CELERY_RESULT_BACKEND = "cache+memory://"
