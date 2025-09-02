@@ -558,6 +558,141 @@
     });
     </script>
     
+    <!-- Dark Mode System Integration -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Enhanced dark mode system integration
+        const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        const body = document.body;
+        const html = document.documentElement;
+        
+        // Function to handle theme changes
+        function handleThemeChange(e) {
+            // Add transition class for smooth switching
+            body.style.transition = 'color 0.3s ease, background-color 0.3s ease';
+            html.style.transition = 'color 0.3s ease, background-color 0.3s ease';
+            
+            // Update any custom elements that need manual dark mode handling
+            updateCustomElements(e.matches);
+            
+            // Remove transition after animation completes
+            setTimeout(() => {
+                body.style.transition = '';
+                html.style.transition = '';
+            }, 300);
+            
+            // Dispatch custom event for other components
+            document.dispatchEvent(new CustomEvent('themeChanged', {
+                detail: { isDark: e.matches }
+            }));
+            
+            console.log('Theme changed to:', e.matches ? 'dark' : 'light');
+        }
+        
+        // Function to update custom elements
+        function updateCustomElements(isDark) {
+            // Update loading overlay background
+            const loadingOverlay = document.getElementById('loading-overlay');
+            if (loadingOverlay) {
+                loadingOverlay.style.background = isDark 
+                    ? 'rgba(0, 0, 0, 0.8)' 
+                    : 'rgba(255, 255, 255, 0.8)';
+            }
+            
+            // Update newsletter modal backdrop
+            const newsletterModal = document.getElementById('newsletterModal');
+            if (newsletterModal) {
+                const currentBackdrop = isDark 
+                    ? 'rgba(0, 0, 0, 0.7)' 
+                    : 'rgba(0, 0, 0, 0.5)';
+                newsletterModal.style.background = currentBackdrop;
+            }
+            
+            // Update any SVG fills that need manual adjustment
+            const svgElements = document.querySelectorAll('svg[data-theme-aware]');
+            svgElements.forEach(svg => {
+                if (isDark) {
+                    svg.classList.add('dark-mode');
+                } else {
+                    svg.classList.remove('dark-mode');
+                }
+            });
+            
+            // Update any images that have dark mode variants
+            const images = document.querySelectorAll('img[data-dark-src]');
+            images.forEach(img => {
+                if (isDark && img.dataset.darkSrc) {
+                    img.dataset.lightSrc = img.dataset.lightSrc || img.src;
+                    img.src = img.dataset.darkSrc;
+                } else if (!isDark && img.dataset.lightSrc) {
+                    img.src = img.dataset.lightSrc;
+                }
+            });
+        }
+        
+        // Listen for system theme changes
+        darkModeMediaQuery.addListener(handleThemeChange);
+        
+        // Also listen using the newer addEventListener method for better browser support
+        if (darkModeMediaQuery.addEventListener) {
+            darkModeMediaQuery.addEventListener('change', handleThemeChange);
+        }
+        
+        // Initialize on page load
+        updateCustomElements(darkModeMediaQuery.matches);
+        
+        // Add theme detection to window for debugging
+        window.getTheme = () => darkModeMediaQuery.matches ? 'dark' : 'light';
+        
+        // Add smooth transitions to all theme-aware elements on load
+        const themeAwareElements = document.querySelectorAll('body, header, footer, .article-card, .btn, .search-input, .dropdown-menu');
+        themeAwareElements.forEach(element => {
+            element.style.transition = 'color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease';
+        });
+        
+        // Handle theme changes for dynamically loaded content
+        document.addEventListener('htmx:afterSwap', function() {
+            // Apply theme-aware transitions to new elements
+            const newElements = document.querySelectorAll('[hx-target] .article-card, [hx-target] .btn');
+            newElements.forEach(element => {
+                element.style.transition = 'color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease';
+            });
+        });
+        
+        // Performance optimization: debounce theme changes
+        let themeChangeTimeout;
+        function debouncedThemeChange(e) {
+            clearTimeout(themeChangeTimeout);
+            themeChangeTimeout = setTimeout(() => handleThemeChange(e), 50);
+        }
+        
+        // Replace the immediate listener with debounced version for better performance
+        darkModeMediaQuery.removeListener(handleThemeChange);
+        darkModeMediaQuery.addListener(debouncedThemeChange);
+        
+        // Add meta theme-color support for mobile browsers
+        function updateMetaThemeColor(isDark) {
+            let metaThemeColor = document.querySelector('meta[name="theme-color"]');
+            if (!metaThemeColor) {
+                metaThemeColor = document.createElement('meta');
+                metaThemeColor.name = 'theme-color';
+                document.head.appendChild(metaThemeColor);
+            }
+            metaThemeColor.content = isDark ? '#0f172a' : '#ffffff';
+        }
+        
+        // Update meta theme color on change
+        document.addEventListener('themeChanged', function(e) {
+            updateMetaThemeColor(e.detail.isDark);
+        });
+        
+        // Initialize meta theme color
+        updateMetaThemeColor(darkModeMediaQuery.matches);
+        
+        console.log('Dark mode system integration initialized. Current theme:', darkModeMediaQuery.matches ? 'dark' : 'light');
+    });
+    </script>
+    
     {% block extra_js %}{% endblock %}
 </body>
 </html>
