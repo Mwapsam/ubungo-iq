@@ -2,3 +2,17 @@
 *.sqlite3
 *.pyc
 *.log
+__pycache__/
+db.sqlite3
+media
+/staticfiles
+.DS_Store
+.vscode/
+.idea/
+*.iml
+*.swp
+*.swo
+*.bak
+*.orig
+*.tmp
+*.old
