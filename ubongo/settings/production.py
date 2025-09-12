@@ -2,16 +2,11 @@ from .base import *
 
 DEBUG = False
 
-SECRET_KEY = os.getenv(
-    "SECRET_KEY"
-)
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 ALLOWED_HOSTS = [
     "*.ubongoiq.com",
-    "3.8.137.16",
-    "127.0.0.1",
-    "localhost",
-    "0.0.0.0",
+    "ubongoiq.com",
 ]
 
 INSTALLED_APPS += ["storages"]
@@ -19,7 +14,7 @@ INSTALLED_APPS += ["storages"]
 SECURE_HSTS_SECONDS = 31536000
 SECURE_SSL_REDIRECT = True
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-USE_X_FORWARDED_HOST = True  
+USE_X_FORWARDED_HOST = True
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
