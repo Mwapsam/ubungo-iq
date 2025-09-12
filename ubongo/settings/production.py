@@ -3,9 +3,7 @@ from .caching import *
 
 DEBUG = False
 
-SECRET_KEY = os.getenv(
-    "SECRET_KEY"
-)
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 ALLOWED_HOSTS = [
     "*.ubongoiq.com",
@@ -24,7 +22,7 @@ INSTALLED_APPS += [
 SECURE_HSTS_SECONDS = 31536000
 SECURE_SSL_REDIRECT = True
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-USE_X_FORWARDED_HOST = True  
+USE_X_FORWARDED_HOST = True
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
@@ -55,8 +53,8 @@ AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY", "")
 AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_STORAGE_BUCKET_NAME", "")
 AWS_S3_REGION_NAME = os.environ.get("AWS_S3_REGION_NAME", "")
 
-AWS_CLOUDFRONT_DOMAIN = os.environ.get("AWS_CLOUDFRONT_DOMAIN", "")
-CLOUDFRONT_ID = os.environ.get("AWS_CLOUDFRONT_ID", "")
+# AWS_CLOUDFRONT_DOMAIN = os.environ.get("AWS_CLOUDFRONT_DOMAIN", "")
+# CLOUDFRONT_ID = os.environ.get("AWS_CLOUDFRONT_ID", "")
 
 AWS_DEFAULT_ACL = None
 AWS_QUERYSTRING_AUTH = False
@@ -65,9 +63,7 @@ AWS_S3_OBJECT_PARAMETERS = {
     "CacheControl": "max-age=31536000, public",
 }
 
-AWS_S3_CUSTOM_DOMAIN = (
-    AWS_CLOUDFRONT_DOMAIN or f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
-)
+AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
 
 STATICFILES_LOCATION = "static"
 STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{STATICFILES_LOCATION}/"
@@ -147,9 +143,23 @@ CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 
 
 CSP_DEFAULT_SRC = ["'self'"]
-CSP_SCRIPT_SRC = ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com", "https://dp7dk6iy0oxso.cloudfront.net"]
-CSP_STYLE_SRC = ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://dp7dk6iy0oxso.cloudfront.net"]
-CSP_FONT_SRC = ["'self'", "https://fonts.gstatic.com", "https://dp7dk6iy0oxso.cloudfront.net"]
+CSP_SCRIPT_SRC = [
+    "'self'",
+    "'unsafe-inline'",
+    "https://cdnjs.cloudflare.com",
+    "https://dp7dk6iy0oxso.cloudfront.net",
+]
+CSP_STYLE_SRC = [
+    "'self'",
+    "'unsafe-inline'",
+    "https://fonts.googleapis.com",
+    "https://dp7dk6iy0oxso.cloudfront.net",
+]
+CSP_FONT_SRC = [
+    "'self'",
+    "https://fonts.gstatic.com",
+    "https://dp7dk6iy0oxso.cloudfront.net",
+]
 CSP_IMG_SRC = ["'self'", "data:", "https:", "https://dp7dk6iy0oxso.cloudfront.net"]
 CSP_CONNECT_SRC = ["'self'"]
 CSP_FRAME_SRC = ["'none'"]
