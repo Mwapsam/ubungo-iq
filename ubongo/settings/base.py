@@ -162,12 +162,12 @@ WAGTAILIMAGES_AVIF_QUALITY = 70
 
 WAGTAILIMAGES_EXTENSIONS = ["gif", "jpg", "jpeg", "png", "webp", "svg", "avif"]
 
-WAGTAILIMAGES_FORMAT_CONVERSIONS = {
-    "bmp": "avif",
-    "png": "avif",
-    "jpeg": "avif",
-    "gif": "webp",
-}
+# WAGTAILIMAGES_FORMAT_CONVERSIONS = {
+#     "bmp": "avif",
+#     "png": "avif",
+#     "jpeg": "avif",
+#     "gif": "webp",
+# }
 
 WAGTAILIMAGES_CACHE_BACKEND = "wagtail_images"
 
