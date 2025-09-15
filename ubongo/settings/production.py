@@ -18,7 +18,6 @@ ALLOWED_HOSTS = [
 
 INSTALLED_APPS += [
     "storages",
-    "compressor",
 ]
 
 SECURE_HSTS_SECONDS = 31536000
@@ -36,38 +35,27 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760
 STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
-    "compressor.finders.CompressorFinder",
 ]
 
 WAGTAILADMIN_STATIC_FILE_VERSION_STRINGS = False
 
-COMPRESS_ENABLED = True
-COMPRESS_OFFLINE = True
-COMPRESS_ROOT = os.path.join(BASE_DIR, "static")
-COMPRESS_URL = STATIC_URL
-COMPRESS_CSS_HASHING_METHOD = "content"
-COMPRESS_STORAGE = "ubongo.settings.storage_backends.CachedS3Boto3Storage"
+DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+
 
 STATICFILES_STORAGE = "ubongo.settings.storage_backends.StaticToS3Storage"
 
 AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID", "")
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY", "")
 AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_STORAGE_BUCKET_NAME", "")
-AWS_S3_REGION_NAME = os.environ.get("AWS_S3_REGION_NAME", "")
 
-AWS_CLOUDFRONT_DOMAIN = os.environ.get("AWS_CLOUDFRONT_DOMAIN", "")
-CLOUDFRONT_ID = os.environ.get("AWS_CLOUDFRONT_ID", "")
-
-AWS_DEFAULT_ACL = None
-AWS_QUERYSTRING_AUTH = False
-
-AWS_S3_OBJECT_PARAMETERS = {
-    "CacheControl": "max-age=31536000, public",
-}
-
-AWS_S3_CUSTOM_DOMAIN = (
-    AWS_CLOUDFRONT_DOMAIN or f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
+AWS_S3_ENDPOINT_URL = (
+    "https://806f142a89e516c4e43c1cb14d6cc740.r2.cloudflarestorage.com"
 )
+
+AWS_S3_REGION_NAME = "auto"  
+AWS_S3_SIGNATURE_VERSION = "s3v4"  
+AWS_DEFAULT_ACL = "public-read"  
+AWS_S3_CUSTOM_DOMAIN = "ubongoiq.com"  
 
 STATICFILES_LOCATION = "static"
 STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{STATICFILES_LOCATION}/"
@@ -76,8 +64,28 @@ MEDIAFILES_LOCATION = "media"
 MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{MEDIAFILES_LOCATION}/"
 
 STORAGES = {
-    "default": {"BACKEND": "ubongo.settings.storage_backends.mediaRootS3Boto3Storage"},
-    "staticfiles": {"BACKEND": "ubongo.settings.storage_backends.StaticToS3Storage"},
+    "default": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+        "OPTIONS": {
+            "bucket_name": AWS_STORAGE_BUCKET_NAME,
+            "endpoint_url": AWS_S3_ENDPOINT_URL,
+            "access_key": AWS_ACCESS_KEY_ID,
+            "secret_key": AWS_SECRET_ACCESS_KEY,
+            "signature_version": AWS_S3_SIGNATURE_VERSION,
+            "region_name": AWS_S3_REGION_NAME,
+        },
+    },
+    "staticfiles": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+        "OPTIONS": {
+            "bucket_name": AWS_STORAGE_BUCKET_NAME,
+            "endpoint_url": AWS_S3_ENDPOINT_URL,
+            "access_key": AWS_ACCESS_KEY_ID,
+            "secret_key": AWS_SECRET_ACCESS_KEY,
+            "signature_version": AWS_S3_SIGNATURE_VERSION,
+            "region_name": AWS_S3_REGION_NAME,
+        },
+    },
 }
 
 DATABASES = {
