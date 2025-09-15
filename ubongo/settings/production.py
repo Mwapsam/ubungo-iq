@@ -4,10 +4,7 @@ DEBUG = False
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 
-ALLOWED_HOSTS = [
-    "*.ubongoiq.com",
-    "ubongoiq.com",
-]
+ALLOWED_HOSTS = ["*.ubongoiq.com", "ubongoiq.com", "www.ubongoiq.com"]
 
 INSTALLED_APPS += ["storages"]
 
