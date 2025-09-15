@@ -3,17 +3,13 @@ from .caching import *
 
 DEBUG = False
 
-SECRET_KEY = os.getenv(
-    "SECRET_KEY"
-)
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 ALLOWED_HOSTS = [
     "*.ubongoiq.com",
     "ubongoiq.com",
+    "www.ubongoiq.com",
     "3.8.137.16",
-    "127.0.0.1",
-    "localhost",
-    "0.0.0.0",
 ]
 
 INSTALLED_APPS += [
@@ -23,7 +19,7 @@ INSTALLED_APPS += [
 SECURE_HSTS_SECONDS = 31536000
 SECURE_SSL_REDIRECT = True
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-USE_X_FORWARDED_HOST = True  
+USE_X_FORWARDED_HOST = True
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
@@ -52,14 +48,14 @@ AWS_S3_ENDPOINT_URL = (
     "https://806f142a89e516c4e43c1cb14d6cc740.r2.cloudflarestorage.com"
 )
 
-AWS_S3_REGION_NAME = "auto"  
-AWS_S3_SIGNATURE_VERSION = "s3v4"  
-AWS_DEFAULT_ACL = "public-read"  
-AWS_S3_CUSTOM_DOMAIN = "static.ubongoiq.com"  
+AWS_S3_REGION_NAME = "auto"
+AWS_S3_SIGNATURE_VERSION = "s3v4"
+AWS_DEFAULT_ACL = "public-read"
+AWS_S3_CUSTOM_DOMAIN = "static.ubongoiq.com"
 
 STATICFILES_LOCATION = "static"
 STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{STATICFILES_LOCATION}/"
-# STATIC_URL = AWS_S3_CUSTOM_DOMAIN 
+# STATIC_URL = AWS_S3_CUSTOM_DOMAIN
 
 MEDIAFILES_LOCATION = "media"
 MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{MEDIAFILES_LOCATION}/"
@@ -156,9 +152,23 @@ CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 
 
 CSP_DEFAULT_SRC = ["'self'"]
-CSP_SCRIPT_SRC = ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com", "https://dp7dk6iy0oxso.cloudfront.net"]
-CSP_STYLE_SRC = ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://dp7dk6iy0oxso.cloudfront.net"]
-CSP_FONT_SRC = ["'self'", "https://fonts.gstatic.com", "https://dp7dk6iy0oxso.cloudfront.net"]
+CSP_SCRIPT_SRC = [
+    "'self'",
+    "'unsafe-inline'",
+    "https://cdnjs.cloudflare.com",
+    "https://dp7dk6iy0oxso.cloudfront.net",
+]
+CSP_STYLE_SRC = [
+    "'self'",
+    "'unsafe-inline'",
+    "https://fonts.googleapis.com",
+    "https://dp7dk6iy0oxso.cloudfront.net",
+]
+CSP_FONT_SRC = [
+    "'self'",
+    "https://fonts.gstatic.com",
+    "https://dp7dk6iy0oxso.cloudfront.net",
+]
 CSP_IMG_SRC = ["'self'", "data:", "https:", "https://dp7dk6iy0oxso.cloudfront.net"]
 CSP_CONNECT_SRC = ["'self'"]
 CSP_FRAME_SRC = ["'none'"]
