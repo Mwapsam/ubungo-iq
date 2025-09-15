@@ -55,7 +55,7 @@ AWS_S3_ENDPOINT_URL = (
 AWS_S3_REGION_NAME = "auto"  
 AWS_S3_SIGNATURE_VERSION = "s3v4"  
 AWS_DEFAULT_ACL = "public-read"  
-AWS_S3_CUSTOM_DOMAIN = "ubongoiq.com"  
+AWS_S3_CUSTOM_DOMAIN = "static.ubongoiq.com"  
 
 STATICFILES_LOCATION = "static"
 # STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{STATICFILES_LOCATION}/"
