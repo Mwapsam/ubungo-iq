@@ -46,7 +46,7 @@ STATICFILES_STORAGE = "ubongo.settings.storage_backends.StaticToS3Storage"
 
 AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID", "")
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY", "")
-AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_STORAGE_BUCKET_NAME", "")
+AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_STORAGE_BUCKET_NAME", "ubongo")
 
 AWS_S3_ENDPOINT_URL = (
     "https://806f142a89e516c4e43c1cb14d6cc740.r2.cloudflarestorage.com"
