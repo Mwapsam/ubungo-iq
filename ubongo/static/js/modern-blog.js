@@ -373,41 +373,41 @@
         return cookieValue;
     }
 
-    // function /api/categories/(message) {
-    //     const errorDiv = document.createElement('div');
-    //     errorDiv.className = 'error-message';
-    //     errorDiv.textContent = message;
-    //     errorDiv.style.cssText = `
-    //         position: fixed;
-    //         top: 2rem;
-    //         right: 2rem;
-    //         background: #ef4444;
-    //         color: white;
-    //         padding: 1rem 1.5rem;
-    //         border-radius: 0.5rem;
-    //         z-index: 1000;
-    //         box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-    //         transform: translateX(100%);
-    //         transition: transform 0.3s ease;
-    //     `;
-        
-    //     document.body.appendChild(errorDiv);
-        
-    //     // Slide in
-    //     setTimeout(() => {
-    //         errorDiv.style.transform = 'translateX(0)';
-    //     }, 100);
-        
-    //     // Auto remove after 5 seconds
-    //     setTimeout(() => {
-    //         errorDiv.style.transform = 'translateX(100%)';
-    //         setTimeout(() => {
-    //             if (errorDiv.parentNode) {
-    //                 errorDiv.parentNode.removeChild(errorDiv);
-    //             }
-    //         }, 300);
-    //     }, 5000);
-    // }
+    function showErrorMessage(message) {
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'error-message';
+        errorDiv.textContent = message;
+        errorDiv.style.cssText = `
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: #ef4444;
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            z-index: 1000;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        `;
+
+        document.body.appendChild(errorDiv);
+
+        // Slide in
+        setTimeout(() => {
+            errorDiv.style.transform = 'translateX(0)';
+        }, 100);
+
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+            errorDiv.style.transform = 'translateX(100%)';
+            setTimeout(() => {
+                if (errorDiv.parentNode) {
+                    errorDiv.parentNode.removeChild(errorDiv);
+                }
+            }, 300);
+        }, 5000);
+    }
 
     function debounce(func, wait) {
         let timeout;

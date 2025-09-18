@@ -160,7 +160,7 @@ WAGTAILIMAGES_WEBP_QUALITY = 80
 WAGTAILIMAGES_AVIF_QUALITY = 70
 
 
-WAGTAILIMAGES_EXTENSIONS = ["gif", "jpg", "jpeg", "png", "webp", "svg", "avif"]
+WAGTAILIMAGES_EXTENSIONS = ["gif", "jpg", "jpeg", "png", "webp", "svg"]
 
 # WAGTAILIMAGES_FORMAT_CONVERSIONS = {
 #     "bmp": "avif",

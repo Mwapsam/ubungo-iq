@@ -8,11 +8,9 @@
         <div class="featured-article-image">
             <a href="{{ article.get_url }}">
                 <picture>
-                    {% image article.featured_image width-800 format-avif as img_avif %}
                     {% image article.featured_image width-800 format-webp as img_webp %}
                     {% image article.featured_image width-800 as img_fallback %}
-                    
-                    <source srcset="{{ img_avif.url }}" type="image/avif">
+
                     <source srcset="{{ img_webp.url }}" type="image/webp">
                     <img src="{{ img_fallback.url }}" 
                          alt="{{ article.featured_image.title|default:article.title }}"
@@ -65,11 +63,9 @@
         <div class="featured-card-image" style="aspect-ratio: 16/9; overflow: hidden;">
             <a href="{{ article.get_url }}">
                 <picture>
-                    {% image article.featured_image width-400 format-avif as img_avif %}
                     {% image article.featured_image width-400 format-webp as img_webp %}
                     {% image article.featured_image width-400 as img_fallback %}
-                    
-                    <source srcset="{{ img_avif.url }}" type="image/avif">
+
                     <source srcset="{{ img_webp.url }}" type="image/webp">
                     <img src="{{ img_fallback.url }}" 
                          alt="{{ article.featured_image.title|default:article.title }}"

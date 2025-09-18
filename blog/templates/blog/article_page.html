@@ -95,11 +95,9 @@
             <div class="container">
                 <figure style="max-width: 800px; margin: 0 auto;">
                     <picture>
-                        {% image self.featured_image width-1200 format-avif as img_avif %}
                         {% image self.featured_image width-1200 format-webp as img_webp %}
                         {% image self.featured_image width-1200 as img_fallback %}
-                        
-                        <source srcset="{{ img_avif.url }}" type="image/avif">
+
                         <source srcset="{{ img_webp.url }}" type="image/webp">
                         <img src="{{ img_fallback.url }}" 
                              alt="{{ self.featured_image.title|default:self.title }}"
