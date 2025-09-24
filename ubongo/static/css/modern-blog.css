@@ -882,7 +882,7 @@ select {
 }
 
 .footer-title {
-  color: white;
+  color: #5f5c5c;
   font-weight: 600;
   font-size: var(--font-size-lg);
   margin: 0;
@@ -903,13 +903,13 @@ select {
 }
 
 .footer-links a {
-  color: var(--color-gray-300);
+  color: #000;
   text-decoration: none;
   transition: color var(--transition-fast);
 }
 
 .footer-links a:hover {
-  color: white;
+  color: rgb(32, 30, 30);
 }
 
 .social-links {
